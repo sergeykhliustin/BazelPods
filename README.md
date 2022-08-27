@@ -1,2 +1,2 @@
 # [WIP] BazelPods
-One more way to integrate CocoaPods into Bazel
+Casual fork of awesome [PodToBUILD](https://github.com/pinterest/PodToBUILD)
