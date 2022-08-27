@@ -1,0 +1,9 @@
+
+build \
+--announce_rc \
+--spawn_strategy=local \
+--strategy=SwiftCompile=worker \
+--verbose_failures \
+--apple_platform_type=macos \
+--compilation_mode=dbg \
+--features=swift.use_global_module_cache
