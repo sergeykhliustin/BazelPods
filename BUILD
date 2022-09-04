@@ -1,5 +1,5 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
-load("@build_bazel_rules_apple//apple:macos.bzl", "macos_command_line_application", "macos_unit_test")
+load("@build_bazel_rules_apple//apple:macos.bzl", "macos_command_line_application")
 load("@rules_cc//cc:defs.bzl", "objc_library")
 
 objc_library(
@@ -12,22 +12,23 @@ objc_library(
 # PodToBUILD is a core library enabling Starlark code generation
 swift_library(
     name = "PodToBUILD",
-    srcs = glob(["Sources/PodToBUILD/*.swift"]),
+    srcs = glob(["Sources/PodToBUILD/**/*.swift"]),
     deps = [":ObjcSupport"],
     copts = ["-swift-version", "5"],
+    visibility = ["//Tests:__pkg__"]
 )
 
 # Compiler
 macos_command_line_application(
     name = "Compiler",
-    minimum_os_version = "10.13",
+    minimum_os_version = "10.11",
     deps = [":CompilerLib"],
 )
 
 swift_library(
     name = "CompilerLib",
-    srcs = glob(["Sources/Compiler/*.swift"]),
-    deps = [":PodToBUILD", "@swift-argument-parser//:ArgumentParser"],
+    srcs = glob(["Sources/Compiler/**/*.swift"]),
+    deps = [":PodToBUILD", "@bazelpods-swift-argument-parser//:ArgumentParser"],
     copts = ["-swift-version", "5"],
 )
 
@@ -35,42 +36,13 @@ swift_library(
 
 macos_command_line_application(
     name = "Generator",
-    minimum_os_version = "10.13",
+    minimum_os_version = "10.11",
     deps = [":GeneratorLib"],
 )
 
 swift_library(
     name = "GeneratorLib",
-    srcs = glob(["Sources/Generator/*.swift"]),
-    deps = [":PodToBUILD", "@swift-argument-parser//:ArgumentParser"],
+    srcs = glob(["Sources/Generator/**/*.swift"]),
+    deps = [":PodToBUILD", "@bazelpods-swift-argument-parser//:ArgumentParser"],
     copts = ["-swift-version", "5"],
 )
-
-# This tests RepoToolsCore and Starlark logic
-swift_library(
-    name = "PodToBUILDTestsLib",
-    srcs = glob(["Tests/PodToBUILDTests/*.swift"]),
-    deps = ["@podtobuild-SwiftCheck//:SwiftCheck"],
-    data = glob(["Examples/**/*.podspec.json"])
-)
-
-macos_unit_test(
-    name = "PodToBUILDTests",
-    deps = [":PodToBUILDTestsLib"],
-    minimum_os_version = "10.13",
-)
-
-swift_library(
-    name = "BuildTestsLib",
-    srcs = glob(["Tests/BuildTests/*.swift"]),
-    deps = ["@podtobuild-SwiftCheck//:SwiftCheck"],
-    data = glob(["Examples/**/*.podspec.json"])
-)
-
-# This tests RepoToolsCore and Starlark logic
-macos_unit_test(
-    name = "BuildTests",
-    deps = [":BuildTestsLib"],
-    minimum_os_version = "10.13",
-)
-

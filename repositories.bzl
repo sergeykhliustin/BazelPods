@@ -8,34 +8,7 @@ load(
     "http_archive"
 )
 
-def bazelpods_dependencies():
-    http_archive(
-        name = "swift-argument-parser",
-        url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.1.3.tar.gz",
-        strip_prefix = "swift-argument-parser-1.1.3",
-        sha256 = "e52c0ac4e17cfad9f13f87a63ddc850805695e17e98bf798cce85144764cdcaa",
-        build_file_content = """
-load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
-
-swift_library(
-    name = "ArgumentParser",
-    srcs = glob(["Sources/ArgumentParser/**/*.swift"]),
-    deps = [":ArgumentParserToolInfo"],
-    copts = ["-swift-version", "5"],
-    visibility = [
-        "//visibility:public"
-    ]
-)
-
-swift_library(
-    name = "ArgumentParserToolInfo",
-    srcs = glob(["Sources/ArgumentParserToolInfo/**/*.swift"]),
-    copts = ["-swift-version", "5"],
-)
-    """
-    )
-
-NAMESPACE_PREFIX = "podtobuild-"
+NAMESPACE_PREFIX = "bazelpods-"
 
 def namespaced_name(name):
     if name.startswith("@"):
@@ -59,41 +32,18 @@ def namespaced_git_repository(name, **kwargs):
         **kwargs
     )
 
+def namespaced_http_archive(name, **kwargs):
+    http_archive(
+        name = namespaced_name(name),
+        **kwargs
+    )
+
 def namespaced_build_file(libs):
     return """
 package(default_visibility = ["//visibility:public"])
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_c_module",
 "swift_library")
 """ + "\n\n".join(libs)
-
-def namespaced_swift_c_library(name, srcs, hdrs, includes, module_map):
-    return """
-objc_library(
-  name = "{name}Lib",
-  srcs = glob([
-    {srcs}
-  ]),
-  hdrs = glob([
-    {hdrs}
-  ]),
-  includes = [
-    {includes}
-  ]
-)
-
-swift_c_module(
-  name = "{name}",
-  deps = [":{name}Lib"],
-  module_name = "{name}",
-  module_map = "{module_map}",
-)
-""".format(**dict(
-        name = name,
-        srcs = ",\n".join(['"%s"' % x for x in srcs]),
-        hdrs = ",\n".join(['"%s"' % x for x in hdrs]),
-        includes = ",\n".join(['"%s"' % x for x in includes]),
-        module_map = module_map,
-    ))
 
 def namespaced_swift_library(name, srcs, deps = None, defines = None, copts=[]):
     deps = [] if deps == None else deps
@@ -114,49 +64,28 @@ swift_library(
         copts = ",\n".join(['"%s"' % x for x in copts]),
     ))
 
-def podtobuild_dependencies():
-    """Fetches repositories that are dependencies of the podtobuild workspace.
-
-    Users should call this macro in their `WORKSPACE` to ensure that all of the
-    dependencies of podtobuild are downloaded and that they are isolated from
-    changes to those dependencies.
-    """
-
-    namespaced_new_git_repository(
-        name = "Yams",
-        remote = "https://github.com/jpsim/Yams.git",
-        commit = "39698493e08190d867da98ff49210952b8059e78",
-        patch_cmds = [
-            """
-echo '
-module CYaml {
-    umbrella header "CYaml.h"
-    export *
-}
-' > Sources/CYaml/include/Yams.modulemap
-""",
-        ],
+def bazelpods_dependencies():
+    namespaced_http_archive(
+        name = "swift-argument-parser",
+        url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.1.3.tar.gz",
+        strip_prefix = "swift-argument-parser-1.1.3",
+        sha256 = "e52c0ac4e17cfad9f13f87a63ddc850805695e17e98bf798cce85144764cdcaa",
         build_file_content = namespaced_build_file([
-            namespaced_swift_c_library(
-                name = "CYaml",
-                srcs = [
-                    "Sources/CYaml/src/*.c",
-                    "Sources/CYaml/src/*.h",
-                ],
-                hdrs = [
-                    "Sources/CYaml/include/*.h",
-                ],
-                includes = ["Sources/CYaml/include"],
-                module_map = "Sources/CYaml/include/Yams.modulemap",
+            namespaced_swift_library(
+                name = "ArgumentParser",
+                srcs = ["Sources/ArgumentParser/**/*.swift"],
+                deps = [":ArgumentParserToolInfo"],
+                copts = ["-swift-version", "5"],
             ),
             namespaced_swift_library(
-                name = "Yams",
-                srcs = ["Sources/Yams/*.swift"],
-                deps = [":CYaml", ":CYamlLib"],
-                defines = ["SWIFT_PACKAGE"],
-            ),
-        ]),
+                name = "ArgumentParserToolInfo",
+                srcs = ["Sources/ArgumentParserToolInfo/**/*.swift"],
+                copts = ["-swift-version", "5"],
+            )
+        ])
     )
+
+def bazelpodstests_dependencies():
     namespaced_new_git_repository(
         name = "SwiftCheck",
         remote = "https://github.com/typelift/SwiftCheck.git",

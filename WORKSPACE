@@ -12,32 +12,6 @@ http_archive(
     sha256 = "a2fd565e527f83fb3f9eb07eb9737240e668c9242d3bc318712efa54a7deda97",
 )
 
-http_archive(
-    name = "swift-argument-parser",
-    url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.1.3.tar.gz",
-    strip_prefix = "swift-argument-parser-1.1.3",
-    sha256 = "e52c0ac4e17cfad9f13f87a63ddc850805695e17e98bf798cce85144764cdcaa",
-    build_file_content = """
-load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
-
-swift_library(
-    name = "ArgumentParser",
-    srcs = glob(["Sources/ArgumentParser/**/*.swift"]),
-    deps = [":ArgumentParserToolInfo"],
-    copts = ["-swift-version", "5"],
-    visibility = [
-        "//visibility:public"
-    ]
-)
-
-swift_library(
-    name = "ArgumentParserToolInfo",
-    srcs = glob(["Sources/ArgumentParserToolInfo/**/*.swift"]),
-    copts = ["-swift-version", "5"],
-)
-    """
-)
-
 load(
     "@build_bazel_rules_apple//apple:repositories.bzl",
     "apple_rules_dependencies",
@@ -59,7 +33,7 @@ load(
 
 swift_rules_extra_dependencies()
 
-load("//:repositories.bzl", "bazelpods_dependencies", "podtobuild_dependencies")
+load("//:repositories.bzl", "bazelpods_dependencies", "bazelpodstests_dependencies")
 
 bazelpods_dependencies()
-podtobuild_dependencies()
+bazelpodstests_dependencies()
