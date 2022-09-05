@@ -15,4 +15,8 @@ extension String {
     var lastPath: String {
         return (self as NSString).lastPathComponent
     }
+
+    var pathExtenstion: String {
+        return (self as NSString).pathExtension
+    }
 }

@@ -65,9 +65,7 @@ public struct PodBuildFile: SkylarkConvertible {
     ) -> [SkylarkConvertible] {
         let subspecs = podSpec.selectedSubspecs(subspecs: buildOptions.subspecs)
 
-        let extraDeps =
-            AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions) +
-            ObjcImport.vendoredLibraries(withPodspec: podSpec, subspecs: subspecs)
+        let extraDeps: [BazelTarget] = []
 
         let sourceLibs = makeSourceLibs(spec: podSpec,
                                         subspecs: subspecs,

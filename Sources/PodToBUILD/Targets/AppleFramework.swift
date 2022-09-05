@@ -27,6 +27,9 @@ struct AppleFramework: BazelTarget {
 
     let deps: AttrSet<[String]>
     let vendoredXCFrameworks: AttrSet<[XCFramework]>
+    let vendoredStaticFrameworks: AttrSet<Set<String>>
+    let vendoredDynamicFrameworks: AttrSet<Set<String>>
+    let vendoredStaticLibraries: AttrSet<Set<String>>
 
     let objcDefines: AttrSet<[String]>
     let swiftDefines: AttrSet<[String]>
@@ -83,8 +86,16 @@ struct AppleFramework: BazelTarget {
         let depNames = deps.map { ":\($0)" }
         self.deps = AttrSet(basic: depNames) <> allPodSpecDeps
 
-        self.vendoredXCFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
-        .map({ $0.compactMap({ XCFramework($0, options: options) }) })
+        let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
+        let xcFrameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtenstion == "xcframework" }) })
+        self.vendoredXCFrameworks = xcFrameworks.map({ $0.compactMap({ XCFramework($0, options: options) }) })
+
+        let frameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtenstion == "framework" }) })
+
+        self.vendoredStaticFrameworks = frameworks.map({ $0.filter({ !isDynamicFramework($0, options: options) }) })
+        self.vendoredDynamicFrameworks = frameworks.map({ $0.filter({ isDynamicFramework($0, options: options) }) })
+
+        self.vendoredStaticLibraries = spec.collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
 
         self.swiftDefines = AttrSet(basic: ["COCOAPODS"])
         self.objcDefines = AttrSet(basic: ["COCOAPODS=1"])
@@ -150,13 +161,16 @@ struct AppleFramework: BazelTarget {
         let bundleId = "org.cocoapods.\(moduleName)"
 
         let vendoredXCFrameworks = vendoredXCFrameworks.multi.ios ?? []
+        let vendoredStaticFrameworks = vendoredStaticFrameworks.multi.ios ?? []
+        let vendoredDynamicFrameworks = vendoredDynamicFrameworks.multi.ios ?? []
+        let vendoredStaticLibraries = vendoredStaticLibraries.multi.ios ?? []
 
         let lines: [SkylarkFunctionArgument] = [
             .named(name: "name", value: name.toSkylark()),
             .named(name: "module_name", value: moduleName.toSkylark()),
             .named(name: "bundle_id", value: bundleId.toSkylark()),
-            .named(name: "platforms", value: platforms.toSkylark()),
             .named(name: "swift_version", value: swiftVersion.toSkylark()),
+            .named(name: "platforms", value: platforms.toSkylark()),
             .named(name: "srcs", value: sourceFiles.toSkylark()),
             .named(name: "public_headers", value: publicHeaders.toSkylark()),
             .named(name: "private_headers", value: privateHeaders.toSkylark()),
@@ -164,6 +178,9 @@ struct AppleFramework: BazelTarget {
             .named(name: "resource_bundles", value: resourceBundles.toSkylark()),
             .named(name: "deps", value: deps.toSkylark()),
             .named(name: "vendored_xcframeworks", value: vendoredXCFrameworks.toSkylark()),
+            .named(name: "vendored_static_frameworks", value: vendoredStaticFrameworks.toSkylark()),
+            .named(name: "vendored_dynamic_frameworks", value: vendoredDynamicFrameworks.toSkylark()),
+            .named(name: "vendored_static_libraries", value: vendoredStaticLibraries.toSkylark()),
             .named(name: "objc_defines", value: objcDefines),
             .named(name: "swift_defines", value: swiftDefines),
             .named(name: "sdk_dylibs", value: sdkDylibs.toSkylark()),

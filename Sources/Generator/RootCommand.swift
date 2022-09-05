@@ -32,6 +32,9 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
     var podsRoot: String = "Pods"
 
+    @Option(name: .shortAndLong, help: "Packaging pods in dynamic frameworks (same as `use_frameworks!`)")
+    var frameworks: Bool = false
+
     @Flag(name: .shortAndLong, help: "Concurrent mode for generating files faster")
     var concurrent: Bool = false
 
@@ -78,7 +81,8 @@ struct RootCommand: ParsableCommand {
                                                  sourcePath: src,
                                                  iosPlatform: minIos,
                                                  depsPrefix: depsPrefix,
-                                                 podsRoot: podsRoot)
+                                                 podsRoot: podsRoot,
+                                                 linkDynamic: frameworks)
             let skylarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()

@@ -138,7 +138,7 @@ public func xcconfigSettingToList(_ value: String) -> [String] {
         .filter({ !$0.isEmpty })
 }
 
-public func isFrameworkDynamic(_ framework: String, options: BuildOptions) -> Bool {
+public func isDynamicFramework(_ framework: String, options: BuildOptions) -> Bool {
     let frameworkPath = URL(fileURLWithPath: framework, relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
     let frameworkExtension = frameworkPath.pathExtension
     let frameworkName = frameworkPath.deletingPathExtension().lastPathComponent

@@ -18,6 +18,8 @@ public protocol BuildOptions {
     var depsPrefix: String { get }
     var podsRoot: String { get }
 
+    var linkDynamic: Bool { get }
+
     var userOptions: [String] { get }
     var globalCopts: [String] { get }
 
@@ -39,6 +41,7 @@ public struct BasicBuildOptions: BuildOptions {
     public let iosPlatform: String
     public let depsPrefix: String
     public let podsRoot: String
+    public let linkDynamic: Bool
 
     public init(podName: String = "",
                 subspecs: [String] = [],
@@ -48,8 +51,8 @@ public struct BasicBuildOptions: BuildOptions {
                 globalCopts: [String] = [],
                 iosPlatform: String = "13.0",
                 depsPrefix: String = "//Pods",
-                podsRoot: String = "Pods"
-    ) {
+                podsRoot: String = "Pods",
+                linkDynamic: Bool = false) {
         self.podName = podName
         self.subspecs = subspecs
         self.podspecPath = podspecPath
@@ -59,6 +62,7 @@ public struct BasicBuildOptions: BuildOptions {
         self.iosPlatform = iosPlatform
         self.depsPrefix = depsPrefix
         self.podsRoot = podsRoot
+        self.linkDynamic = linkDynamic
     }
 
     public static let empty = BasicBuildOptions(podName: "")

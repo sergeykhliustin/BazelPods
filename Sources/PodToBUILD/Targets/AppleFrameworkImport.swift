@@ -66,8 +66,8 @@ struct AppleFrameworkImport: BazelTarget {
         let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks).map({ $0.filter({ !$0.hasSuffix("xcframework") }) })
         let frameworks = vendoredFrameworks.map {
             $0.compactMap {
-                let isDynamic = isFrameworkDynamic($0, options: options)
-                let frameworkName = URL(fileURLWithPath: $0).deletingLastPathComponent().lastPathComponent
+                let isDynamic = isDynamicFramework($0, options: options)
+                let frameworkName = URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent
 
                 return AppleFrameworkImport(name: "\(spec.moduleName ?? spec.name)_\(frameworkName)_VendoredFramework",
                                             isDynamic: isDynamic,
