@@ -65,8 +65,8 @@ struct AppleFramework: BazelTarget {
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
             .map({
                 $0.map({
-                    getDependencyName(options: options, podDepName: $0, podName: podName)
-                }).filter({ !$0.hasPrefix(":") })
+                    getDependencyName(podDepName: $0, podName: podName, options: options)
+                }).filter({ !($0.hasPrefix(":") && !$0.hasPrefix(options.depsPrefix)) })
             })
 
         let depNames = deps.map { ":\($0)" }

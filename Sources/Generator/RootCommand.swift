@@ -26,6 +26,12 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Minimum iOS version if not listed in podspec")
     var minIos: String = "13.0"
 
+    @Option(name: .long, help: "Dependencies prefix")
+    var depsPrefix: String = "//Pods"
+
+    @Option(name: .long, help: "Pods root")
+    var podsRoot: String = "Pods"
+
     @Flag(name: .shortAndLong, help: "Concurrent mode for generating files faster")
     var concurrent: Bool = false
 
@@ -65,9 +71,19 @@ struct RootCommand: ParsableCommand {
                 podSpecJson = jsonPodspec
             }
 
+            print("pods root")
+            print(podsRoot)
+
             // Consider adding a split here to split out sublibs
+            let buildOptions = BasicBuildOptions(podName: specification.name,
+                                                 subspecs: specification.subspecs,
+                                                 podspecPath: specification.podspec,
+                                                 sourcePath: src,
+                                                 iosPlatform: minIos,
+                                                 depsPrefix: depsPrefix,
+                                                 podsRoot: podsRoot)
             let skylarkString = PodBuildFile
-                .with(podSpec: podSpec, buildOptions: specification.toBuildOptions(src: src, ios: minIos))
+                .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()
 
             if printOutput {

@@ -1,0 +1,24 @@
+install! 'cocoapods',
+         :integrate_targets => false
+platform :ios, '13.4'
+target 'TestApp_iOS' do
+  inhibit_all_warnings!
+  use_modular_headers!
+[[PODS]]
+end
+
+post_install do |installer|
+  puts "Generating Pods.json"
+  development_pods = installer.sandbox.development_pods.keys
+  mapped_pods = installer.analysis_result.specifications.reduce({}) { |result, spec|
+    result[spec.name] = {
+      name: spec.name,
+      podspec: "#{spec.defined_in_file.to_s}",
+      development: (development_pods.include? spec.name)
+    }
+    result
+  }
+  File.open('Pods/Pods.json', 'w') { |file|
+    file.write(JSON.pretty_generate(mapped_pods))
+  }
+end

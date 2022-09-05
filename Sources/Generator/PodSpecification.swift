@@ -39,9 +39,4 @@ struct PodSpecification {
             PodSpecification(name: $0.key, subspecs: subspecsByPodName[$0.key] ?? [], podspec: $0.value, development: podConfigsMap[$0.key]?.development ?? false)
         })
     }
-
-    func toBuildOptions(src: String, ios: String) -> BuildOptions {
-        let path = (src as NSString).appendingPathComponent("Pods/\(name)")
-        return BasicBuildOptions(podName: name, subspecs: subspecs, podspecPath: podspec, sourcePath: path, iosPlatform: ios)
-    }
 }

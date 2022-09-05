@@ -60,10 +60,6 @@ let AnyFileTypes = ObjcLikeFileTypes
     .union(SwiftLikeFileTypes)
     .union(HeaderFileTypes)
 
-public func getRulePrefix(name: String) -> String {
-    return "//Pods/\(name)"
-}
-
 public func getPodBaseDir() -> String {
     return "Pods"
 }
@@ -105,7 +101,7 @@ public func getSourcePatternPrefix(options: BuildOptions) -> String {
 /// Versions are ignored!
 /// When a given dependency is locally spec'ed, it should
 /// Match the PodName i.e. PINCache/Core
-public func getDependencyName(options: BuildOptions, podDepName: String, podName: String) -> String  {
+public func getDependencyName(podDepName: String, podName: String, options: BuildOptions) -> String  {
     let results = podDepName.components(separatedBy: "/")
     if results.count > 1 && results[0] == podName {
         // This is a local subspec reference
@@ -113,10 +109,10 @@ public func getDependencyName(options: BuildOptions, podDepName: String, podName
         return ":\(getNamePrefix(options: options) + bazelLabel(fromString: join))"
     } else {
         if results.count > 1 {
-            return getRulePrefix(name: results[0])
+            return options.getRulePrefix(name: results[0])
         } else {
             // This is a reference to another pod library
-            return getRulePrefix(name:
+            return options.getRulePrefix(name:
                     bazelLabel(fromString: results[0]))
         }
     }

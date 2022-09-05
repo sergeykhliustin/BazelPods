@@ -28,6 +28,9 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Minimum iOS version if not listed in podspec")
     var minIos: String = "13.0"
 
+    @Option(name: .long, help: "Dependencies prefix")
+    var depsPrefix: String = "//Pods"
+
     func run() throws {
         _ = CrashReporter()
         let jsonData = try NSData(contentsOfFile: podspecJson, options: []) as Data
@@ -43,7 +46,8 @@ struct RootCommand: ParsableCommand {
         let assumedPodName = podSpecURL.lastPathComponent!.components(separatedBy: ".")[0]
         let options = BasicBuildOptions(podName: assumedPodName,
                                         subspecs: subspecs,
-                                        iosPlatform: minIos)
+                                        iosPlatform: minIos,
+                                        depsPrefix: depsPrefix)
 
         let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()
         print(result)
