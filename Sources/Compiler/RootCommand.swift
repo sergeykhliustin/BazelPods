@@ -19,8 +19,8 @@ struct RootCommand: ParsableCommand {
     @Argument(help: "podspec.json", completion: .file(extensions: ["json"]))
     var podspecJson: String
 
-    @Option(name: .long, help: "Sources root")
-    var src: String?
+    @Option(name: .long, help: "Sources root where Pods directory located (or renamed by podsRoot)")
+    var src: String = ""
 
     @Option(name: .long, parsing: .upToNextOption, help: "Subspecs list")
     var subspecs: [String] = []
@@ -30,6 +30,9 @@ struct RootCommand: ParsableCommand {
 
     @Option(name: .long, help: "Dependencies prefix")
     var depsPrefix: String = "//Pods"
+
+    @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
+    var podsRoot: String = "Pods"
 
     func run() throws {
         _ = CrashReporter()
@@ -46,15 +49,16 @@ struct RootCommand: ParsableCommand {
         let assumedPodName = podSpecURL.lastPathComponent!.components(separatedBy: ".")[0]
         let options = BasicBuildOptions(podName: assumedPodName,
                                         subspecs: subspecs,
+                                        sourcePath: src,
                                         iosPlatform: minIos,
-                                        depsPrefix: depsPrefix)
+                                        depsPrefix: depsPrefix,
+                                        podsRoot: podsRoot)
 
         let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()
         print(result)
     }
 
     func absolutePath(_ path: String) -> String {
-        guard let src = src else { return path }
         guard !path.starts(with: "/") else { return path }
         return (src as NSString).appendingPathComponent(path)
     }

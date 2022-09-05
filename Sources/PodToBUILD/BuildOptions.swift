@@ -5,6 +5,8 @@
 //  Created by Jerry Marino on 3/25/2020.
 //  Copyright © 2020 Pinterest Inc. All rights reserved.
 
+import Foundation
+
 public protocol BuildOptions {
     var podName: String { get }
     var subspecs: [String] { get }
@@ -19,11 +21,9 @@ public protocol BuildOptions {
     var userOptions: [String] { get }
     var globalCopts: [String] { get }
 
-    var path: String { get }
+    var podTargetSrcRoot: String { get }
 
-
-    var podBaseDir: String { get }
-    var genfileOutputBaseDir: String { get }
+    var podTargetAbsoluteRoot: String { get }
 
     func getRulePrefix(name: String) -> String
 }
@@ -36,7 +36,6 @@ public struct BasicBuildOptions: BuildOptions {
 
     public let userOptions: [String]
     public let globalCopts: [String]
-    public let path: String
     public let iosPlatform: String
     public let depsPrefix: String
     public let podsRoot: String
@@ -45,7 +44,6 @@ public struct BasicBuildOptions: BuildOptions {
                 subspecs: [String] = [],
                 podspecPath: String = "",
                 sourcePath: String = "",
-                path: String = ".",
                 userOptions: [String] = [],
                 globalCopts: [String] = [],
                 iosPlatform: String = "13.0",
@@ -54,7 +52,6 @@ public struct BasicBuildOptions: BuildOptions {
     ) {
         self.podName = podName
         self.subspecs = subspecs
-        self.path = path
         self.podspecPath = podspecPath
         self.sourcePath = sourcePath
         self.userOptions = userOptions
@@ -66,22 +63,15 @@ public struct BasicBuildOptions: BuildOptions {
 
     public static let empty = BasicBuildOptions(podName: "")
 
+    public var podTargetSrcRoot: String {
+        return podsRoot.appendingPath(podName)
+    }
+
+    public var podTargetAbsoluteRoot: String {
+        return sourcePath.appendingPath(podsRoot.lastPath).appendingPath(podName)
+    }
+
     public func getRulePrefix(name: String) -> String {
         return "\(depsPrefix)/\(name)"
-    }
-
-    public var podBaseDir: String {
-        return podsRoot
-    }
-
-    public var genfileOutputBaseDir: String {
-        let basePath = podBaseDir
-        let podName = podName
-        let parts = path.split(separator: "/")
-        if path ==  "." || parts.count < 2 {
-            return "\(basePath)/\(podName)"
-        }
-
-        return String(parts[0..<2].joined(separator: "/"))
     }
 }

@@ -20,7 +20,7 @@ struct RootCommand: ParsableCommand {
     @Argument(help: "Pods.json")
     var podsJson: String
 
-    @Option(name: .long, help: "Sources root")
+    @Option(name: .long, help: "Sources root where Pods directory located (or renamed by podsRoot)")
     var src: String
 
     @Option(name: .long, help: "Minimum iOS version if not listed in podspec")
@@ -29,7 +29,7 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Dependencies prefix")
     var depsPrefix: String = "//Pods"
 
-    @Option(name: .long, help: "Pods root")
+    @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
     var podsRoot: String = "Pods"
 
     @Flag(name: .shortAndLong, help: "Concurrent mode for generating files faster")
@@ -70,9 +70,6 @@ struct RootCommand: ParsableCommand {
                 podSpec = try PodSpec(JSONPodspec: jsonPodspec)
                 podSpecJson = jsonPodspec
             }
-
-            print("pods root")
-            print(podsRoot)
 
             // Consider adding a split here to split out sublibs
             let buildOptions = BasicBuildOptions(podName: specification.name,

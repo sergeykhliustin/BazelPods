@@ -18,6 +18,12 @@ ios_application(
     sdk_frameworks = [
       "UIKit"
     ],
+    linkopts = [
+      "-ObjC"
+    ],
+    xcconfig = {
+      "LD_VERIFY_BITCODE": "NO"
+    },
     deps = [
 [[DEPS]]
     ]
