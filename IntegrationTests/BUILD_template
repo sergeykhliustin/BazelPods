@@ -16,7 +16,8 @@ ios_application(
       "TestApp_iOS/**"
     ]),
     sdk_frameworks = [
-      "UIKit"
+      "UIKit",
+      "CoreGraphics"
     ],
     linkopts = [
       "-ObjC"

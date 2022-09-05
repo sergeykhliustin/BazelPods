@@ -38,6 +38,12 @@ extension SkylarkNode: ExpressibleByIntegerLiteral {
     }
 }
 
+extension Bool: SkylarkConvertible {
+    func toSkylark() -> SkylarkNode {
+        return .bool(self)
+    }
+}
+
 extension Int: SkylarkConvertible {
     func toSkylark() -> SkylarkNode {
         return .int(self)

@@ -34,7 +34,7 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
     var podsRoot: String = "Pods"
 
-    @Option(name: .shortAndLong, help: "Packaging pods in dynamic frameworks (same as `use_frameworks!`)")
+    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
     func run() throws {

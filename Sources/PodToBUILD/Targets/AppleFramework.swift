@@ -11,6 +11,8 @@ struct AppleFramework: BazelTarget {
     let name: String
     let version: String
     let moduleName: AttrSet<String>
+    let linkDynamic: Bool
+    var infoplists: [String] = []
     let platforms: [String: String]?
     let swiftVersion: AttrSet<String?>
 
@@ -25,7 +27,7 @@ struct AppleFramework: BazelTarget {
     // resource_bundles attribute
     let resourceBundles: AttrSet<[String: Set<String>]>
 
-    let deps: AttrSet<[String]>
+    var deps: AttrSet<[String]>
     let vendoredXCFrameworks: AttrSet<[XCFramework]>
     let vendoredStaticFrameworks: AttrSet<Set<String>>
     let vendoredDynamicFrameworks: AttrSet<Set<String>>
@@ -50,6 +52,7 @@ struct AppleFramework: BazelTarget {
         self.name = podName
         self.version = spec.version ?? "1.0"
         self.moduleName = Self.resolveModuleName(spec: spec)
+        self.linkDynamic = options.linkDynamic
         var platforms = spec.platforms ?? [:]
         if platforms["ios"] == nil {
             platforms["ios"] = options.iosPlatform
@@ -112,6 +115,14 @@ struct AppleFramework: BazelTarget {
         self.linkOpts = xcconfigParser.linkOpts
     }
 
+    var canLinkDynamic: Bool {
+        return sourceFiles.multi.ios?.isEmpty == false
+    }
+
+    mutating func addInfoPlist(_ target: BazelTarget) {
+        self.infoplists.append(":" + target.name)
+    }
+
     func toSkylark() -> SkylarkNode {
         let basicSwiftDefines: SkylarkNode =
             .functionCall(name: "select",
@@ -165,11 +176,15 @@ struct AppleFramework: BazelTarget {
         let vendoredDynamicFrameworks = vendoredDynamicFrameworks.multi.ios ?? []
         let vendoredStaticLibraries = vendoredStaticLibraries.multi.ios ?? []
 
+        let linkDynamic = self.linkDynamic && canLinkDynamic
+
         let lines: [SkylarkFunctionArgument] = [
             .named(name: "name", value: name.toSkylark()),
             .named(name: "module_name", value: moduleName.toSkylark()),
             .named(name: "bundle_id", value: bundleId.toSkylark()),
             .named(name: "swift_version", value: swiftVersion.toSkylark()),
+            .named(name: "link_dynamic", value: linkDynamic.toSkylark()),
+            .named(name: "infoplists", value: infoplists.toSkylark()),
             .named(name: "platforms", value: platforms.toSkylark()),
             .named(name: "srcs", value: sourceFiles.toSkylark()),
             .named(name: "public_headers", value: publicHeaders.toSkylark()),

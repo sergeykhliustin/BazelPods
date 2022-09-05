@@ -51,12 +51,19 @@ public struct PodBuildFile: SkylarkConvertible {
                                deps: [BazelTarget] = [],
                                dataDeps: [BazelTarget] = [],
                                options: BuildOptions) -> [BazelTarget] {
-        return [
-            AppleFramework(spec: spec,
-                           subspecs: subspecs,
-                           deps: Set((deps + dataDeps).map({ $0.name })),
-                           options: options)
-        ]
+        var result: [BazelTarget] = []
+        var framework = AppleFramework(spec: spec,
+                                       subspecs: subspecs,
+                                       deps: Set((deps + dataDeps).map({ $0.name })),
+                                       options: options)
+        if options.linkDynamic && framework.canLinkDynamic {
+            let infoplist = InfoPlist(framework: framework, spec: spec, options: options)
+            framework.addInfoPlist(infoplist)
+            result.append(infoplist)
+        }
+        result.append(framework)
+
+        return result
     }
 
     static func makeConvertables(
