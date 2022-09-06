@@ -15,17 +15,17 @@ struct AppleResourceBundle: BazelTarget {
     let bundleName: String
     let resources: AttrSet<Set<String>>
 
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         let resources = extractResources(patterns: (resources.basic ?? []).union(resources.multi.ios ?? []))
 
         return .functionCall(
             name: "apple_resource_bundle",
             arguments: [
-                .named(name: "name", value: name.toSkylark()),
-                .named(name: "bundle_name", value: bundleName.toSkylark()),
-                .named(name: "infoplists", value: ["\(name)_InfoPlist"].toSkylark()),
+                .named(name: "name", value: name.toStarlark()),
+                .named(name: "bundle_name", value: bundleName.toStarlark()),
+                .named(name: "infoplists", value: ["\(name)_InfoPlist"].toStarlark()),
                 .named(name: "resources",
-                       value: GlobNode(include: resources).toSkylark() )
+                       value: GlobNode(include: resources).toStarlark() )
         ])
     }
 

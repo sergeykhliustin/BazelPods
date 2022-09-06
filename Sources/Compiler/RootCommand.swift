@@ -10,10 +10,6 @@ import ArgumentParser
 import PodToBUILD
 import ObjcSupport
 
-extension String: LocalizedError {
-    public var errorDescription: String? { return self }
-}
-
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Compiler", abstract: "Compiles podspec.json to BUILD file")
     @Argument(help: "podspec.json", completion: .file(extensions: ["json"]))

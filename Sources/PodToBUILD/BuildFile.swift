@@ -8,19 +8,19 @@
 
 import Foundation
 
-public struct PodBuildFile: SkylarkConvertible {
-    /// Skylark Convertibles excluding prefix nodes.
-    /// @note Use toSkylark() to generate the actual BUILD file
-    let skylarkConvertibles: [SkylarkConvertible]
+public struct PodBuildFile: StarlarkConvertible {
+    /// Starlark Convertibles excluding prefix nodes.
+    /// @note Use toStarlark() to generate the actual BUILD file
+    let starlarkConvertibles: [StarlarkConvertible]
 
     private let options: BuildOptions
 
-    /// Return the skylark representation of the entire BUILD file
-    func toSkylark() -> SkylarkNode {
-        let convertibleNodes: [SkylarkNode] = skylarkConvertibles.compactMap { $0.toSkylark() }
+    /// Return the starlark representation of the entire BUILD file
+    func toStarlark() -> StarlarkNode {
+        let convertibleNodes: [StarlarkNode] = starlarkConvertibles.compactMap { $0.toStarlark() }
 
         return .lines([
-            makeLoadNodes(forConvertibles: skylarkConvertibles)
+            makeLoadNodes(forConvertibles: starlarkConvertibles)
         ] + [
             ConfigSetting.makeConfigSettingNodes()
         ] + convertibleNodes)
@@ -30,19 +30,19 @@ public struct PodBuildFile: SkylarkConvertible {
                             buildOptions: BuildOptions =
                             BasicBuildOptions.empty) -> PodBuildFile {
         let libs = PodBuildFile.makeConvertables(fromPodspec: podSpec, buildOptions: buildOptions)
-        return PodBuildFile(skylarkConvertibles: libs,
+        return PodBuildFile(starlarkConvertibles: libs,
                             options: buildOptions)
     }
 
-    func makeLoadNodes(forConvertibles skylarkConvertibles: [SkylarkConvertible]) -> SkylarkNode {
+    func makeLoadNodes(forConvertibles starlarkConvertibles: [StarlarkConvertible]) -> StarlarkNode {
         return .lines(
             Set(
-                skylarkConvertibles
+                starlarkConvertibles
                     .compactMap({ $0 as? BazelTarget })
                     .map({ $0.loadNode })
                     .filter({ !$0.isEmpty })
                 )
-                .map({ SkylarkNode.skylark($0) })
+                .map({ StarlarkNode.starlark($0) })
         )
     }
 
@@ -69,7 +69,7 @@ public struct PodBuildFile: SkylarkConvertible {
     static func makeConvertables(
             fromPodspec podSpec: PodSpec,
             buildOptions: BuildOptions = BasicBuildOptions.empty
-    ) -> [SkylarkConvertible] {
+    ) -> [StarlarkConvertible] {
         let subspecs = podSpec.selectedSubspecs(subspecs: buildOptions.subspecs)
 
         let extraDeps: [BazelTarget] = []
@@ -88,6 +88,6 @@ public struct PodBuildFile: SkylarkConvertible {
     }
 
     public func compile() -> String {
-        return SkylarkCompiler(toSkylark()).run()
+        return StarlarkCompiler(toStarlark()).run()
     }
 }

@@ -7,7 +7,7 @@
 //
 
 /// Law: Names must be valid bazel names; see the spec
-protocol BazelTarget: SkylarkConvertible {
+protocol BazelTarget: StarlarkConvertible {
     var loadNode: String { get }
     var name: String { get }
 }

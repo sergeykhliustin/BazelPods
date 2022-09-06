@@ -37,7 +37,8 @@ import Foundation
  platform
  deployment_target
 
- A specification should indicate the platform and the correspondent deployment targets on which the library is supported. If not defined in a subspec the attributes of this group inherit the value of the parent."
+ A specification should indicate the platform and the correspondent deployment targets on which the library is supported
+ If not defined in a subspec the attributes of this group inherit the value of the parent."
 
  ---
 

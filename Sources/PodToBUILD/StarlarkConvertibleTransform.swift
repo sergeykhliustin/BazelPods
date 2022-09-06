@@ -1,5 +1,5 @@
 //
-//  SkylarkConvertibleTransform.swift
+//  StarlarkConvertibleTransform.swift
 //  PodToBUILD
 //
 //  Created by Jerry Marino on 5/2/17.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SkylarkConvertibleTransform {
-    /// Apply a transform to skylark convertibles
+protocol StarlarkConvertibleTransform {
+    /// Apply a transform to starlark convertibles
     static func transform(convertibles: [BazelTarget], options: BuildOptions, podSpec: PodSpec) -> [BazelTarget]
 }

@@ -16,9 +16,9 @@ enum SelectCase: String {
     case fallback = "//conditions:default"
 }
 
-typealias AttrSetConstraint = Monoid & SkylarkConvertible & EmptyAwareness
+typealias AttrSetConstraint = Monoid & StarlarkConvertible & EmptyAwareness
 
-struct MultiPlatform<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness {
+struct MultiPlatform<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAwareness {
     let ios: T?
     let osx: T?
     let watchos: T?
@@ -89,7 +89,7 @@ struct MultiPlatform<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwa
                                 tvos: tvos.map(transform))
     }
     
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         precondition(ios != nil || osx != nil || watchos != nil || tvos != nil, "MultiPlatform empty can't be rendered")
 
         return .functionCall(name: "select", arguments: [.basic((
@@ -98,7 +98,7 @@ struct MultiPlatform<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwa
             tvos.map { [":\(SelectCase.tvos.rawValue)": $0] } <+>
             // TODO: Change to T.empty and move ios up when we support other platforms
 	        [SelectCase.fallback.rawValue: ios ?? T.empty ] ?? [:]
-        ).toSkylark())])
+        ).toStarlark())])
     }
 }
 
@@ -136,12 +136,12 @@ struct AttrTuple<A: AttrSetConstraint, B: AttrSetConstraint>: AttrSetConstraint 
             (second == nil || second.isEmpty)
     }
 
-    func toSkylark() -> SkylarkNode {
-        fatalError("You tried to toSkylark on a tuple (our domain modelling failed here :( )")
+    func toStarlark() -> StarlarkNode {
+        fatalError("You tried to toStarlark on a tuple (our domain modelling failed here :( )")
     }
 }
 
-struct AttrSet<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness {
+struct AttrSet<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAwareness {
     let basic: T?
     let multi: MultiPlatform<T>
 
@@ -220,12 +220,12 @@ struct AttrSet<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness
         )
     }
 
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         switch basic {
-        case .none where multi.isEmpty: return T.empty.toSkylark()
-        case let .some(b) where multi.isEmpty: return b.toSkylark()
-        case .none: return multi.toSkylark()
-        case let .some(b): return b.toSkylark() .+. multi.toSkylark()
+        case .none where multi.isEmpty: return T.empty.toStarlark()
+        case let .some(b) where multi.isEmpty: return b.toStarlark()
+        case .none: return multi.toStarlark()
+        case let .some(b): return b.toStarlark() .+. multi.toStarlark()
         }
     }
 }
@@ -294,13 +294,13 @@ extension AttrSet where T: AttrSetConstraint, T: Equatable {
     }
 
     /// For simplicity of the BUILD file, we'll condense if all is the same
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         let renderable = self.flattenToBasicIfPossible()
         switch renderable.basic {
-        case .none where renderable.multi.isEmpty: return T.empty.toSkylark()
-        case let .some(b) where renderable.multi.isEmpty: return b.toSkylark()
-        case .none: return renderable.multi.toSkylark()
-        case let .some(b): return b.toSkylark() .+. renderable.multi.toSkylark()
+        case .none where renderable.multi.isEmpty: return T.empty.toStarlark()
+        case let .some(b) where renderable.multi.isEmpty: return b.toStarlark()
+        case .none: return renderable.multi.toStarlark()
+        case let .some(b): return b.toStarlark() .+. renderable.multi.toStarlark()
         }
     }
 }

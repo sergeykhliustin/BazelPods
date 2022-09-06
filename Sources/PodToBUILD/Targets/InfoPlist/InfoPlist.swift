@@ -20,7 +20,7 @@ final class InfoPlist: GenRule {
         var CFBundleInfoDictionaryVersion = "6.0"
         var CFBundleSignature = "????"
         var CFBundleVersion = "1"
-        var NSPrincipalClass: String = ""
+        var NSPrincipalClass: String?
         let CFBundleIdentifier: String
         let CFBundleName: String
         let CFBundleShortVersionString: String

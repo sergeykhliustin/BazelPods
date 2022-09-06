@@ -10,11 +10,11 @@ import XCTest
 @testable import PodToBUILD
 
 class PodSpecToBUILDTests: XCTestCase {
-    let nameArgument = SkylarkFunctionArgument.named(name: "name", value: "test")
+    let nameArgument = StarlarkFunctionArgument.named(name: "name", value: "test")
 
     func testFunctionCall() {
-        let call = SkylarkNode.functionCall(name: "objc_library", arguments: [nameArgument])
-        let compiler = SkylarkCompiler([call])
+        let call = StarlarkNode.functionCall(name: "objc_library", arguments: [nameArgument])
+        let compiler = StarlarkCompiler([call])
         let expected = compilerOutput([
             "objc_library(",
             "  name = \"test\"",
@@ -24,12 +24,12 @@ class PodSpecToBUILDTests: XCTestCase {
         XCTAssertEqual(expected, compiler.run())
     }
 
-    func testCallWithSkylark() {
+    func testCallWithStarlark() {
         let sourceFiles = ["a.m", "b.m"]
-        let globCall = SkylarkNode.functionCall(name: "glob", arguments: [.basic(sourceFiles.toSkylark())])
-        let srcsArg = SkylarkFunctionArgument.named(name: "srcs", value: globCall)
-        let call = SkylarkNode.functionCall(name: "objc_library", arguments: [nameArgument, srcsArg])
-        let compiler = SkylarkCompiler([call])
+        let globCall = StarlarkNode.functionCall(name: "glob", arguments: [.basic(sourceFiles.toStarlark())])
+        let srcsArg = StarlarkFunctionArgument.named(name: "srcs", value: globCall)
+        let call = StarlarkNode.functionCall(name: "objc_library", arguments: [nameArgument, srcsArg])
+        let compiler = StarlarkCompiler([call])
         let expected = compilerOutput([
             "objc_library(",
             "  name = \"test\",",

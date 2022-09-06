@@ -10,11 +10,6 @@ import ArgumentParser
 import PodToBUILD
 import ObjcSupport
 
-extension String: LocalizedError {
-    public var errorDescription: String? { return self }
-}
-
-
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Generator", abstract: "Generates BUILD files for pods")
     @Argument(help: "Pods.json")
@@ -83,12 +78,12 @@ struct RootCommand: ParsableCommand {
                                                  depsPrefix: depsPrefix,
                                                  podsRoot: podsRoot,
                                                  linkDynamic: frameworks)
-            let skylarkString = PodBuildFile
+            let starlarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()
 
             if printOutput {
-                print(skylarkString)
+                print(starlarkString)
             }
             if !debug {
                 if specification.development && !FileManager.default.fileExists(atPath: absolutePath("Pods/\(specification.name)")) {
@@ -105,7 +100,7 @@ struct RootCommand: ParsableCommand {
                     })
                 }
                 let filePath = "Pods/\(specification.name)/BUILD.bazel"
-                if let data = skylarkString.data(using: .utf8) {
+                if let data = starlarkString.data(using: .utf8) {
                     try data.write(to: URL(fileURLWithPath: absolutePath(filePath)))
                 } else {
                     throw "Error writing file: \(filePath)"

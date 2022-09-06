@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct GlobNode: SkylarkConvertible {
+public struct GlobNode: StarlarkConvertible {
     // Bazel Glob function: glob(include, exclude=[], exclude_directories=1)
     public let include: [Either<Set<String>, GlobNode>]
     public let exclude: [Either<Set<String>, GlobNode>]
@@ -30,7 +30,7 @@ public struct GlobNode: SkylarkConvertible {
         self.exclude = exclude.simplify()
     }
 
-    public func toSkylark() -> SkylarkNode {
+    public func toStarlark() -> StarlarkNode {
         // An empty glob doesn't need to be rendered
         guard isEmpty == false else {
             return .empty
@@ -38,21 +38,21 @@ public struct GlobNode: SkylarkConvertible {
 
         let include = self.include
         let exclude = self.exclude
-        let includeArgs: [SkylarkFunctionArgument] = [
-            .basic(include.reduce(SkylarkNode.empty) {
-                $0 .+. $1.toSkylark()
+        let includeArgs: [StarlarkFunctionArgument] = [
+            .basic(include.reduce(StarlarkNode.empty) {
+                $0 .+. $1.toStarlark()
             }),
         ]
 
         // If there's no excludes omit the argument
-        let excludeArgs: [SkylarkFunctionArgument] = exclude.isEmpty ? [] : [
-            .named(name: "exclude", value: exclude.reduce(SkylarkNode.empty) {
-                $0 .+. $1.toSkylark()
+        let excludeArgs: [StarlarkFunctionArgument] = exclude.isEmpty ? [] : [
+            .named(name: "exclude", value: exclude.reduce(StarlarkNode.empty) {
+                $0 .+. $1.toStarlark()
             }),
         ]
 
         // Omit the default argument for exclude_directories
-        let dirArgs: [SkylarkFunctionArgument] = self.excludeDirectories ? [] : [
+        let dirArgs: [StarlarkFunctionArgument] = self.excludeDirectories ? [] : [
             .named(name: "exclude_directories",
                    value: .int(self.excludeDirectories ? 1 : 0)),
         ]

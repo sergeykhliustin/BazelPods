@@ -21,13 +21,13 @@ class GenRule: BazelTarget {
         self.cmd = cmd
     }
 
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         return .functionCall(
             name: "genrule",
             arguments: [
-                .named(name: "name", value: name.toSkylark()),
-                .named(name: "srcs", value: srcs.toSkylark()),
-                .named(name: "outs", value: outs.toSkylark()),
+                .named(name: "name", value: name.toStarlark()),
+                .named(name: "srcs", value: srcs.toStarlark()),
+                .named(name: "outs", value: outs.toStarlark()),
                 .named(name: "cmd", value: .multiLineString(cmd))
             ])
     }

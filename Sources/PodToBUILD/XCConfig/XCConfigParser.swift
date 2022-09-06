@@ -8,7 +8,7 @@
 import Foundation
 
 final class XCConfigParser {
-    private(set) var xcconfig: [String: SkylarkNode] = [:]
+    private(set) var xcconfig: [String: StarlarkNode] = [:]
     private(set) var swiftCopts: [String] = []
     private(set) var objcCopts: [String] = []
     private(set) var linkOpts: [String] = []
@@ -42,17 +42,17 @@ final class XCConfigParser {
 
         for key in config.keys {
             guard !XCSpecs.forceIgnore.contains(key) else { continue }
-            let node: SkylarkNode?
+            let node: StarlarkNode?
             let value = replacePodsEnvVars(config[key]!, options: options)
             switch XCSpecs.allSettingsKeyType[key] {
             case .boolean, .string, .enumeration:
                 node = .string(value)
             case .stringList:
-                node = .list(xcconfigSettingToList(value).map({ $0.toSkylark() }))
+                node = .list(xcconfigSettingToList(value).map({ $0.toStarlark() }))
             case .path:
                 node = .string(value)
             case .pathList:
-                node = .list(xcconfigSettingToList(value).map({ $0.toSkylark() }))
+                node = .list(xcconfigSettingToList(value).map({ $0.toStarlark() }))
             case .none:
                 node = nil
             }

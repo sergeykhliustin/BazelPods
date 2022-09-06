@@ -67,7 +67,7 @@ extension UserConfigurable {
     }
 }
 
-enum UserConfigurableTransform : SkylarkConvertibleTransform {
+enum UserConfigurableTransform : StarlarkConvertibleTransform {
     public static func transform(convertibles: [BazelTarget], options:
                                  BuildOptions, podSpec: PodSpec) -> [BazelTarget] {
         let attributes = UserConfigurableTargetAttributes(buildOptions: options)

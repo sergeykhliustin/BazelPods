@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct XCFramework: SkylarkConvertible {
+struct XCFramework: StarlarkConvertible {
     private let name: String
     private let xcframework: String
     private let input: InputData
@@ -39,24 +39,24 @@ struct XCFramework: SkylarkConvertible {
         }
     }
 
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         let slices = input.AvailableLibraries.map({
             return [
-                "identifier": $0.LibraryIdentifier.toSkylark(),
-                "platform": $0.SupportedPlatform.toSkylark(),
-                "platform_variant": $0.SupportedPlatformVariant.toSkylark(),
-                "supported_archs": $0.SupportedArchitectures.toSkylark(),
-                "path": xcframework.appendingPath($0.LibraryIdentifier).appendingPath($0.LibraryPath).toSkylark(),
+                "identifier": $0.LibraryIdentifier.toStarlark(),
+                "platform": $0.SupportedPlatform.toStarlark(),
+                "platform_variant": $0.SupportedPlatformVariant.toStarlark(),
+                "supported_archs": $0.SupportedArchitectures.toStarlark(),
+                "path": xcframework.appendingPath($0.LibraryIdentifier).appendingPath($0.LibraryPath).toStarlark(),
                 "build_type": [
                     // TODO: Think about
                     "linkage": $0.LibraryPath.hasSuffix("framework") ? "dynamic" : "static",
                     "packaging": $0.LibraryPath.hasSuffix("framework") ? "framework" : "library",
-                ].toSkylark()
+                ].toStarlark()
             ]
         })
         return [
-            "name": name.toSkylark(),
-            "slices": slices.toSkylark()
-        ].toSkylark()
+            "name": name.toStarlark(),
+            "slices": slices.toStarlark()
+        ].toStarlark()
     }
 }

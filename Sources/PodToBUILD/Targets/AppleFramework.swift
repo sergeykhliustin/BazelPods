@@ -36,7 +36,7 @@ struct AppleFramework: BazelTarget {
     let objcDefines: AttrSet<[String]>
     let swiftDefines: AttrSet<[String]>
 
-    let xcconfig: [String: SkylarkNode]
+    let xcconfig: [String: StarlarkNode]
 
     let sdkDylibs: AttrSet<Set<String>>
     let sdkFrameworks: AttrSet<Set<String>>
@@ -124,18 +124,18 @@ struct AppleFramework: BazelTarget {
         self.infoplists.append(":" + target.name)
     }
 
-    func toSkylark() -> SkylarkNode {
-        let basicSwiftDefines: SkylarkNode =
+    func toStarlark() -> StarlarkNode {
+        let basicSwiftDefines: StarlarkNode =
             .functionCall(name: "select",
                           arguments: [
                             .basic([
                                 "//conditions:default": [
                                     "DEBUG",
                                 ],
-                            ].toSkylark())
+                            ].toStarlark())
                           ]
             )
-        let basicObjcDefines: SkylarkNode =
+        let basicObjcDefines: StarlarkNode =
             .functionCall(name: "select",
                           arguments: [
                             .basic([
@@ -146,11 +146,11 @@ struct AppleFramework: BazelTarget {
                                     "POD_CONFIGURATION_DEBUG=1",
                                     "DEBUG=1",
                                 ],
-                            ].toSkylark())
+                            ].toStarlark())
                           ])
 
-        let swiftDefines = self.swiftDefines.toSkylark() .+. basicSwiftDefines
-        let objcDefines = self.objcDefines.toSkylark() .+. basicObjcDefines
+        let swiftDefines = self.swiftDefines.toStarlark() .+. basicSwiftDefines
+        let objcDefines = self.objcDefines.toStarlark() .+. basicObjcDefines
 
         let deps = deps.unpackToMulti().multi.ios.map {
             Set($0).sorted(by: (<))
@@ -177,34 +177,34 @@ struct AppleFramework: BazelTarget {
         let vendoredDynamicFrameworks = vendoredDynamicFrameworks.multi.ios ?? []
         let vendoredStaticLibraries = vendoredStaticLibraries.multi.ios ?? []
 
-        let lines: [SkylarkFunctionArgument] = [
-            .named(name: "name", value: name.toSkylark()),
-            .named(name: "module_name", value: moduleName.toSkylark()),
-            .named(name: "bundle_id", value: bundleId.toSkylark()),
-            .named(name: "swift_version", value: swiftVersion.toSkylark()),
-            .named(name: "link_dynamic", value: linkDynamic.toSkylark()),
-            .named(name: "infoplists", value: infoplists.toSkylark()),
-            .named(name: "platforms", value: platforms.toSkylark()),
-            .named(name: "srcs", value: sourceFiles.toSkylark()),
-            .named(name: "public_headers", value: publicHeaders.toSkylark()),
-            .named(name: "private_headers", value: privateHeaders.toSkylark()),
+        let lines: [StarlarkFunctionArgument] = [
+            .named(name: "name", value: name.toStarlark()),
+            .named(name: "module_name", value: moduleName.toStarlark()),
+            .named(name: "bundle_id", value: bundleId.toStarlark()),
+            .named(name: "swift_version", value: swiftVersion.toStarlark()),
+            .named(name: "link_dynamic", value: linkDynamic.toStarlark()),
+            .named(name: "infoplists", value: infoplists.toStarlark()),
+            .named(name: "platforms", value: platforms.toStarlark()),
+            .named(name: "srcs", value: sourceFiles.toStarlark()),
+            .named(name: "public_headers", value: publicHeaders.toStarlark()),
+            .named(name: "private_headers", value: privateHeaders.toStarlark()),
             .named(name: "data", value: packData()),
-            .named(name: "resource_bundles", value: resourceBundles.toSkylark()),
-            .named(name: "deps", value: deps.toSkylark()),
-            .named(name: "vendored_xcframeworks", value: vendoredXCFrameworks.toSkylark()),
-            .named(name: "vendored_static_frameworks", value: vendoredStaticFrameworks.toSkylark()),
-            .named(name: "vendored_dynamic_frameworks", value: vendoredDynamicFrameworks.toSkylark()),
-            .named(name: "vendored_static_libraries", value: vendoredStaticLibraries.toSkylark()),
+            .named(name: "resource_bundles", value: resourceBundles.toStarlark()),
+            .named(name: "deps", value: deps.toStarlark()),
+            .named(name: "vendored_xcframeworks", value: vendoredXCFrameworks.toStarlark()),
+            .named(name: "vendored_static_frameworks", value: vendoredStaticFrameworks.toStarlark()),
+            .named(name: "vendored_dynamic_frameworks", value: vendoredDynamicFrameworks.toStarlark()),
+            .named(name: "vendored_static_libraries", value: vendoredStaticLibraries.toStarlark()),
             .named(name: "objc_defines", value: objcDefines),
             .named(name: "swift_defines", value: swiftDefines),
-            .named(name: "sdk_dylibs", value: sdkDylibs.toSkylark()),
-            .named(name: "sdk_frameworks", value: sdkFrameworks.toSkylark()),
-            .named(name: "weak_sdk_frameworks", value: weakSdkFrameworks.toSkylark()),
-            .named(name: "objc_copts", value: objcCopts.toSkylark()),
-            .named(name: "swift_copts", value: swiftCopts.toSkylark()),
-            .named(name: "linkopts", value: linkOpts.toSkylark()),
-            .named(name: "xcconfig", value: xcconfig.toSkylark()),
-            .named(name: "visibility", value: ["//visibility:public"].toSkylark())
+            .named(name: "sdk_dylibs", value: sdkDylibs.toStarlark()),
+            .named(name: "sdk_frameworks", value: sdkFrameworks.toStarlark()),
+            .named(name: "weak_sdk_frameworks", value: weakSdkFrameworks.toStarlark()),
+            .named(name: "objc_copts", value: objcCopts.toStarlark()),
+            .named(name: "swift_copts", value: swiftCopts.toStarlark()),
+            .named(name: "linkopts", value: linkOpts.toStarlark()),
+            .named(name: "xcconfig", value: xcconfig.toStarlark()),
+            .named(name: "visibility", value: ["//visibility:public"].toStarlark())
         ]
             .filter({
                 switch $0 {
@@ -221,12 +221,12 @@ struct AppleFramework: BazelTarget {
         )
     }
 
-    private func packData() -> SkylarkNode {
-        let data: SkylarkNode
+    private func packData() -> StarlarkNode {
+        let data: StarlarkNode
         let resources = self.resources.multi.ios ?? []
         let bundles = self.bundles.multi.ios ?? []
-        let resourcesNode = GlobNode(include: resources).toSkylark()
-        let bundlesNode = bundles.toSkylark()
+        let resourcesNode = GlobNode(include: resources).toStarlark()
+        let bundlesNode = bundles.toStarlark()
 
         switch (!resources.isEmpty, !bundles.isEmpty) {
         case (false, false):
@@ -236,7 +236,7 @@ struct AppleFramework: BazelTarget {
         case (false, true):
             data = bundlesNode
         case (true, true):
-            data = SkylarkNode.expr(lhs: resourcesNode, op: "+", rhs: bundlesNode)
+            data = StarlarkNode.expr(lhs: resourcesNode, op: "+", rhs: bundlesNode)
         }
         return data
     }

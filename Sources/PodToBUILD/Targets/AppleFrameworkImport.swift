@@ -36,17 +36,17 @@ struct AppleFrameworkImport: BazelTarget {
     //     ],
     //     visibility = ["visibility:public"]
     // )
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         let ruleName = appleFrameworkImport(isDynamic: isDynamic, isXCFramework: isXCFramework)
 
-        return SkylarkNode.functionCall(
+        return StarlarkNode.functionCall(
             name: ruleName,
-                arguments: [SkylarkFunctionArgument]([
+                arguments: [StarlarkFunctionArgument]([
                     .named(name: "name", value: .string(name)),
                     .named(name: isXCFramework ? "xcframework_imports": "framework_imports",
                            value: frameworkImport.map {
                                   GlobNode(include: Set([$0 + "/**"]))
-                            }.toSkylark()),
+                            }.toStarlark()),
                     .named(name: "visibility", value: .list(["//visibility:public"]))
                 ])
         )

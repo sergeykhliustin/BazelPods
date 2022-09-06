@@ -19,10 +19,10 @@
 //    var copts = AttrSet(basic: [String]())
 //    var sdkFrameworks = AttrSet(basic: [String]())
 //
-//    func toSkylark() -> SkylarkNode {
+//    func toStarlark() -> StarlarkNode {
 //        return .functionCall(
 //            name: "config_setting",
-//            arguments: [SkylarkFunctionArgument]()
+//            arguments: [StarlarkFunctionArgument]()
 //        )
 //    }
 //
