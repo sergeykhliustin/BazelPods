@@ -99,6 +99,7 @@ enum PodSpecField: String {
     case swiftVersion = "swift_version"
     case swiftVersions = "swift_versions"
     case platforms
+    case staticFramework = "static_framework"
     case frameworks
     case weakFrameworks = "weak_frameworks"
     case excludeFiles = "exclude_files"
@@ -135,6 +136,7 @@ protocol PodSpecRepresentable {
     var name: String { get }
     var version: String? { get }
     var swiftVersions: Set<String>? { get }
+    var staticFramework: Bool { get }
     var platforms: [String: String]? { get }
     var podTargetXcconfig: [String: String]? { get }
     var userTargetXcconfig: [String: String]? { get }
@@ -167,6 +169,7 @@ public struct PodSpec: PodSpecRepresentable {
     let name: String
     let version: String?
     let swiftVersions: Set<String>?
+    let staticFramework: Bool
     let platforms: [String: String]?
     let sourceFiles: [String]
     let excludeFiles: [String]
@@ -229,6 +232,7 @@ public struct PodSpec: PodSpecRepresentable {
             // This is for "ios", "macos", etc
             name = ""
         }
+        staticFramework = (try? ExtractValue(fromJSON: fieldMap[.staticFramework]) as Bool) ?? false
         version = try ExtractValue(fromJSON: fieldMap[.version]) as String?
         frameworks = strings(fromJSON: fieldMap[.frameworks])
         weakFrameworks = strings(fromJSON: fieldMap[.weakFrameworks])

@@ -52,7 +52,6 @@ struct AppleFramework: BazelTarget {
         self.name = podName
         self.version = spec.version ?? "1.0"
         self.moduleName = Self.resolveModuleName(spec: spec)
-        self.linkDynamic = options.linkDynamic
         var platforms = spec.platforms ?? [:]
         if platforms["ios"] == nil {
             platforms["ios"] = options.iosPlatform
@@ -113,6 +112,8 @@ struct AppleFramework: BazelTarget {
         self.objcCopts = xcconfigParser.objcCopts
         self.swiftCopts = xcconfigParser.swiftCopts
         self.linkOpts = xcconfigParser.linkOpts
+
+        self.linkDynamic = options.linkDynamic && sourceFiles.multi.ios?.isEmpty == false && !spec.staticFramework
     }
 
     var canLinkDynamic: Bool {
@@ -169,14 +170,12 @@ struct AppleFramework: BazelTarget {
         })
 
         let moduleName = moduleName.unpackToMulti().multi.ios ?? ""
-        let bundleId = "org.cocoapods.\(moduleName)"
+        let bundleId = "org.cocoapods.\(name)"
 
         let vendoredXCFrameworks = vendoredXCFrameworks.multi.ios ?? []
         let vendoredStaticFrameworks = vendoredStaticFrameworks.multi.ios ?? []
         let vendoredDynamicFrameworks = vendoredDynamicFrameworks.multi.ios ?? []
         let vendoredStaticLibraries = vendoredStaticLibraries.multi.ios ?? []
-
-        let linkDynamic = self.linkDynamic && canLinkDynamic
 
         let lines: [SkylarkFunctionArgument] = [
             .named(name: "name", value: name.toSkylark()),
