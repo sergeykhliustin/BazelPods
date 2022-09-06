@@ -11,7 +11,8 @@ import PodToBUILD
 import ObjcSupport
 
 struct RootCommand: ParsableCommand {
-    static var configuration = CommandConfiguration(commandName: "Generator", abstract: "Generates BUILD files for pods")
+    static var configuration = CommandConfiguration(commandName: "Generator",
+                                                    abstract: "Generates BUILD files for pods")
     @Argument(help: "Pods.json")
     var podsJson: String
 
@@ -50,7 +51,8 @@ struct RootCommand: ParsableCommand {
         let specifications = PodSpecification.resolve(with: json).sorted(by: { $0.name < $1.name })
         let compiler: (PodSpecification) throws -> Void = { specification in
             print("Generating: \(specification.name)" +
-                  (specification.subspecs.isEmpty ? "" : " \n\tsubspecs: " + specification.subspecs.joined(separator: " ")))
+                  (specification.subspecs.isEmpty ? "" : " \n\tsubspecs: " +
+                   specification.subspecs.joined(separator: " ")))
             let podSpec: PodSpec
             var podSpecJson: JSONDict?
             if specification.podspec.hasSuffix(".json") {
@@ -86,14 +88,17 @@ struct RootCommand: ParsableCommand {
                 print(starlarkString)
             }
             if !debug {
-                if specification.development && !FileManager.default.fileExists(atPath: absolutePath("Pods/\(specification.name)")) {
-                    try? FileManager.default.createDirectory(atPath: absolutePath("Pods/\(specification.name)"), withIntermediateDirectories: false)
+                if specification.development &&
+                    !FileManager.default.fileExists(atPath: absolutePath("Pods/\(specification.name)")) {
+                    try? FileManager.default.createDirectory(atPath: absolutePath("Pods/\(specification.name)"),
+                                                             withIntermediateDirectories: false)
                     let contents = (try? FileManager.default.contentsOfDirectory(atPath: src)) ?? []
                     contents.forEach({ file in
                         let sourcePath = absolutePath(file)
                         let symlinkPath = absolutePath("Pods/\(specification.name)/\(file)")
                         do {
-                            try FileManager.default.createSymbolicLink(atPath: symlinkPath, withDestinationPath: sourcePath)
+                            try FileManager.default.createSymbolicLink(atPath: symlinkPath,
+                                                                       withDestinationPath: sourcePath)
                         } catch {
                             print("Error creating symlink: \(error)")
                         }
@@ -108,7 +113,9 @@ struct RootCommand: ParsableCommand {
                 if addPodspec,
                    let podSpecJson = podSpecJson,
                    let data = try? JSONSerialization.data(withJSONObject: podSpecJson, options: .prettyPrinted) {
-                    try? data.write(to: URL(fileURLWithPath: absolutePath("Pods/\(specification.name)/\(specification.name).json")))
+                    try? data.write(to:
+                        URL(fileURLWithPath: absolutePath("Pods/\(specification.name)/\(specification.name).json"))
+                    )
                 }
             }
         }
@@ -120,8 +127,7 @@ struct RootCommand: ParsableCommand {
                 DispatchQueue.global().async {
                     do {
                         try compiler(specification)
-                    }
-                    catch {
+                    } catch {
                         print("Error generating \(specification.name): \(error)")
                     }
                     dGroup.leave()
@@ -132,8 +138,7 @@ struct RootCommand: ParsableCommand {
             specifications.forEach({ specification in
                 do {
                     try compiler(specification)
-                }
-                catch {
+                } catch {
                     print("Error generating \(specification.name): \(error)")
                 }
             })

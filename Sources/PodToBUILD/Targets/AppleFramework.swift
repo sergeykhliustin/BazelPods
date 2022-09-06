@@ -46,7 +46,11 @@ struct AppleFramework: BazelTarget {
     let swiftCopts: [String]
     let linkOpts: [String]
 
-    init(spec: PodSpec, subspecs: [PodSpec], deps: Set<String> = [], dataDeps: Set<String> = [], options: BuildOptions) {
+    init(spec: PodSpec,
+         subspecs: [PodSpec],
+         deps: Set<String> = [],
+         dataDeps: Set<String> = [],
+         options: BuildOptions) {
 
         let podName = spec.name
         self.name = podName
@@ -59,9 +63,23 @@ struct AppleFramework: BazelTarget {
         self.platforms = platforms
         self.swiftVersion = Self.resolveSwiftVersion(spec: spec)
 
-        sourceFiles = Self.getFilesNodes(from: spec, subspecs: subspecs, includesKeyPath: \.sourceFiles, excludesKeyPath: \.excludeFiles, fileTypes: AnyFileTypes, options: options)
-        publicHeaders = Self.getFilesNodes(from: spec, subspecs: subspecs, includesKeyPath: \.publicHeaders, excludesKeyPath: \.privateHeaders, fileTypes: HeaderFileTypes, options: options)
-        privateHeaders = Self.getFilesNodes(from: spec, subspecs: subspecs, includesKeyPath: \.privateHeaders, fileTypes: HeaderFileTypes, options: options)
+        sourceFiles = Self.getFilesNodes(from: spec,
+                                         subspecs: subspecs,
+                                         includesKeyPath: \.sourceFiles,
+                                         excludesKeyPath: \.excludeFiles,
+                                         fileTypes: AnyFileTypes,
+                                         options: options)
+        publicHeaders = Self.getFilesNodes(from: spec,
+                                           subspecs: subspecs,
+                                           includesKeyPath: \.publicHeaders,
+                                           excludesKeyPath: \.privateHeaders,
+                                           fileTypes: HeaderFileTypes,
+                                           options: options)
+        privateHeaders = Self.getFilesNodes(from: spec,
+                                            subspecs: subspecs,
+                                            includesKeyPath: \.privateHeaders,
+                                            fileTypes: HeaderFileTypes,
+                                            options: options)
 
         let resources = spec.collectAttribute(with: subspecs, keyPath: \.resources).unpackToMulti()
         self.resources = resources.map({ (value: Set<String>) -> Set<String> in
@@ -70,7 +88,9 @@ struct AppleFramework: BazelTarget {
         self.bundles = resources.map({ (value: Set<String>) -> Set<String> in
             value.filter({ $0.hasSuffix(".bundle") })
         })
-        self.resourceBundles = spec.collectAttribute(with: subspecs, keyPath: \.resourceBundles).map({ value -> [String: Set<String>] in
+        self.resourceBundles = spec.collectAttribute(with: subspecs,
+                                                     keyPath: \.resourceBundles)
+        .map({ value -> [String: Set<String>] in
             var result = [String: Set<String>]()
             for key in value.keys {
                 result[key] = Set(extractResources(patterns: value[key]!))
@@ -130,8 +150,8 @@ struct AppleFramework: BazelTarget {
                           arguments: [
                             .basic([
                                 "//conditions:default": [
-                                    "DEBUG",
-                                ],
+                                    "DEBUG"
+                                ]
                             ].toStarlark())
                           ]
             )
@@ -140,12 +160,12 @@ struct AppleFramework: BazelTarget {
                           arguments: [
                             .basic([
                                 ":release": [
-                                    "POD_CONFIGURATION_RELEASE=1",
+                                    "POD_CONFIGURATION_RELEASE=1"
                                  ],
                                 "//conditions:default": [
                                     "POD_CONFIGURATION_DEBUG=1",
-                                    "DEBUG=1",
-                                ],
+                                    "DEBUG=1"
+                                ]
                             ].toStarlark())
                           ])
 
@@ -214,7 +234,7 @@ struct AppleFramework: BazelTarget {
                     return !value.isEmpty
                 }
             })
-        
+
         return .functionCall(
             name: "apple_framework",
             arguments: lines

@@ -4,7 +4,16 @@ included:
 disabled_rules:
 - identifier_name
 - type_body_length
+- function_body_length
+- cyclomatic_complexity
+- operator_whitespace
+- nesting
+- file_length
 
+line_length:
+  ignores_comments: true
+  warning: 150
+  error: 250
 force_cast:
   severity: warning
 force_try:

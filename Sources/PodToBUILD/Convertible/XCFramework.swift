@@ -28,7 +28,8 @@ struct XCFramework: StarlarkConvertible {
         do {
             self.options = options
             self.xcframework = xcframework
-            let frameworkURL = URL(fileURLWithPath: xcframework, relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
+            let frameworkURL = URL(fileURLWithPath: xcframework,
+                                   relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
             name = frameworkURL.deletingPathExtension().lastPathComponent
             let infoPlistURL = frameworkURL.appendingPathComponent("Info.plist")
             let data = try Data(contentsOf: infoPlistURL)
@@ -48,9 +49,8 @@ struct XCFramework: StarlarkConvertible {
                 "supported_archs": $0.SupportedArchitectures.toStarlark(),
                 "path": xcframework.appendingPath($0.LibraryIdentifier).appendingPath($0.LibraryPath).toStarlark(),
                 "build_type": [
-                    // TODO: Think about
                     "linkage": $0.LibraryPath.hasSuffix("framework") ? "dynamic" : "static",
-                    "packaging": $0.LibraryPath.hasSuffix("framework") ? "framework" : "library",
+                    "packaging": $0.LibraryPath.hasSuffix("framework") ? "framework" : "library"
                 ].toStarlark()
             ]
         })

@@ -30,7 +30,7 @@ public struct ConfigSetting: BazelTarget {
             "# Add a config setting release for compilation mode",
             "# Assume that people are using `opt` for release mode",
             "# see the bazel user manual for more information",
-            "# https://docs.bazel.build/versions/master/be/general.html#config_setting",
+            "# https://docs.bazel.build/versions/master/be/general.html#config_setting"
         ].map { StarlarkNode.starlark($0) }
         return .lines([.lines(comment),
             ConfigSetting(

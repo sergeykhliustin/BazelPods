@@ -36,7 +36,10 @@ struct PodSpecification {
             return (podspecPaths, subspecsByPodName)
         }
         return podspecPaths.map({
-            PodSpecification(name: $0.key, subspecs: subspecsByPodName[$0.key] ?? [], podspec: $0.value, development: podConfigsMap[$0.key]?.development ?? false)
+            PodSpecification(name: $0.key,
+                             subspecs: subspecsByPodName[$0.key] ?? [],
+                             podspec: $0.value,
+                             development: podConfigsMap[$0.key]?.development ?? false)
         })
     }
 }

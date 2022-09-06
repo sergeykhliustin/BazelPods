@@ -18,7 +18,8 @@ struct AppleFrameworkImport: BazelTarget {
         }
     }
     let name: String // A unique name for this rule.
-    let frameworkImport: AttrSet<String> // The list of files under a .framework directory which are provided to Objective-C targets that depend on this target.
+    // The list of files under a .framework directory which are provided to Objective-C targets that depend on this target.
+    let frameworkImport: AttrSet<String>
     let isXCFramework: Bool
     let isDynamic: Bool
 
@@ -63,7 +64,8 @@ struct AppleFrameworkImport: BazelTarget {
 
     static func vendoredFrameworks(withPodspec spec: PodSpec, subspecs: [PodSpec], options: BuildOptions) -> [BazelTarget] {
         // TODO: Make frameworks AttrSet
-        let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks).map({ $0.filter({ !$0.hasSuffix("xcframework") }) })
+        let vendoredFrameworks = spec.collectAttribute(with: subspecs,
+                                                       keyPath: \.vendoredFrameworks).map({ $0.filter({ !$0.hasSuffix("xcframework") }) })
         let frameworks = vendoredFrameworks.map {
             $0.compactMap {
                 let isDynamic = isDynamicFramework($0, options: options)

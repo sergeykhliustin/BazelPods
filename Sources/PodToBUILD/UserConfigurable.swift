@@ -22,14 +22,14 @@ public struct UserConfigurableTargetAttributes {
 }
 
 /// Support a collection of operators
-enum UserConfigurableOpt : String {
+enum UserConfigurableOpt: String {
    /// Add values to a value
    /// EX: "Some.copts += -foo, -bar"
    case PlusEqual = "+="
 }
 
 protocol UserConfigurable: BazelTarget {
-    var name : String { get }
+    var name: String { get }
 
     /// Add a given value to a key
     mutating func add(configurableKey: String, value: Any)
@@ -67,18 +67,19 @@ extension UserConfigurable {
     }
 }
 
-enum UserConfigurableTransform : StarlarkConvertibleTransform {
-    public static func transform(convertibles: [BazelTarget], options:
-                                 BuildOptions, podSpec: PodSpec) -> [BazelTarget] {
+enum UserConfigurableTransform: StarlarkConvertibleTransform {
+    public static func transform(convertibles: [BazelTarget],
+                                 options: BuildOptions,
+                                 podSpec: PodSpec) -> [BazelTarget] {
         let attributes = UserConfigurableTargetAttributes(buildOptions: options)
-        return UserConfigurableTransform.executeUserOptionsTransform(onConvertibles: convertibles, copts: options.globalCopts, userAttributes: attributes)
+        return UserConfigurableTransform.executeUserOptionsTransform(onConvertibles: convertibles,
+                                                                     copts: options.globalCopts,
+                                                                     userAttributes: attributes)
     }
 
-    public static  func executeUserOptionsTransform(onConvertibles convertibles:
-                                                    [BazelTarget], copts:
-                                                    [String], userAttributes:
-                                                    UserConfigurableTargetAttributes)
-    -> [BazelTarget] {
+    public static  func executeUserOptionsTransform(onConvertibles convertibles: [BazelTarget],
+                                                    copts: [String],
+                                                    userAttributes: UserConfigurableTargetAttributes) -> [BazelTarget] {
         var operatorByTarget = [String: [String]]()
         for keyPath in userAttributes.keyPathOperators {
             let components = keyPath.split(separator: ".", maxSplits: 1)
@@ -89,15 +90,14 @@ enum UserConfigurableTransform : StarlarkConvertibleTransform {
             }
         }
 
-        let output: [BazelTarget] = convertibles.map {
-            (inputConvertible: BazelTarget) in
+        let output: [BazelTarget] = convertibles.map { (inputConvertible: BazelTarget) in
             guard let configurable = inputConvertible as? UserConfigurable else {
                 return inputConvertible
             }
 
             if let operators = operatorByTarget[configurable.name] {
                 return configurable.apply(keyPathOperators: operators, copts:
-                                          copts)
+                                            copts)
             } else {
                 return configurable.apply(keyPathOperators: [], copts: copts)
             }

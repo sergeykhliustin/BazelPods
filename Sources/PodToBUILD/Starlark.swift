@@ -102,7 +102,6 @@ public indirect enum StarlarkFunctionArgument {
     case named(name: String, value: StarlarkNode)
 }
 
-
 // MARK: - StarlarkCompiler
 
 public struct StarlarkCompiler {

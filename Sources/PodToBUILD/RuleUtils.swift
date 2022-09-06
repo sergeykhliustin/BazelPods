@@ -10,30 +10,28 @@ import Foundation
 
 /// Extract files from a source file pattern.
 func extractFiles(fromPattern patternSet: AttrSet<Set<String>>,
-                         includingFileTypes: Set<String>,
-                         usePrefix: Bool = false,
-                         options: BuildOptions) -> AttrSet<Set<String>> {
+                  includingFileTypes: Set<String>,
+                  usePrefix: Bool = false,
+                  options: BuildOptions) -> AttrSet<Set<String>> {
     let sourcePrefix = usePrefix ? getSourcePatternPrefix(options: options) : ""
-    return patternSet.map {
-        (patterns: Set<String>) -> Set<String> in
+    return patternSet.map { (patterns: Set<String>) -> Set<String> in
         let result = patterns.flatMap { (p: String) -> [String] in
             pattern(fromPattern: sourcePrefix + p, includingFileTypes:
-                    includingFileTypes)
+                        includingFileTypes)
         }
         return Set(result)
     }
 }
 
 func extractFiles(fromPattern patternSet: AttrSet<[String]>,
-                         includingFileTypes: Set<String>,
-                         usePrefix: Bool = false,
-                         options: BuildOptions) -> AttrSet<[String]> {
+                  includingFileTypes: Set<String>,
+                  usePrefix: Bool = false,
+                  options: BuildOptions) -> AttrSet<[String]> {
     let sourcePrefix = usePrefix ? getSourcePatternPrefix(options: options) : ""
-    return patternSet.map {
-        (patterns: [String]) -> [String] in
+    return patternSet.map { (patterns: [String]) -> [String] in
         let result = patterns.flatMap { (p: String) -> [String] in
             pattern(fromPattern: sourcePrefix + p, includingFileTypes:
-                    includingFileTypes)
+                        includingFileTypes)
         }
         return result
     }
@@ -83,7 +81,7 @@ public func getSourcePatternPrefix(options: BuildOptions) -> String {
 /// Versions are ignored!
 /// When a given dependency is locally spec'ed, it should
 /// Match the PodName i.e. PINCache/Core
-public func getDependencyName(podDepName: String, podName: String, options: BuildOptions) -> String  {
+public func getDependencyName(podDepName: String, podName: String, options: BuildOptions) -> String {
     let results = podDepName.components(separatedBy: "/")
     if results.count > 1 && results[0] == podName {
         // This is a local subspec reference

@@ -268,7 +268,7 @@ extension BazelGlobChunk: Equatable {
         default: return false
         }
     }
-    
+
     func hasSuffix(_ suffix: String) -> Bool {
         switch self {
         case .Wild, .DotStarWild, .DirWild:
@@ -279,21 +279,20 @@ extension BazelGlobChunk: Equatable {
     }
 }
 
-
 // * is Wild
 let star = Parsers.just("*")
-let parseWild: Parser<RubyGlobChunk> = star.map{ _ in RubyGlobChunk.Wild }
+let parseWild: Parser<RubyGlobChunk> = star.map { _ in RubyGlobChunk.Wild }
 // ** is DirWild
 let starstar = Parsers.prefix(["*", "*"])
-let parseDirWild: Parser<RubyGlobChunk> = starstar.map{ _ in RubyGlobChunk.DirWild }
+let parseDirWild: Parser<RubyGlobChunk> = starstar.map { _ in RubyGlobChunk.DirWild }
 
 // .*
 let dotStar = Parsers.prefix([".", "*"])
-let parseDotStarWild: Parser<RubyGlobChunk> = dotStar.map{ _ in RubyGlobChunk.DotStarWild }
+let parseDotStarWild: Parser<RubyGlobChunk> = dotStar.map { _ in RubyGlobChunk.DotStarWild }
 
 // ? is CharWild
 let questionmark = Parsers.just("?")
-let parseCharWild: Parser<RubyGlobChunk> = questionmark.map{ _ in RubyGlobChunk.CharWild }
+let parseCharWild: Parser<RubyGlobChunk> = questionmark.map { _ in RubyGlobChunk.CharWild }
 
 // {h, y, z} yields Either(["h", "y", "z"])
 let comma = Parsers.just(",")
@@ -302,19 +301,19 @@ let curlyChunk = Parsers.anyChar.butNot("}") // need to exclude "}" to counter g
     .manyUntil(terminator: comma.forget)
 // matches 1, 2, 3
 let curlyChunks = curlyChunk
-    .rep(separatedBy: (comma.andThen{  Parsers.whitespace.many() }).forget)
+    .rep(separatedBy: (comma.andThen {  Parsers.whitespace.many() }).forget)
 // now we wrap with { }
 let parseCurlySet: Parser<RubyGlobChunk> =
     curlyChunks
         .wrapped(startingWith: "{", endingWith: "}")
-        .map{ css in RubyGlobChunk.Either(Set(css.map{ String($0) })) }
+        .map { css in RubyGlobChunk.Either(Set(css.map { String($0) })) }
 
 // [hm] yields Either(["h", "m"])
 let parseCharacterSet: Parser<RubyGlobChunk> =
     Parsers.anyChar.butNot("]") // a single character (counter greediness by excluding ])
         .manyUntil(terminator: Parsers.just("]").forget) // repeated
         .wrapped(startingWith: "[", endingWith: "]") // wrapped up
-        .map{ cs in RubyGlobChunk.Either(Set(cs.map{ String($0) }))}
+        .map { cs in RubyGlobChunk.Either(Set(cs.map { String($0) }))}
 
 // Either can be {h,m} or [hm]
 let parseEither = parseCurlySet.orElse(parseCharacterSet)
@@ -338,7 +337,7 @@ let parseSpecial =
 //       but Cocoapods will have valid regexes so this isn't be a problem.
 let parseStr: Parser<RubyGlobChunk> =
     Parsers.anyChar.manyUntil(terminator: parseSpecial.forget, atLeast: 1)
-        .map{ cs in RubyGlobChunk.Str(String(cs)) }
+        .map { cs in RubyGlobChunk.Str(String(cs)) }
 
 // One chunk of ruby is either a special chunk or a string
 let parseOneRubyChunk: Parser<RubyGlobChunk> =
@@ -361,18 +360,18 @@ extension Sequence where Iterator.Element == RubyGlobChunk {
             let foo: RubyGlobChunk = x
             switch foo {
             case .Wild:
-                return acc.map{ cs in cs + [BazelGlobChunk.Wild] }
+                return acc.map { cs in cs + [BazelGlobChunk.Wild] }
             case .DotStarWild:
-                return acc.map{ cs in cs + [BazelGlobChunk.DotStarWild] }
+                return acc.map { cs in cs + [BazelGlobChunk.DotStarWild] }
             case .DirWild:
-                return acc.map{ cs in cs + [BazelGlobChunk.DirWild] }
+                return acc.map { cs in cs + [BazelGlobChunk.DirWild] }
             case .CharWild:
                 fatalError("Unsupported chunk (CharWild)")
             case let .Either(strs):
                 return acc.flatMap { cs in
                     // cs is one different regex
                     // for every char we want to make a new regex
-                    strs.map{ str in
+                    strs.map { str in
                         cs + [BazelGlobChunk.Str(str)]
                     }
                 }
@@ -399,7 +398,7 @@ extension Sequence where Iterator.Element == BazelGlobChunk {
             }
         }
     }
-    
+
     var bazelString: String {
         return self.reduce("") { (acc, x) in
             switch x {
@@ -436,46 +435,46 @@ public func pattern(fromPattern pattern: String, includingFileTypes fileTypes: S
     if let arr = parseGlob.parseFully(Array(pattern)) {
         // Remove empty empty chunks
         let filtered: [[BazelGlobChunk]] = arr.toBazelChunks()
-            .map{ $0.simplify }
-            .filter{ (bazelChunks: [BazelGlobChunk]) -> Bool in
+            .map { $0.simplify }
+            .filter { (bazelChunks: [BazelGlobChunk]) -> Bool in
                 bazelChunks.count != 0 && bazelChunks[0] != BazelGlobChunk.Str("")
         }
 
         // Allow all file types
         if fileTypes.count == 0 {
              let strs: [String] = filtered
-                  .map{ (glob: [BazelGlobChunk]) -> String in glob.bazelString }
+                  .map { (glob: [BazelGlobChunk]) -> String in glob.bazelString }
              return Array(Set(strs))
         }
         // In Bazel, to keep things simple, we want all patterns to end in an extension
         // Unfortunately, Cocoapods patterns could end in anything, so we need to fix them all
         let suffixFixed: [[BazelGlobChunk]] = filtered
-            .flatMap{ (bazelGlobChunks: [BazelGlobChunk]) -> [[BazelGlobChunk]] in
+            .flatMap { (bazelGlobChunks: [BazelGlobChunk]) -> [[BazelGlobChunk]] in
                 let lastChunk = bazelGlobChunks.last! // count != 0 already filtered out
                 switch lastChunk {
                 // ending in * needs to map to *.m (except .*)
                 case .Wild, .DotStarWild:
                     let lastTwo = Array(bazelGlobChunks.suffix(2))
                     // if we end in .*
-                    if (lastTwo.count == 2 && lastTwo[0].hasSuffix(".")) {
-                        return fileTypes.map{
+                    if lastTwo.count == 2 && lastTwo[0].hasSuffix(".") {
+                        return fileTypes.map {
                             // strip the last * and replace with the extension
                             bazelGlobChunks.prefix(upTo: bazelGlobChunks.count-1) + [BazelGlobChunk.Str($0)]
                         }
                     } else {
                         // otherwise we can just append the extension
-                        return fileTypes.map{ bazelGlobChunks + [BazelGlobChunk.Str($0)] }
+                        return fileTypes.map { bazelGlobChunks + [BazelGlobChunk.Str($0)] }
                     }
                 // ending in ** needs to map to **/*.m
                 case .DirWild:
-                     return fileTypes.map{ bazelGlobChunks + [.Str("/"), .Wild, .Str($0)] }
+                     return fileTypes.map { bazelGlobChunks + [.Str("/"), .Wild, .Str($0)] }
                 // ending in a string if that string doesn't have an extension
                 // needs the full /**/*.m
                 case let .Str(s):
                     let allButLast = bazelGlobChunks.count >= 2 ? bazelGlobChunks.prefix(upTo: bazelGlobChunks.count-1) : []
                     // assume that alphanumeric suffix is an extension
                     let regex = try! NSRegularExpression(pattern: "\\.[^/]*$", options: [])
-                    return fileTypes.map{ (fileType: String) -> [BazelGlobChunk] in
+                    return fileTypes.map { (fileType: String) -> [BazelGlobChunk] in
                         return regex.matches(in: s).count > 0 ?
                             allButLast + [lastChunk] :
                             allButLast + [lastChunk, .Str("/"), .DirWild, .Str("/"), .Wild, .Str(fileType)]
@@ -485,11 +484,11 @@ public func pattern(fromPattern pattern: String, includingFileTypes fileTypes: S
 
         // compile the bazel chunks
         let strs: [String] = suffixFixed
-            .map{ (glob: [BazelGlobChunk]) -> String in glob.bazelString }
+            .map { (glob: [BazelGlobChunk]) -> String in glob.bazelString }
 
         return Array(Set(strs))
             // Only include patterns that contain the suffixes we care about
-            .filter{ (bazelRegex: String) -> Bool in
+            .filter { (bazelRegex: String) -> Bool in
                 // if at least one of the filetypes we're checking matches then we're good
                 (fileTypes.filter { fileType in
                     bazelRegex.hasSuffix(fileType)
@@ -569,4 +568,3 @@ extension NSRegularExpression {
         return results.map { nsString.substring(with: $0.range) }
     }
 }
-

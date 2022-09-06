@@ -18,7 +18,7 @@ struct ObjcImport: BazelTarget {
                 name: "objc_import",
                 arguments: [
                     .named(name: "name", value: name.toStarlark()),
-                    .named(name: "archives", value: archives.toStarlark()),
+                    .named(name: "archives", value: archives.toStarlark())
                 ]
         )
     }

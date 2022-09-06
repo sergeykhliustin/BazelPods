@@ -86,7 +86,7 @@ extension Set: StarlarkConvertible {
         // HACK: Huge hack, but fixing this for real would require major refactoring
         // ASSUMPTION: You're only calling Set.toStarlark on strings!!!
         // FIXME in Swift 4
-        return self.map{ $0 as! String }.sorted().toStarlark()
+        return self.map { $0 as! String }.sorted().toStarlark()
     }
 }
 

@@ -238,13 +238,13 @@ public struct PodSpec: PodSpecRepresentable {
         frameworks = strings(fromJSON: fieldMap[.frameworks])
         weakFrameworks = strings(fromJSON: fieldMap[.weakFrameworks])
         excludeFiles = strings(fromJSON: fieldMap[.excludeFiles])
-        sourceFiles = strings(fromJSON: fieldMap[.sourceFiles]).map({ 
+        sourceFiles = strings(fromJSON: fieldMap[.sourceFiles]).map({
             $0.hasSuffix("/") ? String($0.dropLast()) : $0
         })
         publicHeaders = strings(fromJSON: fieldMap[.publicHeaders])
         privateHeaders = strings(fromJSON: fieldMap[.privateHeaders])
 
-        prefixHeaderFile  = (fieldMap[.prefixHeaderFile] as? Bool).map{ .left($0) } ?? // try a bool
+        prefixHeaderFile  = (fieldMap[.prefixHeaderFile] as? Bool).map { .left($0) } ?? // try a bool
 	        (fieldMap[.prefixHeaderFile] as? String).map { .right($0) } // try a string
 
         prefixHeaderContents = fieldMap[.prefixHeaderContents] as? String
@@ -260,8 +260,8 @@ public struct PodSpec: PodSpecRepresentable {
 
         headerDirectory = fieldMap[.headerDirectory] as? String
         moduleName = fieldMap[.moduleName] as? String
-        requiresArc = (fieldMap[.requiresArc] as? Bool).map{ .left($0) } ?? // try a bool
-	        stringsStrict(fromJSON: fieldMap[.requiresArc]).map{ .right($0) } // try a string
+        requiresArc = (fieldMap[.requiresArc] as? Bool).map { .left($0) } ?? // try a bool
+	        stringsStrict(fromJSON: fieldMap[.requiresArc]).map { .right($0) } // try a string
 
         if let podSubspecDependencies = fieldMap[.dependencies] as? JSONDict {
             dependencies = Array(podSubspecDependencies.keys)
@@ -353,7 +353,7 @@ enum PodSpecSource {
     case http(url: URL)
 
     static func source(fromDict dict: JSONDict) -> PodSpecSource {
-        if let gitURLString: String = try? ExtractValue(fromJSON: dict["git"])  {
+        if let gitURLString: String = try? ExtractValue(fromJSON: dict["git"]) {
             guard let gitURL = URL(string: gitURLString) else {
                 fatalError("Invalid source URL for Git: \(gitURLString)")
             }
@@ -425,7 +425,7 @@ func strings(fromJSON JSONValue: Any? = nil) -> [String] {
     return [String]()
 }
 
-fileprivate func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
+private func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
     if let str = JSONValue as? String {
         return [str]
     }
@@ -434,4 +434,3 @@ fileprivate func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
     }
     return nil
 }
-

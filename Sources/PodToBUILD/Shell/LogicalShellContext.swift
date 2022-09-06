@@ -35,7 +35,7 @@ func MakeShellInvocation(_ command: String, arguments: [String], value standardO
     return (encode(command, arguments: arguments), output)
 }
 
-struct LogicalCommandOutput : CommandOutput {
+struct LogicalCommandOutput: CommandOutput {
     var standardErrorData = Data()
     var standardOutputData = Data()
     var terminationStatus: Int32 = 0
@@ -44,9 +44,9 @@ struct LogicalCommandOutput : CommandOutput {
 /// LogicalShellContext is a Shell context which is virtualized
 /// We don't actually interact with the file system, but execute
 /// CommandInvocations
-class LogicalShellContext : ShellContext {
-    let commandInvocations : [String: CommandOutput]
-    private var invokedCommands = [String] ()
+class LogicalShellContext: ShellContext {
+    let commandInvocations: [String: CommandOutput]
+    private var invokedCommands = [String]()
 
     init(commandInvocations: [(String, CommandOutput)]) {
         var values = [String: CommandOutput]()
@@ -60,11 +60,11 @@ class LogicalShellContext : ShellContext {
         print(invokedCommands)
         return invokedCommands.contains(encodedCommand)
     }
-    
+
     func executed(_ command: String, arguments: [String]) -> Bool {
         return invokedCommands.contains(encode(command, arguments: arguments))
     }
-    
+
     func command(_ launchPath: String, arguments: [String]) -> CommandOutput {
         let encoded = encode(launchPath, arguments: arguments)
         print("Execute: \(encoded)\n")
@@ -101,17 +101,17 @@ class LogicalShellContext : ShellContext {
         let encoded = "write value:\(value) toPath:\(path)"
         invokedCommands.append(encoded)
     }
-    
+
     static func encodeDownload(url: URL, toFile file: String) -> String {
         return "download url:\(url) toFile:\(file)"
     }
-    
+
     func download(url: URL, toFile file: String) -> Bool {
         let encoded = LogicalShellContext.encodeDownload(url: url, toFile: file)
         invokedCommands.append(encoded)
         return true
     }
-    
+
     func tmpdir() -> String {
         let encoded = "create tmpdir"
         invokedCommands.append(encoded)
