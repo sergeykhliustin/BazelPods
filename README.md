@@ -11,7 +11,7 @@ There are two existing wonderful alternatives to this project: [cocoapods-bazel]
 `cocoapods-bazel` generates BUILD files based on targets from `Pods.xcodeproj`.  
 As a result of this, we will have some aggregated targets needed for Xcode but redundant for Bazel.  
 These targets cause issues with resources and module name resolving.  
-For example, currently, it not working out of the box for a custom Firebase setup.
+For example, currently, it's not working out of the box for a custom Firebase setup.
 
 `PodToBUILD`'s main idea is to generate BUILD files directly from .podspec info and **it's great!**  
 Unfortunately, out of the box, it cannot resolve the whole dependency tree with private pods as Cocoapods do.  
