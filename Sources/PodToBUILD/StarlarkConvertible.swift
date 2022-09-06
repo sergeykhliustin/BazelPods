@@ -56,37 +56,32 @@ extension String: StarlarkConvertible {
     }
 }
 
-extension Array: StarlarkConvertible {
+extension Array: StarlarkConvertible where Element: StarlarkConvertible {
     func toStarlark() -> StarlarkNode {
-        return .list(self.map { x in (x as! StarlarkConvertible).toStarlark() })
+        return .list(self.map { $0.toStarlark() })
     }
 }
 
-extension Optional: StarlarkConvertible {
+extension Optional: StarlarkConvertible where Wrapped: StarlarkConvertible {
     func toStarlark() -> StarlarkNode {
         switch self {
         case .none: return StarlarkNode.empty
-        case .some(let x): return (x as! StarlarkConvertible).toStarlark()
+        case .some(let x): return x.toStarlark()
         }
     }
 }
 
-extension Dictionary: StarlarkConvertible {
+extension Dictionary: StarlarkConvertible where Key == String, Value: StarlarkConvertible {
     func toStarlark() -> StarlarkNode {
-        return .dict([:] <> self.map { kv in
-            let key = kv.0 as! String
-            let value = kv.1 as! StarlarkConvertible
-            return (key, value.toStarlark())
+        return .dict([:] <> self.map {
+            return ($0.key, $0.value.toStarlark())
         })
     }
 }
 
-extension Set: StarlarkConvertible {
+extension Set: StarlarkConvertible where Element: StarlarkConvertible, Element: Comparable {
     func toStarlark() -> StarlarkNode {
-        // HACK: Huge hack, but fixing this for real would require major refactoring
-        // ASSUMPTION: You're only calling Set.toStarlark on strings!!!
-        // FIXME in Swift 4
-        return self.map { $0 as! String }.sorted().toStarlark()
+        return self.sorted().toStarlark()
     }
 }
 

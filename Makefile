@@ -19,7 +19,7 @@ integration-clean:
 	rm -rf Pods;
 	bazel clean
 
-integration: integration-clean integration-setup integration-build
+integration: integration-clean integration-setup integration-generate integration-build
 
 clean:
 	bazel clean

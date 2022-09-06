@@ -41,7 +41,7 @@ struct AppleResourceBundle: BazelTarget {
                 return result
             })
             .map({
-                return $0.map({ (x: (String, Set<String>)) -> BazelTarget  in
+                return $0.map({ (x: (String, Set<String>)) -> AppleResourceBundle  in
                     let name = "\(spec.moduleName ?? spec.name)_\(x.0)_Bundle"
                     let bundleName = x.0
                     return AppleResourceBundle(name: name, bundleName: bundleName, resources: AttrSet(basic: x.1))
