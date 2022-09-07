@@ -138,16 +138,22 @@ public func xcconfigSettingToList(_ value: String) -> [String] {
 
 public func isDynamicFramework(_ framework: String, options: BuildOptions) -> Bool {
     let frameworkPath = URL(fileURLWithPath: framework, relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
-    let frameworkExtension = frameworkPath.pathExtension
     let frameworkName = frameworkPath.deletingPathExtension().lastPathComponent
-
     let executablePath = frameworkPath.appendingPathComponent(frameworkName)
-    let archs = SystemShellContext().command("/usr/bin/lipo", arguments: ["-archs", executablePath.path]).standardOutputAsString
-    // TODO: Refactor this
-    if !archs.contains("x86_64") && frameworkExtension == "framework" {
-        return false
-    }
     // TODO: Find proper way
     let output = SystemShellContext().command("/usr/bin/file", arguments: [executablePath.path]).standardOutputAsString
     return output.contains("dynamically")
+}
+
+public func frameworkArchs(_ framework: String, options: BuildOptions) -> [String] {
+    let frameworkPath = URL(fileURLWithPath: framework, relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
+    let frameworkName = frameworkPath.deletingPathExtension().lastPathComponent
+
+    let executablePath = frameworkPath.appendingPathComponent(frameworkName)
+    let archs = SystemShellContext().command("/usr/bin/lipo",
+                                             arguments: ["-archs", executablePath.path])
+        .standardOutputAsString
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+        .components(separatedBy: " ")
+    return archs
 }

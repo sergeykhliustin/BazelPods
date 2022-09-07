@@ -110,12 +110,15 @@ struct AppleFramework: BazelTarget {
 
         let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
         let xcFrameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtenstion == "xcframework" }) })
-        self.vendoredXCFrameworks = xcFrameworks.map({ $0.compactMap({ XCFramework($0, options: options) }) })
+        let vendoredXCFrameworks = xcFrameworks.map({ $0.compactMap({ XCFramework(xcframework: $0, options: options) }) })
 
         let frameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtenstion == "framework" }) })
 
         self.vendoredStaticFrameworks = frameworks.map({ $0.filter({ !isDynamicFramework($0, options: options) }) })
-        self.vendoredDynamicFrameworks = frameworks.map({ $0.filter({ isDynamicFramework($0, options: options) }) })
+        let vendoredDynamicFrameworks = frameworks.map({ $0.filter({ isDynamicFramework($0, options: options) }) })
+        let dynamicFrameworksWrapped = vendoredDynamicFrameworks.map({ $0.compactMap({ XCFramework(dynamicFramework: $0, options: options) }) })
+        self.vendoredXCFrameworks = vendoredXCFrameworks <> dynamicFrameworksWrapped
+        self.vendoredDynamicFrameworks = .empty
 
         self.vendoredStaticLibraries = spec.collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
 
