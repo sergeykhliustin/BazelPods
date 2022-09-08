@@ -136,24 +136,26 @@ public func xcconfigSettingToList(_ value: String) -> [String] {
         .filter({ !$0.isEmpty })
 }
 
-public func isDynamicFramework(_ framework: String, options: BuildOptions) -> Bool {
+public func frameworkExecutablePath(_ framework: String, options: BuildOptions) -> String {
     let frameworkPath = URL(fileURLWithPath: framework, relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
     let frameworkName = frameworkPath.deletingPathExtension().lastPathComponent
     let executablePath = frameworkPath.appendingPathComponent(frameworkName)
+    return executablePath.path
+}
+
+public func isDynamicFramework(_ framework: String, options: BuildOptions) -> Bool {
+    let path = frameworkExecutablePath(framework, options: options)
     // TODO: Find proper way
-    let output = SystemShellContext().command("/usr/bin/file", arguments: [executablePath.path]).standardOutputAsString
+    let output = SystemShellContext().command("/usr/bin/file", arguments: [path]).standardOutputAsString
     return output.contains("dynamically")
 }
 
 public func frameworkArchs(_ framework: String, options: BuildOptions) -> [String] {
-    let frameworkPath = URL(fileURLWithPath: framework, relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
-    let frameworkName = frameworkPath.deletingPathExtension().lastPathComponent
-
-    let executablePath = frameworkPath.appendingPathComponent(frameworkName)
+    let path = frameworkExecutablePath(framework, options: options)
     let archs = SystemShellContext().command("/usr/bin/lipo",
-                                             arguments: ["-archs", executablePath.path])
+                                             arguments: ["-archs", path])
         .standardOutputAsString
         .trimmingCharacters(in: .whitespacesAndNewlines)
         .components(separatedBy: " ")
-    return archs
+    return archs.filter({ !$0.isEmpty })
 }

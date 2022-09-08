@@ -7,29 +7,37 @@
 
 import Foundation
 
-// Currently not used
-// https://github.com/bazelbuild/rules_apple/blob/0.13.0/doc/rules-resources.md#apple_resource_bundle
+// https://github.com/bazel-ios/rules_ios/blob/master/rules/precompiled_apple_resource_bundle.bzl
+// Using this rule since apple_framework.resource_bundles conflicts when bundle_name == apple_framework.name and dynamic linking
 struct AppleResourceBundle: BazelTarget {
-    let loadNode = "load('@build_bazel_rules_apple//apple:resources.bzl', 'apple_resource_bundle')"
+//    let loadNode = "load('@build_bazel_rules_apple//apple:resources.bzl', 'apple_resource_bundle')"
+    let loadNode = "load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')"
     let name: String
+    let bundleId: String
     let bundleName: String
     let resources: AttrSet<Set<String>>
+    var infoplists: [String] = []
 
     func toStarlark() -> StarlarkNode {
         let resources = extractResources(patterns: (resources.basic ?? []).union(resources.multi.ios ?? []))
 
         return .functionCall(
-            name: "apple_resource_bundle",
+            name: "precompiled_apple_resource_bundle",
             arguments: [
                 .named(name: "name", value: name.toStarlark()),
+                .named(name: "bundle_id", value: bundleId.toStarlark()),
                 .named(name: "bundle_name", value: bundleName.toStarlark()),
-                .named(name: "infoplists", value: ["\(name)_InfoPlist"].toStarlark()),
+                .named(name: "infoplists", value: infoplists.toStarlark()),
                 .named(name: "resources",
                        value: GlobNode(include: resources).toStarlark() )
         ])
     }
 
-    static func bundleResources(withPodSpec spec: PodSpec, subspecs: [PodSpec], options: BuildOptions) -> [BazelTarget] {
+    mutating func addInfoPlist(_ target: BazelTarget) {
+        self.infoplists.append(":" + target.name)
+    }
+
+    static func bundleResources(withPodSpec spec: PodSpec, subspecs: [PodSpec], options: BuildOptions) -> [AppleResourceBundle] {
         // See if the Podspec specifies a prebuilt .bundle file
 
         let resourceBundles = spec.collectAttribute(with: subspecs, keyPath: \.resourceBundles)
@@ -44,7 +52,10 @@ struct AppleResourceBundle: BazelTarget {
                 return $0.map({ (x: (String, Set<String>)) -> AppleResourceBundle  in
                     let name = "\(spec.moduleName ?? spec.name)_\(x.0)_Bundle"
                     let bundleName = x.0
-                    return AppleResourceBundle(name: name, bundleName: bundleName, resources: AttrSet(basic: x.1))
+                    return AppleResourceBundle(name: name,
+                                               bundleId: "org.cocoapods.\(bundleName)",
+                                               bundleName: bundleName,
+                                               resources: AttrSet(basic: x.1))
                 })
             })
 

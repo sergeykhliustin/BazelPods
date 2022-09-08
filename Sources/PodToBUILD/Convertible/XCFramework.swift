@@ -42,6 +42,11 @@ struct XCFramework: StarlarkConvertible {
                 var lib = $0
                 lib.path = xcframework.appendingPath($0.LibraryIdentifier).appendingPath($0.LibraryPath)
                 lib.linkage = $0.LibraryPath.hasSuffix("framework") ? .dynamic : .static
+                if lib.SupportedPlatformVariant == "simulator" && lib.SupportedPlatform == "ios" {
+                    lib.SupportedArchitectures = lib.SupportedArchitectures.map({
+                        $0.replacingOccurrences(of: "arm64", with: "sim_arm64")
+                    })
+                }
                 return lib
             })
             self.input = input
@@ -52,8 +57,9 @@ struct XCFramework: StarlarkConvertible {
     }
     /// Wrap dynamic framework into xcframework.
     /// Assume that framework can be either device + simulator (x86_64 + arm*) or only for device (arm*).
-    init?(dynamicFramework framework: String, options: BuildOptions) {
+    init?(framework: String, options: BuildOptions) {
         guard framework.hasSuffix(".framework") else { return nil }
+        let isDynamic = isDynamicFramework(framework, options: options)
         let archs = frameworkArchs(framework, options: options)
         guard !archs.isEmpty else { return nil }
 
@@ -67,16 +73,19 @@ struct XCFramework: StarlarkConvertible {
                                            SupportedArchitectures: deviceArchs,
                                            SupportedPlatform: "ios",
                                            SupportedPlatformVariant: nil,
-                                           path: framework))
-
-        // We will create slice with static linkage if framework is not build for simulator since it's only way to pass bazel slice strip
-        libraries.append(InputData.Library(LibraryIdentifier: "ios-x86_64-simulator",
-                                           LibraryPath: framework,
-                                           SupportedArchitectures: ["x86_64"],
-                                           SupportedPlatform: "ios",
-                                           SupportedPlatformVariant: "simulator",
                                            path: framework,
-                                           linkage: archs.contains("x86_64") ? .dynamic : .static)) // <- Dirty hack here
+                                           linkage: isDynamic ? .dynamic : .static))
+        // TODO: Fix this
+        if archs.contains("x86_64") {
+            libraries.append(InputData.Library(LibraryIdentifier: "ios-x86_64-simulator",
+                                               LibraryPath: framework,
+                                               SupportedArchitectures: ["x86_64"],
+                                               SupportedPlatform: "ios",
+                                               SupportedPlatformVariant: "simulator",
+                                               path: framework,
+                                               linkage: isDynamic ? .dynamic : .static))
+
+        }
 
         input = InputData(AvailableLibraries: libraries)
     }

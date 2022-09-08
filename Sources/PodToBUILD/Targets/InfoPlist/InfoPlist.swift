@@ -15,6 +15,7 @@ final class InfoPlist: GenRule {
         }
         enum Platforms: String, Codable {
             case iPhoneSimulator
+            case iPhoneOS
         }
 
         var CFBundleInfoDictionaryVersion = "6.0"
@@ -52,7 +53,7 @@ final class InfoPlist: GenRule {
             CFBundleShortVersionString: spec.version ?? "1.0",
             CFBundlePackageType: .BNDL,
             MinimumOSVersion: spec.platforms?["ios"] ?? options.iosPlatform,
-            CFBundleSupportedPlatforms: [.iPhoneSimulator],
+            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
             UIDeviceFamily: [1, 2]
         )
         self.init(name: bundle.name + "_InfoPlist", data: data)
@@ -65,7 +66,7 @@ final class InfoPlist: GenRule {
             CFBundleShortVersionString: spec.version ?? "1.0",
             CFBundlePackageType: .FMWK,
             MinimumOSVersion: spec.platforms?["ios"] ?? options.iosPlatform,
-            CFBundleSupportedPlatforms: [.iPhoneSimulator],
+            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
             UIDeviceFamily: [1, 2]
         )
         self.init(name: framework.name + "_InfoPlist", data: data)

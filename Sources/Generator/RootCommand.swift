@@ -28,16 +28,19 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
     var podsRoot: String = "Pods"
 
-    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks (same as `use_frameworks!`)")
+    @Option(name: .long, parsing: .upToNextOption, help: "Extra sdk frameworks for all targets")
+    var extraSDK: [String] = []
+
+    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
     @Flag(name: .shortAndLong, help: "Concurrent mode for generating files faster")
     var concurrent: Bool = false
 
-    @Flag(name: .shortAndLong, help: "Print BUILD files contents to terminal output")
+    @Flag(name: .long, help: "Print BUILD files contents to terminal output")
     var printOutput: Bool = false
 
-    @Flag(name: .shortAndLong, help: "Debug mode. Files will not be written")
+    @Flag(name: .long, help: "Debug mode. Files will not be written")
     var debug: Bool = false
 
     @Flag(name: .shortAndLong, help: "Will add podspec.json to the pod directory. Just for debugging purposes.")
@@ -79,7 +82,8 @@ struct RootCommand: ParsableCommand {
                                                  iosPlatform: minIos,
                                                  depsPrefix: depsPrefix,
                                                  podsRoot: podsRoot,
-                                                 linkDynamic: frameworks)
+                                                 extraSDKFrameworks: extraSDK,
+                                                 dynamicFrameworks: frameworks)
             let starlarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()

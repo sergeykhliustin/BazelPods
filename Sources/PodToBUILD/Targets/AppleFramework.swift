@@ -28,6 +28,7 @@ struct AppleFramework: BazelTarget {
     let resourceBundles: AttrSet<[String: Set<String>]>
 
     var deps: AttrSet<[String]>
+    let conditionalDeps: [String: [Arch]]
     let vendoredXCFrameworks: AttrSet<[XCFramework]>
     let vendoredStaticFrameworks: AttrSet<Set<String>>
     let vendoredDynamicFrameworks: AttrSet<Set<String>>
@@ -49,6 +50,7 @@ struct AppleFramework: BazelTarget {
     init(spec: PodSpec,
          subspecs: [PodSpec],
          deps: Set<String> = [],
+         conditionalDeps: [String: [Arch]] = [:],
          dataDeps: Set<String> = [],
          options: BuildOptions) {
 
@@ -88,15 +90,7 @@ struct AppleFramework: BazelTarget {
         self.bundles = resources.map({ (value: Set<String>) -> Set<String> in
             value.filter({ $0.hasSuffix(".bundle") })
         })
-        self.resourceBundles = spec.collectAttribute(with: subspecs,
-                                                     keyPath: \.resourceBundles)
-        .map({ value -> [String: Set<String>] in
-            var result = [String: Set<String>]()
-            for key in value.keys {
-                result[key] = Set(extractResources(patterns: value[key]!))
-            }
-            return result
-        })
+        self.resourceBundles = .empty
 
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
             .map({
@@ -107,18 +101,15 @@ struct AppleFramework: BazelTarget {
 
         let depNames = deps.map { ":\($0)" }
         self.deps = AttrSet(basic: depNames) <> allPodSpecDeps
+        self.conditionalDeps = conditionalDeps
 
         let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
         let xcFrameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtenstion == "xcframework" }) })
         let vendoredXCFrameworks = xcFrameworks.map({ $0.compactMap({ XCFramework(xcframework: $0, options: options) }) })
 
-        let frameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtenstion == "framework" }) })
-
-        self.vendoredStaticFrameworks = frameworks.map({ $0.filter({ !isDynamicFramework($0, options: options) }) })
-        let vendoredDynamicFrameworks = frameworks.map({ $0.filter({ isDynamicFramework($0, options: options) }) })
-        let dynamicFrameworksWrapped = vendoredDynamicFrameworks.map({ $0.compactMap({ XCFramework(dynamicFramework: $0, options: options) }) })
-        self.vendoredXCFrameworks = vendoredXCFrameworks <> dynamicFrameworksWrapped
+        self.vendoredXCFrameworks = vendoredXCFrameworks// <> wrappedFrameworks
         self.vendoredDynamicFrameworks = .empty
+        self.vendoredStaticFrameworks = .empty
 
         self.vendoredStaticLibraries = spec.collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
 
@@ -129,18 +120,20 @@ struct AppleFramework: BazelTarget {
         self.xcconfig = xcconfigParser.xcconfig
 
         sdkDylibs = spec.collectAttribute(with: subspecs, keyPath: \.libraries)
-        sdkFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.frameworks)
+        sdkFrameworks = spec
+            .collectAttribute(with: subspecs, keyPath: \.frameworks) <> AttrSet(basic: Set(options.extraSDKFrameworks))
+            .unpackToMulti()
         weakSdkFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.weakFrameworks)
 
         self.objcCopts = xcconfigParser.objcCopts
         self.swiftCopts = xcconfigParser.swiftCopts
         self.linkOpts = xcconfigParser.linkOpts
 
-        self.linkDynamic = options.linkDynamic && sourceFiles.multi.ios?.isEmpty == false && !spec.staticFramework
+        self.linkDynamic = options.dynamicFrameworks && sourceFiles.multi.ios?.isEmpty == false && !spec.staticFramework
     }
 
-    var canLinkDynamic: Bool {
-        return sourceFiles.multi.ios?.isEmpty == false
+    var needsInfoPlist: Bool {
+        return linkDynamic && resourceBundles.multi.ios?[self.name] == nil
     }
 
     mutating func addInfoPlist(_ target: BazelTarget) {
@@ -175,8 +168,37 @@ struct AppleFramework: BazelTarget {
         let swiftDefines = self.swiftDefines.toStarlark() .+. basicSwiftDefines
         let objcDefines = self.objcDefines.toStarlark() .+. basicObjcDefines
 
-        let deps = deps.unpackToMulti().multi.ios.map {
+        let baseDeps = deps.unpackToMulti().multi.ios.map {
             Set($0).sorted(by: (<))
+        } ?? []
+
+        var conditionalDepsMap = self.conditionalDeps.reduce([String: [String]]()) { partialResult, element in
+            var result = partialResult
+            element.value.forEach({
+                let conditon = ":" + $0.rawValue
+                let name = ":" + element.key
+                var arr = result[conditon] ?? []
+                arr.append(name)
+                result[conditon] = arr
+            })
+            return result
+        }
+
+        let deps: StarlarkNode
+        if conditionalDepsMap.isEmpty {
+            deps = baseDeps.toStarlark()
+        } else {
+            conditionalDepsMap["//conditions:default"] = []
+            let conditionalDeps: StarlarkNode =
+                .functionCall(name: "select",
+                              arguments: [
+                                .basic(conditionalDepsMap.toStarlark())
+                              ])
+            if baseDeps.isEmpty {
+                deps = conditionalDeps
+            } else {
+                deps = .expr(lhs: baseDeps.toStarlark(), op: "+", rhs: conditionalDeps)
+            }
         }
 
         // TODO: Make headers conditional

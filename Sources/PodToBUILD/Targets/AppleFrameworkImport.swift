@@ -19,11 +19,11 @@ struct AppleFrameworkImport: BazelTarget {
     }
     let name: String // A unique name for this rule.
     // The list of files under a .framework directory which are provided to Objective-C targets that depend on this target.
-    let frameworkImport: AttrSet<String>
+    let frameworkImport: String
     let isXCFramework: Bool
     let isDynamic: Bool
 
-    init(name: String, isDynamic: Bool, isXCFramework: Bool, frameworkImport: AttrSet<String>) {
+    init(name: String, isDynamic: Bool, isXCFramework: Bool, frameworkImport: String) {
         self.name = name
         self.isDynamic = isDynamic
         self.frameworkImport = frameworkImport
@@ -45,9 +45,7 @@ struct AppleFrameworkImport: BazelTarget {
                 arguments: [StarlarkFunctionArgument]([
                     .named(name: "name", value: .string(name)),
                     .named(name: isXCFramework ? "xcframework_imports": "framework_imports",
-                           value: frameworkImport.map {
-                                  GlobNode(include: Set([$0 + "/**"]))
-                            }.toStarlark()),
+                           value: GlobNode(include: Set([frameworkImport.appendingPath("/**")])).toStarlark()),
                     .named(name: "visibility", value: .list(["//visibility:public"]))
                 ])
         )
@@ -63,7 +61,6 @@ struct AppleFrameworkImport: BazelTarget {
     }
 
     static func vendoredFrameworks(withPodspec spec: PodSpec, subspecs: [PodSpec], options: BuildOptions) -> [BazelTarget] {
-        // TODO: Make frameworks AttrSet
         let vendoredFrameworks = spec.collectAttribute(with: subspecs,
                                                        keyPath: \.vendoredFrameworks).map({ $0.filter({ !$0.hasSuffix("xcframework") }) })
         let frameworks = vendoredFrameworks.map {
@@ -74,7 +71,7 @@ struct AppleFrameworkImport: BazelTarget {
                 return AppleFrameworkImport(name: "\(spec.moduleName ?? spec.name)_\(frameworkName)_VendoredFramework",
                                             isDynamic: isDynamic,
                                             isXCFramework: false,
-                                            frameworkImport: AttrSet(basic: $0))
+                                            frameworkImport: $0)
             } as [AppleFrameworkImport]
         }
         return (frameworks.basic ?? []) + (frameworks.multi.ios ?? [])

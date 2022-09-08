@@ -30,8 +30,11 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
     var podsRoot: String = "Pods"
 
-    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks (same as `use_frameworks!`)")
+    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
+
+    @Option(name: .long, parsing: .upToNextOption, help: "Extra sdk frameworks for all targets")
+    var extraSDK: [String] = []
 
     func run() throws {
         _ = CrashReporter()
@@ -52,7 +55,8 @@ struct RootCommand: ParsableCommand {
                                         iosPlatform: minIos,
                                         depsPrefix: depsPrefix,
                                         podsRoot: podsRoot,
-                                        linkDynamic: frameworks)
+                                        extraSDKFrameworks: extraSDK,
+                                        dynamicFrameworks: frameworks)
 
         let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()
         print(result)

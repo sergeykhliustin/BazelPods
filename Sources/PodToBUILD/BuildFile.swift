@@ -49,14 +49,16 @@ public struct PodBuildFile: StarlarkConvertible {
     static func makeSourceLibs(spec: PodSpec,
                                subspecs: [PodSpec] = [],
                                deps: [BazelTarget] = [],
+                               conditionalDeps: [String: [Arch]] = [:],
                                dataDeps: [BazelTarget] = [],
                                options: BuildOptions) -> [BazelTarget] {
         var result: [BazelTarget] = []
         var framework = AppleFramework(spec: spec,
                                        subspecs: subspecs,
                                        deps: Set((deps + dataDeps).map({ $0.name })),
+                                       conditionalDeps: conditionalDeps,
                                        options: options)
-        if options.linkDynamic && framework.canLinkDynamic {
+        if framework.needsInfoPlist {
             let infoplist = InfoPlist(framework: framework, spec: spec, options: options)
             framework.addInfoPlist(infoplist)
             result.append(infoplist)
@@ -66,20 +68,41 @@ public struct PodBuildFile: StarlarkConvertible {
         return result
     }
 
-    static func makeConvertables(
-            fromPodspec podSpec: PodSpec,
-            buildOptions: BuildOptions = BasicBuildOptions.empty
-    ) -> [StarlarkConvertible] {
+    static func makeResourceBundles(spec: PodSpec,
+                                    subspecs: [PodSpec] = [],
+                                    options: BuildOptions) -> [BazelTarget] {
+        var result: [BazelTarget] = []
+        let bundles = AppleResourceBundle.bundleResources(withPodSpec: spec, subspecs: subspecs, options: options)
+        for bundle in bundles {
+            var bundle = bundle
+            let infoplist = InfoPlist(bundle: bundle, spec: spec, options: options)
+            bundle.addInfoPlist(infoplist)
+            result.append(bundle)
+            result.append(infoplist)
+        }
+        return result
+    }
+
+    static func makeConvertables(fromPodspec podSpec: PodSpec,
+                                 buildOptions: BuildOptions = BasicBuildOptions.empty) -> [StarlarkConvertible] {
         let subspecs = podSpec.selectedSubspecs(subspecs: buildOptions.subspecs)
 
-        let extraDeps: [BazelTarget] = []
+        let extraDeps: [BazelTarget] = makeResourceBundles(spec: podSpec, subspecs: subspecs, options: buildOptions)
+        let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
+        let conditionalDeps = frameworks.reduce([String: [Arch]]()) { partialResult, target in
+            guard let target = target as? AppleFrameworkImport else { return partialResult }
+            var result = partialResult
+            result[target.name] = Arch.archs(for: target.frameworkImport, options: buildOptions)
+            return result
+        }
 
         let sourceLibs = makeSourceLibs(spec: podSpec,
                                         subspecs: subspecs,
-                                        deps: extraDeps,
+                                        deps: extraDeps.filter({ !($0 is InfoPlist) }),
+                                        conditionalDeps: conditionalDeps,
                                         options: buildOptions)
 
-        var output: [BazelTarget] = sourceLibs + extraDeps
+        var output: [BazelTarget] = sourceLibs + extraDeps + frameworks
 
         output = UserConfigurableTransform.transform(convertibles: output,
                                                      options: buildOptions,

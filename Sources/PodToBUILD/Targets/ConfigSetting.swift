@@ -32,7 +32,7 @@ public struct ConfigSetting: BazelTarget {
             "# see the bazel user manual for more information",
             "# https://docs.bazel.build/versions/master/be/general.html#config_setting"
         ].map { StarlarkNode.starlark($0) }
-        return .lines([.lines(comment),
+        var settings = [
             ConfigSetting(
                 name: "release",
                 values: ["compilation_mode": "opt"]).toStarlark(),
@@ -45,6 +45,11 @@ public struct ConfigSetting: BazelTarget {
             ConfigSetting(
                 name: "watchosCase",
                 values: ["apple_platform_type": "watchos"]).toStarlark()
-        ])
+        ]
+        settings.append(contentsOf: Arch.allCases.map({
+            ConfigSetting(name: $0.rawValue, values: ["cpu": $0.rawValue]).toStarlark()
+        }))
+
+        return .lines([.lines(comment)] + settings)
     }
 }
