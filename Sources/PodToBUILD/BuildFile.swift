@@ -8,19 +8,19 @@
 
 import Foundation
 
-public struct PodBuildFile: SkylarkConvertible {
-    /// Skylark Convertibles excluding prefix nodes.
-    /// @note Use toSkylark() to generate the actual BUILD file
-    let skylarkConvertibles: [SkylarkConvertible]
+public struct PodBuildFile: StarlarkConvertible {
+    /// Starlark Convertibles excluding prefix nodes.
+    /// @note Use toStarlark() to generate the actual BUILD file
+    let starlarkConvertibles: [StarlarkConvertible]
 
     private let options: BuildOptions
 
-    /// Return the skylark representation of the entire BUILD file
-    func toSkylark() -> SkylarkNode {
-        let convertibleNodes: [SkylarkNode] = skylarkConvertibles.compactMap { $0.toSkylark() }
+    /// Return the starlark representation of the entire BUILD file
+    func toStarlark() -> StarlarkNode {
+        let convertibleNodes: [StarlarkNode] = starlarkConvertibles.compactMap { $0.toStarlark() }
 
         return .lines([
-            makeLoadNodes(forConvertibles: skylarkConvertibles)
+            makeLoadNodes(forConvertibles: starlarkConvertibles)
         ] + [
             ConfigSetting.makeConfigSettingNodes()
         ] + convertibleNodes)
@@ -30,51 +30,79 @@ public struct PodBuildFile: SkylarkConvertible {
                             buildOptions: BuildOptions =
                             BasicBuildOptions.empty) -> PodBuildFile {
         let libs = PodBuildFile.makeConvertables(fromPodspec: podSpec, buildOptions: buildOptions)
-        return PodBuildFile(skylarkConvertibles: libs,
+        return PodBuildFile(starlarkConvertibles: libs,
                             options: buildOptions)
     }
 
-    func makeLoadNodes(forConvertibles skylarkConvertibles: [SkylarkConvertible]) -> SkylarkNode {
+    func makeLoadNodes(forConvertibles starlarkConvertibles: [StarlarkConvertible]) -> StarlarkNode {
         return .lines(
             Set(
-                skylarkConvertibles
+                starlarkConvertibles
                     .compactMap({ $0 as? BazelTarget })
                     .map({ $0.loadNode })
                     .filter({ !$0.isEmpty })
                 )
-                .map({ SkylarkNode.skylark($0) })
+                .map({ StarlarkNode.starlark($0) })
         )
     }
 
     static func makeSourceLibs(spec: PodSpec,
                                subspecs: [PodSpec] = [],
                                deps: [BazelTarget] = [],
+                               conditionalDeps: [String: [Arch]] = [:],
                                dataDeps: [BazelTarget] = [],
                                options: BuildOptions) -> [BazelTarget] {
-        return [
-            AppleFramework(spec: spec,
-                           subspecs: subspecs,
-                           deps: Set((deps + dataDeps).map({ $0.name })),
-                           options: options)
-        ]
+        var result: [BazelTarget] = []
+        var framework = AppleFramework(spec: spec,
+                                       subspecs: subspecs,
+                                       deps: Set((deps + dataDeps).map({ $0.name })),
+                                       conditionalDeps: conditionalDeps,
+                                       options: options)
+        if framework.needsInfoPlist {
+            let infoplist = InfoPlist(framework: framework, spec: spec, options: options)
+            framework.addInfoPlist(infoplist)
+            result.append(infoplist)
+        }
+        result.append(framework)
+
+        return result
     }
 
-    static func makeConvertables(
-            fromPodspec podSpec: PodSpec,
-            buildOptions: BuildOptions = BasicBuildOptions.empty
-    ) -> [SkylarkConvertible] {
+    static func makeResourceBundles(spec: PodSpec,
+                                    subspecs: [PodSpec] = [],
+                                    options: BuildOptions) -> [BazelTarget] {
+        var result: [BazelTarget] = []
+        let bundles = AppleResourceBundle.bundleResources(withPodSpec: spec, subspecs: subspecs, options: options)
+        for bundle in bundles {
+            var bundle = bundle
+            let infoplist = InfoPlist(bundle: bundle, spec: spec, options: options)
+            bundle.addInfoPlist(infoplist)
+            result.append(bundle)
+            result.append(infoplist)
+        }
+        return result
+    }
+
+    static func makeConvertables(fromPodspec podSpec: PodSpec,
+                                 buildOptions: BuildOptions = BasicBuildOptions.empty) -> [StarlarkConvertible] {
         let subspecs = podSpec.selectedSubspecs(subspecs: buildOptions.subspecs)
 
-        let extraDeps =
-            AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions) +
-            ObjcImport.vendoredLibraries(withPodspec: podSpec, subspecs: subspecs)
+        let extraDeps: [BazelTarget] = makeResourceBundles(spec: podSpec, subspecs: subspecs, options: buildOptions)
+        let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
+        let conditionalDeps = frameworks.reduce([String: [Arch]]()) { partialResult, target in
+            guard let target = target as? AppleFrameworkImport else { return partialResult }
+            var result = partialResult
+            result[target.name] = Arch.archs(for: target.frameworkImport, options: buildOptions)
+            return result
+        }
 
         let sourceLibs = makeSourceLibs(spec: podSpec,
                                         subspecs: subspecs,
-                                        deps: extraDeps,
+                                        deps: extraDeps.filter({ !($0 is InfoPlist) }),
+                                        conditionalDeps: conditionalDeps,
                                         options: buildOptions)
 
-        var output: [BazelTarget] = sourceLibs + extraDeps
+        var output: [BazelTarget] = sourceLibs + extraDeps + frameworks
 
         output = UserConfigurableTransform.transform(convertibles: output,
                                                      options: buildOptions,
@@ -83,6 +111,6 @@ public struct PodBuildFile: SkylarkConvertible {
     }
 
     public func compile() -> String {
-        return SkylarkCompiler(toSkylark()).run()
+        return StarlarkCompiler(toStarlark()).run()
     }
 }

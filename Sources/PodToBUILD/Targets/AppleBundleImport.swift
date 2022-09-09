@@ -17,13 +17,13 @@ public struct AppleBundleImport: BazelTarget {
         return true
     }
 
-    public func toSkylark() -> SkylarkNode {
+    public func toStarlark() -> StarlarkNode {
         return .functionCall(
             name: "apple_bundle_import",
             arguments: [
-                .named(name: "name", value: bazelLabel(fromString: name).toSkylark()),
+                .named(name: "name", value: bazelLabel(fromString: name).toStarlark()),
                 .named(name: "bundle_imports",
-                       value: bundleImports.map { GlobNode(include: Set($0)) }.toSkylark() )
+                       value: bundleImports.map { GlobNode(include: Set($0)) }.toStarlark() )
                 ])
     }
 

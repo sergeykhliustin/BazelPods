@@ -10,29 +10,37 @@ import ArgumentParser
 import PodToBUILD
 import ObjcSupport
 
-extension String: LocalizedError {
-    public var errorDescription: String? { return self }
-}
-
-
 struct RootCommand: ParsableCommand {
-    static var configuration = CommandConfiguration(commandName: "Generator", abstract: "Generates BUILD files for pods")
+    static var configuration = CommandConfiguration(commandName: "Generator",
+                                                    abstract: "Generates BUILD files for pods")
     @Argument(help: "Pods.json")
     var podsJson: String
 
-    @Option(name: .long, help: "Sources root")
+    @Option(name: .long, help: "Sources root where Pods directory located (or renamed by podsRoot)")
     var src: String
 
     @Option(name: .long, help: "Minimum iOS version if not listed in podspec")
     var minIos: String = "13.0"
 
+    @Option(name: .long, help: "Dependencies prefix")
+    var depsPrefix: String = "//Pods"
+
+    @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
+    var podsRoot: String = "Pods"
+
+    @Option(name: .long, parsing: .upToNextOption, help: "Extra sdk frameworks for all targets")
+    var extraSDK: [String] = []
+
+    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
+    var frameworks: Bool = false
+
     @Flag(name: .shortAndLong, help: "Concurrent mode for generating files faster")
     var concurrent: Bool = false
 
-    @Flag(name: .shortAndLong, help: "Print BUILD files contents to terminal output")
+    @Flag(name: .long, help: "Print BUILD files contents to terminal output")
     var printOutput: Bool = false
 
-    @Flag(name: .shortAndLong, help: "Debug mode. Files will not be written")
+    @Flag(name: .long, help: "Debug mode. Files will not be written")
     var debug: Bool = false
 
     @Flag(name: .shortAndLong, help: "Will add podspec.json to the pod directory. Just for debugging purposes.")
@@ -46,7 +54,8 @@ struct RootCommand: ParsableCommand {
         let specifications = PodSpecification.resolve(with: json).sorted(by: { $0.name < $1.name })
         let compiler: (PodSpecification) throws -> Void = { specification in
             print("Generating: \(specification.name)" +
-                  (specification.subspecs.isEmpty ? "" : " \n\tsubspecs: " + specification.subspecs.joined(separator: " ")))
+                  (specification.subspecs.isEmpty ? "" : " \n\tsubspecs: " +
+                   specification.subspecs.joined(separator: " ")))
             let podSpec: PodSpec
             var podSpecJson: JSONDict?
             if specification.podspec.hasSuffix(".json") {
@@ -66,29 +75,41 @@ struct RootCommand: ParsableCommand {
             }
 
             // Consider adding a split here to split out sublibs
-            let skylarkString = PodBuildFile
-                .with(podSpec: podSpec, buildOptions: specification.toBuildOptions(src: src, ios: minIos))
+            let buildOptions = BasicBuildOptions(podName: specification.name,
+                                                 subspecs: specification.subspecs,
+                                                 podspecPath: specification.podspec,
+                                                 sourcePath: src,
+                                                 iosPlatform: minIos,
+                                                 depsPrefix: depsPrefix,
+                                                 podsRoot: podsRoot,
+                                                 extraSDKFrameworks: extraSDK,
+                                                 dynamicFrameworks: frameworks)
+            let starlarkString = PodBuildFile
+                .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()
 
             if printOutput {
-                print(skylarkString)
+                print(starlarkString)
             }
             if !debug {
-                if specification.development && !FileManager.default.fileExists(atPath: absolutePath("Pods/\(specification.name)")) {
-                    try? FileManager.default.createDirectory(atPath: absolutePath("Pods/\(specification.name)"), withIntermediateDirectories: false)
+                if specification.development &&
+                    !FileManager.default.fileExists(atPath: absolutePath("Pods/\(specification.name)")) {
+                    try? FileManager.default.createDirectory(atPath: absolutePath("Pods/\(specification.name)"),
+                                                             withIntermediateDirectories: false)
                     let contents = (try? FileManager.default.contentsOfDirectory(atPath: src)) ?? []
                     contents.forEach({ file in
                         let sourcePath = absolutePath(file)
                         let symlinkPath = absolutePath("Pods/\(specification.name)/\(file)")
                         do {
-                            try FileManager.default.createSymbolicLink(atPath: symlinkPath, withDestinationPath: sourcePath)
+                            try FileManager.default.createSymbolicLink(atPath: symlinkPath,
+                                                                       withDestinationPath: sourcePath)
                         } catch {
                             print("Error creating symlink: \(error)")
                         }
                     })
                 }
                 let filePath = "Pods/\(specification.name)/BUILD.bazel"
-                if let data = skylarkString.data(using: .utf8) {
+                if let data = starlarkString.data(using: .utf8) {
                     try data.write(to: URL(fileURLWithPath: absolutePath(filePath)))
                 } else {
                     throw "Error writing file: \(filePath)"
@@ -96,7 +117,9 @@ struct RootCommand: ParsableCommand {
                 if addPodspec,
                    let podSpecJson = podSpecJson,
                    let data = try? JSONSerialization.data(withJSONObject: podSpecJson, options: .prettyPrinted) {
-                    try? data.write(to: URL(fileURLWithPath: absolutePath("Pods/\(specification.name)/\(specification.name).json")))
+                    try? data.write(to:
+                        URL(fileURLWithPath: absolutePath("Pods/\(specification.name)/\(specification.name).json"))
+                    )
                 }
             }
         }
@@ -108,8 +131,7 @@ struct RootCommand: ParsableCommand {
                 DispatchQueue.global().async {
                     do {
                         try compiler(specification)
-                    }
-                    catch {
+                    } catch {
                         print("Error generating \(specification.name): \(error)")
                     }
                     dGroup.leave()
@@ -120,8 +142,7 @@ struct RootCommand: ParsableCommand {
             specifications.forEach({ specification in
                 do {
                     try compiler(specification)
-                }
-                catch {
+                } catch {
                     print("Error generating \(specification.name): \(error)")
                 }
             })

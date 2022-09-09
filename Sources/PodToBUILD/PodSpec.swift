@@ -37,7 +37,8 @@ import Foundation
  platform
  deployment_target
 
- A specification should indicate the platform and the correspondent deployment targets on which the library is supported. If not defined in a subspec the attributes of this group inherit the value of the parent."
+ A specification should indicate the platform and the correspondent deployment targets on which the library is supported
+ If not defined in a subspec the attributes of this group inherit the value of the parent."
 
  ---
 
@@ -99,6 +100,7 @@ enum PodSpecField: String {
     case swiftVersion = "swift_version"
     case swiftVersions = "swift_versions"
     case platforms
+    case staticFramework = "static_framework"
     case frameworks
     case weakFrameworks = "weak_frameworks"
     case excludeFiles = "exclude_files"
@@ -135,6 +137,7 @@ protocol PodSpecRepresentable {
     var name: String { get }
     var version: String? { get }
     var swiftVersions: Set<String>? { get }
+    var staticFramework: Bool { get }
     var platforms: [String: String]? { get }
     var podTargetXcconfig: [String: String]? { get }
     var userTargetXcconfig: [String: String]? { get }
@@ -167,6 +170,7 @@ public struct PodSpec: PodSpecRepresentable {
     let name: String
     let version: String?
     let swiftVersions: Set<String>?
+    let staticFramework: Bool
     let platforms: [String: String]?
     let sourceFiles: [String]
     let excludeFiles: [String]
@@ -229,17 +233,18 @@ public struct PodSpec: PodSpecRepresentable {
             // This is for "ios", "macos", etc
             name = ""
         }
+        staticFramework = (try? ExtractValue(fromJSON: fieldMap[.staticFramework]) as Bool) ?? false
         version = try ExtractValue(fromJSON: fieldMap[.version]) as String?
         frameworks = strings(fromJSON: fieldMap[.frameworks])
         weakFrameworks = strings(fromJSON: fieldMap[.weakFrameworks])
         excludeFiles = strings(fromJSON: fieldMap[.excludeFiles])
-        sourceFiles = strings(fromJSON: fieldMap[.sourceFiles]).map({ 
+        sourceFiles = strings(fromJSON: fieldMap[.sourceFiles]).map({
             $0.hasSuffix("/") ? String($0.dropLast()) : $0
         })
         publicHeaders = strings(fromJSON: fieldMap[.publicHeaders])
         privateHeaders = strings(fromJSON: fieldMap[.privateHeaders])
 
-        prefixHeaderFile  = (fieldMap[.prefixHeaderFile] as? Bool).map{ .left($0) } ?? // try a bool
+        prefixHeaderFile  = (fieldMap[.prefixHeaderFile] as? Bool).map { .left($0) } ?? // try a bool
 	        (fieldMap[.prefixHeaderFile] as? String).map { .right($0) } // try a string
 
         prefixHeaderContents = fieldMap[.prefixHeaderContents] as? String
@@ -255,8 +260,8 @@ public struct PodSpec: PodSpecRepresentable {
 
         headerDirectory = fieldMap[.headerDirectory] as? String
         moduleName = fieldMap[.moduleName] as? String
-        requiresArc = (fieldMap[.requiresArc] as? Bool).map{ .left($0) } ?? // try a bool
-	        stringsStrict(fromJSON: fieldMap[.requiresArc]).map{ .right($0) } // try a string
+        requiresArc = (fieldMap[.requiresArc] as? Bool).map { .left($0) } ?? // try a bool
+	        stringsStrict(fromJSON: fieldMap[.requiresArc]).map { .right($0) } // try a string
 
         if let podSubspecDependencies = fieldMap[.dependencies] as? JSONDict {
             dependencies = Array(podSubspecDependencies.keys)
@@ -348,7 +353,7 @@ enum PodSpecSource {
     case http(url: URL)
 
     static func source(fromDict dict: JSONDict) -> PodSpecSource {
-        if let gitURLString: String = try? ExtractValue(fromJSON: dict["git"])  {
+        if let gitURLString: String = try? ExtractValue(fromJSON: dict["git"]) {
             guard let gitURL = URL(string: gitURLString) else {
                 fatalError("Invalid source URL for Git: \(gitURLString)")
             }
@@ -420,7 +425,7 @@ func strings(fromJSON JSONValue: Any? = nil) -> [String] {
     return [String]()
 }
 
-fileprivate func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
+private func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
     if let str = JSONValue as? String {
         return [str]
     }
@@ -429,4 +434,3 @@ fileprivate func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
     }
     return nil
 }
-

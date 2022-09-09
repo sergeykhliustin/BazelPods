@@ -24,26 +24,26 @@ Let Cocoapods download, resolve and setup everything for us. After that, it will
 
 ### ⚙️ Features
 
-- Platforms
-  - [x] iOS
+- Platforms and architectures
+  - [x] iOS full support
+    - [x] Simulator: arm64, x86_64
+    - [x] Device: armv7, arm64, arm64e
   - [ ] macOS (soon)
   - [ ] watchOS (soon)
   - [ ] tvOS (soon)
 - Linking
   - [x] Static
-  - [ ] Dynamic `use_frameworks!` (soon)
-  - [ ] Mixed (soon)
-- Archs:
-  - [x] x86_64 (simulator)
-  - [ ] arm64 (currently there are some issues with detecting vendored frameworks architecture, so coming soon)
+  - [x] Dynamic `use_frameworks!` (`--frameworks` option. also check `--extra-sdk` if you facing missing sdk issues)
+  - [ ] Mixed (?)
 - Pods: 
+  - [x] Autodetect vendored frameworks architectures and ignore unsupported
   - [x] Almost everything from top pods (vendored frameworks/xcframeworks/libraries, resources/bundles, xcconfigs)
-  - [x] Nested subspecs (possibly works, but not tested yet)
+  - [ ] Nested subspecs (possibly works, but not tested yet)
   - [ ] Local pods with custom paths (currently supports only pods located at the root of your repo)
 
 
 ### 🎸 Let's rock
-Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) first.
+Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) and [`rules_apple`](https://github.com/bazelbuild/rules_apple) first.
 
 Add `BazelPods` to your `WORKSPACE`
 ```starlark
@@ -85,33 +85,41 @@ Enjoy :)
 
 ### Generator options
 ```
-USAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--concurrent] [--print-output] [--debug] [--add-podspec]
+USAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--extra-sdk <extra-sdk> ...] [--frameworks] [--concurrent] [--print-output] [--debug] [--add-podspec]
 
 ARGUMENTS:
   <pods-json>             Pods.json
 
 OPTIONS:
-  --src <src>             Sources root
+  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
   --min-ios <min-ios>     Minimum iOS version if not listed in podspec (default: 13.0)
+  --deps-prefix <deps-prefix>
+                          Dependencies prefix (default: //Pods)
+  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
+  --extra-sdk <extra-sdk> Extra sdk frameworks for all targets
+  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   -c, --concurrent        Concurrent mode for generating files faster
-  -p, --print-output      Print BUILD files contents to terminal output
-  -d, --debug             Debug mode. Files will not be written
+  --print-output          Print BUILD files contents to terminal output
+  --debug                 Debug mode. Files will not be written
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
   -h, --help              Show help information.
 ```
 ### Compiler
 ```
-OVERVIEW: Compiles podspec.json to BUILD file
-
-USAGE: Compiler <podspec-json> [--src <src>] [--subspecs <subspecs> ...] [--min-ios <min-ios>]
+USAGE: Compiler <podspec-json> [--src <src>] [--subspecs <subspecs> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--extra-sdk <extra-sdk> ...]
 
 ARGUMENTS:
   <podspec-json>          podspec.json
 
 OPTIONS:
-  --src <src>             Sources root
+  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
   --subspecs <subspecs>   Subspecs list
   --min-ios <min-ios>     Minimum iOS version if not listed in podspec (default: 13.0)
+  --deps-prefix <deps-prefix>
+                          Dependencies prefix (default: //Pods)
+  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
+  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  --extra-sdk <extra-sdk> Extra sdk frameworks for all targets
   -h, --help              Show help information.
 ```
 ## Contributing and issues

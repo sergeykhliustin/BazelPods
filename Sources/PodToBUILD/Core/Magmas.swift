@@ -39,7 +39,6 @@ public protocol Identity {
     static var empty: Self { get }
 }
 
-
 /// Monoids are the building blocks for clean, reusable,
 /// composable code.
 ///
@@ -51,7 +50,7 @@ public protocol Identity {
 public protocol Monoid: Semigroup, Identity {}
 
 public func mfold<M: Monoid>(_ monoids: [M]) -> M {
-    return monoids.reduce(M.empty){ $0 <> $1 }
+    return monoids.reduce(M.empty) { $0 <> $1 }
 }
 
 /// This is a hack since Swift doesn't have conditional conformances
@@ -67,11 +66,11 @@ public func<+> <T: Semigroup>(lhs: T?, rhs: T?) -> T? {
 // induce the monoid with optional since swift can't handle
 // option monoids
 public func sfold<S: Semigroup>(_ semigroups: [S?]) -> S? {
-    return semigroups.reduce(nil){ $0 <+> $1 }
+    return semigroups.reduce(nil) { $0 <+> $1 }
 }
 
 extension Array: Monoid {
-    public static func <>(lhs: Array, rhs: Array) -> Array {
+    public static func <> (lhs: Array, rhs: Array) -> Array {
         return lhs + rhs
     }
 
@@ -79,7 +78,7 @@ extension Array: Monoid {
 }
 
 extension String: Monoid {
-    public static func <>(lhs: String, rhs: String) -> String {
+    public static func <> (lhs: String, rhs: String) -> String {
         return lhs + rhs
     }
 
@@ -89,7 +88,8 @@ extension String: Monoid {
 extension Dictionary: Monoid {
     /// Override with the stuff on the right
     /// [b:1] <> [b:2] => [b:2]
-    public static func<><Dictish: Collection>(lhs: Dictionary, rhs: Dictish) -> Dictionary where Dictish.Iterator.Element == Dictionary.Element {
+    public static func<><Dictish: Collection>(lhs: Dictionary, rhs: Dictish) -> Dictionary
+    where Dictish.Iterator.Element == Dictionary.Element {
         return rhs.reduce(lhs) { (acc: Dictionary, kv: (Key, Value)) in
             var d = acc
             d[kv.0] = kv.1
@@ -97,7 +97,7 @@ extension Dictionary: Monoid {
         }
     }
 
-    public static func<+><T>(lhs: Dictionary, rhs: Dictionary) -> Dictionary where Dictionary.Value == Array<T> {
+    public static func<+><T>(lhs: Dictionary, rhs: Dictionary) -> Dictionary where Dictionary.Value == [T] {
         return rhs.reduce(lhs) { (acc: Dictionary, kv: (Key, Value)) in
             var result = acc
             if let current = result[kv.0] {
@@ -114,7 +114,7 @@ extension Dictionary: Monoid {
 }
 
 extension Optional: Monoid {
-    public static func <>(lhs: Optional, rhs: Optional) -> Optional {
+    public static func<>(lhs: Optional, rhs: Optional) -> Optional {
         switch (lhs, rhs) {
         case (.none, _): return rhs
         case (.some, .some): return lhs <> rhs
@@ -145,7 +145,7 @@ extension Trivial: Monoid {
     static func<>(lhs: Trivial, rhs: Trivial) -> Trivial {
         return Trivial()
     }
-    
+
     public static var empty: Trivial { return Trivial() }
 }
 
@@ -181,11 +181,10 @@ extension Optional where Wrapped: EmptyAwareness {
     public var isEmptyAwareEmpty: Bool {
         switch self {
         case .none: return true
-        case .some(let val): return val.isEmpty 
+        case .some(let val): return val.isEmpty
         }
     }
 }
-
 
 extension Optional: EmptyAwareness {
     public var isEmpty: Bool {
@@ -215,14 +214,14 @@ precedencegroup PipeForward {
     higherThan: AssignmentPrecedence
 }
 infix operator |>: PipeForward
-public func |><T,U>(x: T, f: (T) -> U) -> U {
+public func |><T, U>(x: T, f: (T) -> U) -> U {
     return f(x)
 }
 
-public indirect enum Either<T,U> {
+public indirect enum Either<T, U> {
     case left(T)
     case right(U)
-    
+
     public func fold<R>(left: (T) -> R, right: (U) -> R) -> R {
         switch self {
         case let .left(t): return left(t)

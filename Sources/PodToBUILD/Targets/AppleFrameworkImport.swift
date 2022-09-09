@@ -18,11 +18,12 @@ struct AppleFrameworkImport: BazelTarget {
         }
     }
     let name: String // A unique name for this rule.
-    let frameworkImport: AttrSet<String> // The list of files under a .framework directory which are provided to Objective-C targets that depend on this target.
+    // The list of files under a .framework directory which are provided to Objective-C targets that depend on this target.
+    let frameworkImport: String
     let isXCFramework: Bool
     let isDynamic: Bool
 
-    init(name: String, isDynamic: Bool, isXCFramework: Bool, frameworkImport: AttrSet<String>) {
+    init(name: String, isDynamic: Bool, isXCFramework: Bool, frameworkImport: String) {
         self.name = name
         self.isDynamic = isDynamic
         self.frameworkImport = frameworkImport
@@ -36,17 +37,15 @@ struct AppleFrameworkImport: BazelTarget {
     //     ],
     //     visibility = ["visibility:public"]
     // )
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         let ruleName = appleFrameworkImport(isDynamic: isDynamic, isXCFramework: isXCFramework)
 
-        return SkylarkNode.functionCall(
+        return StarlarkNode.functionCall(
             name: ruleName,
-                arguments: [SkylarkFunctionArgument]([
+                arguments: [StarlarkFunctionArgument]([
                     .named(name: "name", value: .string(name)),
                     .named(name: isXCFramework ? "xcframework_imports": "framework_imports",
-                           value: frameworkImport.map {
-                                  GlobNode(include: Set([$0 + "/**"]))
-                            }.toSkylark()),
+                           value: GlobNode(include: Set([frameworkImport.appendingPath("/**")])).toStarlark()),
                     .named(name: "visibility", value: .list(["//visibility:public"]))
                 ])
         )
@@ -62,40 +61,17 @@ struct AppleFrameworkImport: BazelTarget {
     }
 
     static func vendoredFrameworks(withPodspec spec: PodSpec, subspecs: [PodSpec], options: BuildOptions) -> [BazelTarget] {
-        // TODO: Make frameworks AttrSet
-        let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
+        let vendoredFrameworks = spec.collectAttribute(with: subspecs,
+                                                       keyPath: \.vendoredFrameworks).map({ $0.filter({ !$0.hasSuffix("xcframework") }) })
         let frameworks = vendoredFrameworks.map {
             $0.compactMap {
-                var isDynamic: Bool = false
+                let isDynamic = isDynamicFramework($0, options: options)
+                let frameworkName = URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent
 
-                let frameworkPath = URL(fileURLWithPath: $0, relativeTo: URL(fileURLWithPath: options.sourcePath))
-                let frameworkExtension = frameworkPath.pathExtension
-                let frameworkName = frameworkPath.deletingPathExtension().lastPathComponent
-
-                let isXCFramework = frameworkExtension == "xcframework"
-                if !isXCFramework {
-                    let executablePath = frameworkPath.appendingPathComponent(frameworkName)
-                    let archs = SystemShellContext().command("/usr/bin/lipo", arguments: ["-archs", executablePath.path]).standardOutputAsString
-                    // TODO: Refactor this
-                    if !archs.contains("x86_64") && frameworkExtension == "framework" {
-                        return nil
-                    }
-                    // TODO: Find proper way
-                    let output = SystemShellContext().command("/usr/bin/file", arguments: [executablePath.path]).standardOutputAsString
-                    isDynamic = output.contains("dynamically")
-                } else {
-                    let contents = (try? FileManager.default.contentsOfDirectory(at: frameworkPath, includingPropertiesForKeys: nil)) ?? []
-                    if let slice = contents.first(where: { $0.lastPathComponent.hasPrefix("ios-") && $0.lastPathComponent.contains("x86_64") }) {
-                        let sliceContents = (try? FileManager.default.contentsOfDirectory(at: slice, includingPropertiesForKeys: nil)) ?? []
-                        if sliceContents.contains(where: { $0.pathExtension == "framework" }) {
-                            isDynamic = true
-                        }
-                    }
-                }
                 return AppleFrameworkImport(name: "\(spec.moduleName ?? spec.name)_\(frameworkName)_VendoredFramework",
                                             isDynamic: isDynamic,
-                                            isXCFramework: isXCFramework,
-                                            frameworkImport: AttrSet(basic: $0))
+                                            isXCFramework: false,
+                                            frameworkImport: $0)
             } as [AppleFrameworkImport]
         }
         return (frameworks.basic ?? []) + (frameworks.multi.ios ?? [])

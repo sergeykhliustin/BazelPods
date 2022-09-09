@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct GlobNode: SkylarkConvertible {
+public struct GlobNode: StarlarkConvertible {
     // Bazel Glob function: glob(include, exclude=[], exclude_directories=1)
     public let include: [Either<Set<String>, GlobNode>]
     public let exclude: [Either<Set<String>, GlobNode>]
@@ -30,7 +30,7 @@ public struct GlobNode: SkylarkConvertible {
         self.exclude = exclude.simplify()
     }
 
-    public func toSkylark() -> SkylarkNode {
+    public func toStarlark() -> StarlarkNode {
         // An empty glob doesn't need to be rendered
         guard isEmpty == false else {
             return .empty
@@ -38,23 +38,23 @@ public struct GlobNode: SkylarkConvertible {
 
         let include = self.include
         let exclude = self.exclude
-        let includeArgs: [SkylarkFunctionArgument] = [
-            .basic(include.reduce(SkylarkNode.empty) {
-                $0 .+. $1.toSkylark()
-            }),
+        let includeArgs: [StarlarkFunctionArgument] = [
+            .basic(include.reduce(StarlarkNode.empty) {
+                $0 .+. $1.toStarlark()
+            })
         ]
 
         // If there's no excludes omit the argument
-        let excludeArgs: [SkylarkFunctionArgument] = exclude.isEmpty ? [] : [
-            .named(name: "exclude", value: exclude.reduce(SkylarkNode.empty) {
-                $0 .+. $1.toSkylark()
-            }),
+        let excludeArgs: [StarlarkFunctionArgument] = exclude.isEmpty ? [] : [
+            .named(name: "exclude", value: exclude.reduce(StarlarkNode.empty) {
+                $0 .+. $1.toStarlark()
+            })
         ]
 
         // Omit the default argument for exclude_directories
-        let dirArgs: [SkylarkFunctionArgument] = self.excludeDirectories ? [] : [
+        let dirArgs: [StarlarkFunctionArgument] = self.excludeDirectories ? [] : [
             .named(name: "exclude_directories",
-                   value: .int(self.excludeDirectories ? 1 : 0)),
+                   value: .int(self.excludeDirectories ? 1 : 0))
         ]
 
         return .functionCall(name: "glob",
@@ -108,8 +108,8 @@ extension Either: Equatable where T == Set<String>, U == GlobNode {
 
 extension Array where Iterator.Element == Either<Set<String>, GlobNode> {
     var isEmpty: Bool {
-        return self.reduce(true) {
-            $0 == false ? $0 : $1.isEmpty
+        return self.allSatisfy {
+            $0.isEmpty
         }
     }
 
@@ -148,8 +148,7 @@ extension Either where T == Set<String>, U == GlobNode {
                 // remaining globs
                 var setAccum: Set<String> = Set()
                 let remainingGlobs = include
-                    .reduce(into: [Either<Set<String>, GlobNode>]()) {
-                    accum, next in
+                    .reduce(into: [Either<Set<String>, GlobNode>]()) { accum, next in
                     switch next {
                     case let .left(val):
                         setAccum = setAccum <> val
@@ -198,12 +197,10 @@ extension GlobNode: Monoid {
     }
 }
 
-
 extension GlobNode {
     /// Evaluates the glob for all the sources on disk
     public func sourcesOnDisk() -> Set<String> {
-        let includedFiles = self.include.reduce(into: Set<String>()) {
-            accum, next in
+        let includedFiles = self.include.reduce(into: Set<String>()) { accum, next in
             switch next {
             case .left(let setVal):
                  setVal.forEach { podGlob(pattern: $0).forEach { accum.insert($0) } }
@@ -212,8 +209,7 @@ extension GlobNode {
             }
         }
 
-        let excludedFiles = self.exclude.reduce(into: Set<String>()) {
-            accum, next in
+        let excludedFiles = self.exclude.reduce(into: Set<String>()) { accum, next in
             switch next {
             case .left(let setVal):
                  setVal.forEach { podGlob(pattern: $0).forEach { accum.insert($0) } }
@@ -228,4 +224,3 @@ extension GlobNode {
         return sourcesOnDisk().count > 0
     }
 }
-

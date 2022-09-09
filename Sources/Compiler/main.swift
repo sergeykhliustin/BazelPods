@@ -1,2 +1,1 @@
-
 RootCommand.main()

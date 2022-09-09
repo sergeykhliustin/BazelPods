@@ -11,15 +11,17 @@ final class InfoPlist: GenRule {
     struct PlistData: Codable {
         enum PackageType: String, Codable {
             case BNDL
+            case FMWK
         }
         enum Platforms: String, Codable {
             case iPhoneSimulator
+            case iPhoneOS
         }
 
         var CFBundleInfoDictionaryVersion = "6.0"
         var CFBundleSignature = "????"
         var CFBundleVersion = "1"
-        var NSPrincipalClass: String = ""
+        var NSPrincipalClass: String?
         let CFBundleIdentifier: String
         let CFBundleName: String
         let CFBundleShortVersionString: String
@@ -51,9 +53,22 @@ final class InfoPlist: GenRule {
             CFBundleShortVersionString: spec.version ?? "1.0",
             CFBundlePackageType: .BNDL,
             MinimumOSVersion: spec.platforms?["ios"] ?? options.iosPlatform,
-            CFBundleSupportedPlatforms: [.iPhoneSimulator],
+            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
             UIDeviceFamily: [1, 2]
         )
         self.init(name: bundle.name + "_InfoPlist", data: data)
+    }
+
+    convenience init(framework: AppleFramework, spec: PodSpec, options: BuildOptions) {
+        let data = PlistData(
+            CFBundleIdentifier: "org.cocoapods.\(framework.name)",
+            CFBundleName: framework.name,
+            CFBundleShortVersionString: spec.version ?? "1.0",
+            CFBundlePackageType: .FMWK,
+            MinimumOSVersion: spec.platforms?["ios"] ?? options.iosPlatform,
+            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
+            UIDeviceFamily: [1, 2]
+        )
+        self.init(name: framework.name + "_InfoPlist", data: data)
     }
 }

@@ -1,0 +1,31 @@
+load('@build_bazel_rules_ios//rules:app.bzl', 'ios_application')
+
+ios_application(
+    name = "TestApp_iOS",
+    bundle_id = "com.bazelpods.testapp",
+    srcs = glob([
+      "TestApp_iOS/**/*.swift",
+    ]),
+    families = [
+        "iphone",
+    ],
+    infoplists = ["TestApp_iOS/Info.plist"],
+    launch_storyboard = "TestApp_iOS/Base.lproj/LaunchScreen.storyboard",
+    minimum_os_version = "13.4",
+    resources = glob([
+      "TestApp_iOS/**"
+    ]),
+    sdk_frameworks = [
+      "UIKit",
+      "CoreGraphics"
+    ],
+    linkopts = [
+      "-ObjC"
+    ],
+    xcconfig = {
+      "LD_VERIFY_BITCODE": "NO"
+    },
+    deps = [
+[[DEPS]]
+    ]
+)

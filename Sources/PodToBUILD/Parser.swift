@@ -18,7 +18,7 @@ import Foundation
  */
 struct Parser<A> {
     let run: ([Character]) -> (A, [Character])?
-    
+
     /// Run the parser; ensure that the result stream is empty or else fail
     func parseFully(_ s: [Character]) -> A? {
         if let (a, rest) = self.run(s), rest.count == 0 {
@@ -27,9 +27,9 @@ struct Parser<A> {
             return nil
         }
     }
-    
+
     func map<B>(_ f: @escaping (A) -> B) -> Parser<B> {
-        return Parser<B>{ s in
+        return Parser<B> { s in
             if let (a, rest) = self.run(s) {
                 return (f(a), rest)
             } else {
@@ -37,7 +37,7 @@ struct Parser<A> {
             }
         }
     }
-    
+
     func flatMap<B>(_ f: @escaping (A) -> Parser<B>) -> Parser<B> {
         return Parser<B> { s in
             if let (a, rest) = self.run(s) {
@@ -47,27 +47,27 @@ struct Parser<A> {
             }
         }
     }
-    
+
     /// flatMap but ignore your input
     func andThen<B>(_ next: @escaping () -> Parser<B>) -> Parser<B> {
         return self.flatMap { _ in next() }
     }
-    
+
     /// A Parser that always fails
     static func fail() -> Parser<A> {
         return Parser<A> { _ in nil }
     }
-    
+
     /// A Parser that always succeeds and returns `x`
     static func trivial(_ x: A) -> Parser<A> {
         return Parser<A> { s in (x, s) }
     }
-    
+
     /// Forget the data structure you've parsed
     var forget: Parser<()> {
-        return self.map{ _ in () }
+        return self.map { _ in () }
     }
-    
+
     /// Try this parser, but if it fails, try `p` before truly failing
     func orElse(_ p: Parser<A>) -> Parser<A> {
         return Parser<A> { s in
@@ -78,36 +78,36 @@ struct Parser<A> {
             }
         }
     }
-    
+
     /// Try each parser in `ps` in order, take the result of the first that succeeds
     static func first<S: Sequence>(_ ps: S) -> Parser<A> where S.Iterator.Element == Parser<A> {
         return ps.reduce(Parser.fail()) { (acc, p) in
             return acc.orElse(p)
         }
     }
-    
+
     /// Make a parser that parses your data zero or more times
     func many() -> Parser<[A]> {
         return manyUntil(terminator: Parser<()>.fail())
     }
-    
+
     /// Make a parser that wraps this parser with two characters
     /// Note: Make sure you don't greedily parse the endingWith character in `self`
     func wrapped(startingWith: Character, endingWith: Character) -> Parser<A> {
-        return Parsers.just(startingWith).andThen{  self }.flatMap{ x in
-            return Parsers.just(endingWith).map{ _ in x }
+        return Parsers.just(startingWith).andThen {  self }.flatMap { x in
+            return Parsers.just(endingWith).map { _ in x }
         }
     }
-    
+
     /// Make a parser that looks for data repeated separated by `separatedBy`
     /// and return all the data (excluding the separatedBy bit)
     /// Note: Make sure you don't greedily parse the `separatedBy` character in `self`
     func rep(separatedBy: Parser<()>) -> Parser<[A]> {
-        return self.flatMap{ a in
-            return Parser<[A]>.trivial([a]) <> (separatedBy.andThen{  self}).many()
+        return self.flatMap { a in
+            return Parser<[A]>.trivial([a]) <> (separatedBy.andThen {  self}).many()
         }
     }
-    
+
     /// Make a parser that is like this parser but always fails when encountering `char`
     func butNot(_ char: Character) -> Parser<A> {
         return Parser<A> { s in
@@ -118,7 +118,7 @@ struct Parser<A> {
             }
         }
     }
-    
+
     /// Make a parser that parses many times until hitting a `terminator` and there are
     /// `atLeast` successfuly pieces of data parsed.
     func manyUntil(terminator: Parser<()>, atLeast: Int = 0) -> Parser<[A]> {
@@ -129,14 +129,14 @@ struct Parser<A> {
             if let (_, _) = terminator.run(next) {
                 return checkedReturn((build, next))
             }
-            
+
             if let (a, rest) = self.run(next) {
                 return loop(rest, build + [a])
             } else {
                 return checkedReturn((build, next))
             }
         }
-        
+
         return Parser<[A]> { s in
             return loop(s, [])
         }
@@ -149,8 +149,8 @@ struct Parser<A> {
 /// This means Parser is a semigroup homomorphism.
 extension Parser where A: Semigroup {
     static func <>(lhs: Parser, rhs: Parser) -> Parser {
-        return lhs.flatMap{ (l: A) -> Parser<A> in
-            rhs.map{ (r: A) -> A in
+        return lhs.flatMap { (l: A) -> Parser<A> in
+            rhs.map { (r: A) -> A in
                 l <> r
             }
         }
@@ -175,16 +175,16 @@ enum Parsers {
             return nil
         }
     }
-    
+
     /// Make a parser to parse just one character `x`
     static func just(_ x: Character) -> Parser<Character> {
-        return Parsers.prefix([x]).map{ cs in cs[0] }
+        return Parsers.prefix([x]).map { cs in cs[0] }
     }
-    
+
     /// Make a parser to parse a sequence of characters `prefix`
     static func prefix(_ prefix: [Character]) -> Parser<[Character]> {
         return Parser<[Character]> { s in
-            if (prefix.count <= s.count && zip(prefix, s[0..<prefix.count]).filter{ $0 != $1 }.count == 0) {
+            if (prefix.count <= s.count && zip(prefix, s[0..<prefix.count]).filter { $0 != $1 }.count == 0) {
                 return (prefix, Array(s[prefix.count..<s.count]))
             } else {
                 return nil

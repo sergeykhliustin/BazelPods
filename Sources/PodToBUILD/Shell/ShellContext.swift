@@ -27,11 +27,11 @@ public struct CommandBinary {
 
 extension CommandOutput {
     /// Return Standard Output as a String
-    public var standardOutputAsString : String {
+    public var standardOutputAsString: String {
         return String(data: standardOutputData, encoding: String.Encoding.utf8) ?? ""
     }
-    
-    public var standardErrorAsString : String {
+
+    public var standardErrorAsString: String {
         return String(data: standardErrorData, encoding: String.Encoding.utf8) ?? ""
     }
 }
@@ -52,11 +52,11 @@ public protocol ShellContext {
     func hardLink(from: String, to: String)
 
     func symLink(from: String, to: String)
-    
+
     func write(value: String, toPath path: URL)
-    
+
     func download(url: URL, toFile: String) -> Bool
-    
+
     func tmpdir() -> String
 }
 
@@ -67,7 +67,7 @@ public func escape(_ string: String) -> String {
 
 let kTaskDidFinishNotificationName = NSNotification.Name(rawValue: "kTaskDidFinishNotificationName")
 
-private struct ShellTaskResult : CommandOutput {
+private struct ShellTaskResult: CommandOutput {
     let standardErrorData: Data
     let standardOutputData: Data
     let terminationStatus: Int32
@@ -75,7 +75,7 @@ private struct ShellTaskResult : CommandOutput {
 
 /// Shell task runs a given command and waits
 /// for it to terminate or timeout
-class ShellTask : NSObject {
+class ShellTask: NSObject {
     let timeout: CFTimeInterval
     let command: String
     let path: String?
@@ -84,8 +84,11 @@ class ShellTask : NSObject {
     private var standardOutputData: Data
     private var standardErrorData: Data
 
-    init(command: String, arguments: [String], timeout: CFTimeInterval, cwd:
-         String? = nil, printOutput: Bool = false) {
+    init(command: String,
+         arguments: [String],
+         timeout: CFTimeInterval,
+         cwd: String? = nil,
+         printOutput: Bool = false) {
         self.command = command
         self.arguments = arguments
         self.timeout = timeout
@@ -108,7 +111,7 @@ class ShellTask : NSObject {
     override var description: String {
         return "ShellTask: " + command + " " + arguments.joined(separator: " ")
     }
-    override var debugDescription : String {
+    override var debugDescription: String {
         return description
     }
 
@@ -152,8 +155,7 @@ class ShellTask : NSObject {
     private func createProcess(stream: Bool, stdout: Pipe, stderr: Pipe) -> Process {
         let process = Process()
         if stream {
-            stdout.fileHandleForReading.readabilityHandler = {
-                handle in
+            stdout.fileHandleForReading.readabilityHandler = { handle in
                 let data = handle.availableData
                 guard data.count > 0 else {
                     return
@@ -163,8 +165,7 @@ class ShellTask : NSObject {
                 }
                 self.standardOutputData.append(data)
             }
-            stderr.fileHandleForReading.readabilityHandler = {
-                handle in
+            stderr.fileHandleForReading.readabilityHandler = { handle in
                 let data = handle.availableData
                 guard data.count > 0 else {
                     return
@@ -230,7 +231,7 @@ class ShellTask : NSObject {
 
 /// SystemShellContext is a shell context that mutates the user's system
 /// All mutations may be logged
-public struct SystemShellContext : ShellContext {
+public struct SystemShellContext: ShellContext {
     func command(_ launchPath: String, arguments: [String]) -> (String, CommandOutput) {
         let data = startShellAndWait(launchPath, arguments: arguments)
         let string = String(data: data.standardOutputData, encoding: String.Encoding.utf8) ?? ""
@@ -291,7 +292,7 @@ public struct SystemShellContext : ShellContext {
         log("WRITE \(value) TO \(path)")
         try? value.write(to: path, atomically: false, encoding: String.Encoding.utf8)
     }
-    
+
     public func download(url: URL, toFile file: String) -> Bool {
         log("DOWNLOAD \(url) TO \(file)")
         guard let fileData = NSData(contentsOf: url) else {
@@ -300,12 +301,12 @@ public struct SystemShellContext : ShellContext {
         let err: AutoreleasingUnsafeMutablePointer<NSError?>? = nil
         NSFileCoordinator().coordinate(writingItemAt: url,
                                        options: NSFileCoordinator.WritingOptions.forReplacing,
-                                       error: err) { (fileURL) in
+                                       error: err) { (_) in
                 FileManager.default.createFile(atPath: file, contents: fileData as Data, attributes: nil)
         }
         return (err == nil)
     }
-    
+
     public func tmpdir() -> String {
         log("CREATE TMPDIR")
         // Taken from https://stackoverflow.com/a/46701313/3000133

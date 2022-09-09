@@ -16,14 +16,14 @@ enum SelectCase: String {
     case fallback = "//conditions:default"
 }
 
-typealias AttrSetConstraint = Monoid & SkylarkConvertible & EmptyAwareness
+typealias AttrSetConstraint = Monoid & StarlarkConvertible & EmptyAwareness
 
-struct MultiPlatform<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness {
+struct MultiPlatform<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAwareness {
     let ios: T?
     let osx: T?
     let watchos: T?
     let tvos: T?
-    
+
     static var empty: MultiPlatform<T> { return MultiPlatform(ios: nil, osx: nil, watchos: nil, tvos: nil) }
 
     var isEmpty: Bool {
@@ -88,8 +88,8 @@ struct MultiPlatform<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwa
                                 watchos: watchos.map(transform),
                                 tvos: tvos.map(transform))
     }
-    
-    func toSkylark() -> SkylarkNode {
+
+    func toStarlark() -> StarlarkNode {
         precondition(ios != nil || osx != nil || watchos != nil || tvos != nil, "MultiPlatform empty can't be rendered")
 
         return .functionCall(name: "select", arguments: [.basic((
@@ -98,7 +98,7 @@ struct MultiPlatform<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwa
             tvos.map { [":\(SelectCase.tvos.rawValue)": $0] } <+>
             // TODO: Change to T.empty and move ios up when we support other platforms
 	        [SelectCase.fallback.rawValue: ios ?? T.empty ] ?? [:]
-        ).toSkylark())])
+        ).toStarlark())])
     }
 }
 
@@ -136,12 +136,12 @@ struct AttrTuple<A: AttrSetConstraint, B: AttrSetConstraint>: AttrSetConstraint 
             (second == nil || second.isEmpty)
     }
 
-    func toSkylark() -> SkylarkNode {
-        fatalError("You tried to toSkylark on a tuple (our domain modelling failed here :( )")
+    func toStarlark() -> StarlarkNode {
+        fatalError("You tried to toStarlark on a tuple (our domain modelling failed here :( )")
     }
 }
 
-struct AttrSet<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness {
+struct AttrSet<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAwareness {
     let basic: T?
     let multi: MultiPlatform<T>
 
@@ -178,7 +178,7 @@ struct AttrSet<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness
         let multiPass = self.multi.map { predicate($0) ? $0 : T.empty }
         return AttrSet<T>(basic: basicPass, multi: multiPass)
     }
-    
+
     func fold<U>(basic: (T?) -> U, multi: (U, MultiPlatform<T>) -> U) -> U {
         return multi(basic(self.basic), self.multi)
     }
@@ -194,8 +194,8 @@ struct AttrSet<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness
         return mutAccum
     }
 
-    func zip<U>(_ other: AttrSet<U>) -> AttrSet<AttrTuple<T,U>> {
-        return AttrSet<AttrTuple<T,U>>(
+    func zip<U>(_ other: AttrSet<U>) -> AttrSet<AttrTuple<T, U>> {
+        return AttrSet<AttrTuple<T, U>>(
             basic: AttrTuple(self.basic, other.basic),
             multi: MultiPlatform<AttrTuple<T, U>>(
                 ios: AttrTuple(self.multi.ios, other.multi.ios),
@@ -220,12 +220,12 @@ struct AttrSet<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness
         )
     }
 
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         switch basic {
-        case .none where multi.isEmpty: return T.empty.toSkylark()
-        case let .some(b) where multi.isEmpty: return b.toSkylark()
-        case .none: return multi.toSkylark()
-        case let .some(b): return b.toSkylark() .+. multi.toSkylark()
+        case .none where multi.isEmpty: return T.empty.toStarlark()
+        case let .some(b) where multi.isEmpty: return b.toStarlark()
+        case .none: return multi.toStarlark()
+        case let .some(b): return b.toStarlark() .+. multi.toStarlark()
         }
     }
 }
@@ -233,8 +233,7 @@ struct AttrSet<T: AttrSetConstraint>: Monoid, SkylarkConvertible, EmptyAwareness
 extension AttrSet {
     ///  Sequences a list of `AttrSet`s to a list of each input's value
     func sequence(_ input: [AttrSet<T>]) -> AttrSet<[T]> {
-        return ([self] + input).reduce(AttrSet<[T]>.empty) {
-            accum, next -> AttrSet<[T]> in
+        return ([self] + input).reduce(AttrSet<[T]>.empty) { accum, next -> AttrSet<[T]> in
             return accum.zip(next).map { zip in
                 let first = zip.first ?? []
                 guard let second = zip.second else {
@@ -246,12 +245,12 @@ extension AttrSet {
     }
 }
 
-extension MultiPlatform where T == Optional<String> {
+extension MultiPlatform where T == String? {
     func denormalize() -> MultiPlatform<String> {
         return self.map { $0.denormalize() }
     }
 }
-extension AttrSet where T == Optional<String> {
+extension AttrSet where T == String? {
     func denormalize() -> AttrSet<String> {
         return self.map { $0.denormalize() }
     }
@@ -271,7 +270,6 @@ extension AttrSet {
         return self
     }
 }
-
 
 extension AttrSet: Equatable where T: AttrSetConstraint, T: Equatable {
     static func == (lhs: AttrSet, rhs: AttrSet) -> Bool {
@@ -294,25 +292,25 @@ extension AttrSet where T: AttrSetConstraint, T: Equatable {
     }
 
     /// For simplicity of the BUILD file, we'll condense if all is the same
-    func toSkylark() -> SkylarkNode {
+    func toStarlark() -> StarlarkNode {
         let renderable = self.flattenToBasicIfPossible()
         switch renderable.basic {
-        case .none where renderable.multi.isEmpty: return T.empty.toSkylark()
-        case let .some(b) where renderable.multi.isEmpty: return b.toSkylark()
-        case .none: return renderable.multi.toSkylark()
-        case let .some(b): return b.toSkylark() .+. renderable.multi.toSkylark()
+        case .none where renderable.multi.isEmpty: return T.empty.toStarlark()
+        case let .some(b) where renderable.multi.isEmpty: return b.toStarlark()
+        case .none: return renderable.multi.toStarlark()
+        case let .some(b): return b.toStarlark() .+. renderable.multi.toStarlark()
         }
     }
 }
 
 extension Dictionary {
     init<S: Sequence>(tuples: S) where S.Iterator.Element == (Key, Value) {
-        self = tuples.reduce([:]) { d, t in d <> [t.0:t.1] }
+        self = tuples.reduce([:]) { d, t in d <> [t.0: t.1] }
     }
 }
 
 // Because we don't have conditional conformance we have to specialize these
-extension Optional where Wrapped == Array<String> {
+extension Optional where Wrapped == [String] {
     static func == (lhs: Optional, rhs: Optional) -> Bool {
         switch (lhs, rhs) {
         case (.none, .none): return true
@@ -341,7 +339,7 @@ extension MultiPlatform where T == [String] {
 extension MultiPlatform where T == Set<String> {
     static func == (lhs: MultiPlatform, rhs: MultiPlatform) -> Bool {
         return lhs.ios == rhs.ios && lhs.osx == rhs.osx && lhs.watchos == rhs.watchos && lhs.tvos == rhs.tvos
-    }   
+    }
 }
 
 extension AttrSet where T == [String] {
@@ -361,7 +359,7 @@ extension AttrSet where T == [String] {
 extension AttrSet where T == Set<String> {
     static func == (lhs: AttrSet, rhs: AttrSet) -> Bool {
         return lhs.basic == rhs.basic && lhs.multi == rhs.multi
-    }   
+    }
 }
 extension PodSpec {
     func attr<T>(_ keyPath: KeyPath<PodSpecRepresentable, T>) -> AttrSet<T> {
@@ -369,7 +367,7 @@ extension PodSpec {
     }
 
     func collectAttribute(with subspecs: [PodSpec] = [],
-                                 keyPath: KeyPath<PodSpecRepresentable, [String]>) -> AttrSet<Set<String>> {
+                          keyPath: KeyPath<PodSpecRepresentable, [String]>) -> AttrSet<Set<String>> {
         return (subspecs + [self])
             .reduce(into: AttrSet<Set<String>>.empty) { partialResult, spec in
                 partialResult = partialResult <> spec.attr(keyPath).unpackToMulti().map({ Set($0) })
@@ -377,7 +375,7 @@ extension PodSpec {
     }
 
     func collectAttribute(with subspecs: [PodSpec] = [],
-                                 keyPath: KeyPath<PodSpecRepresentable, [String: [String]]>) -> AttrSet<[String: [String]]> {
+                          keyPath: KeyPath<PodSpecRepresentable, [String: [String]]>) -> AttrSet<[String: [String]]> {
         return (subspecs + [self])
             .reduce(into: AttrSet<[String: [String]]>.empty) { partialResult, spec in
                 partialResult = partialResult.zip(spec.attr(keyPath).unpackToMulti()).map({
@@ -413,4 +411,3 @@ func getAttrSet<T>(spec: PodSpec, keyPath: KeyPath<PodSpecRepresentable, T>) -> 
         tvos: spec.tvos?[keyPath: keyPath])
     )
 }
-

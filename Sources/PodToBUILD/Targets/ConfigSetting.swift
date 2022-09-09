@@ -13,38 +13,43 @@ public struct ConfigSetting: BazelTarget {
     public let name: String
     let values: [String: String]
 
-    public func toSkylark() -> SkylarkNode {
+    public func toStarlark() -> StarlarkNode {
         return .functionCall(
             name: "config_setting",
             arguments: [
-                .named(name: "name", value: name.toSkylark()),
-                .named(name: "values", value: values.toSkylark())
+                .named(name: "name", value: name.toStarlark()),
+                .named(name: "values", value: values.toStarlark())
             ])
     }
 
     /// Config Setting Nodes
     /// Write Build dependent COPTS.
     /// @note We consume this as an expression in ObjCLibrary
-    static func makeConfigSettingNodes() -> SkylarkNode {
+    static func makeConfigSettingNodes() -> StarlarkNode {
         let comment = [
             "# Add a config setting release for compilation mode",
             "# Assume that people are using `opt` for release mode",
             "# see the bazel user manual for more information",
-            "# https://docs.bazel.build/versions/master/be/general.html#config_setting",
-        ].map { SkylarkNode.skylark($0) }
-        return .lines([.lines(comment),
+            "# https://docs.bazel.build/versions/master/be/general.html#config_setting"
+        ].map { StarlarkNode.starlark($0) }
+        var settings = [
             ConfigSetting(
                 name: "release",
-                values: ["compilation_mode": "opt"]).toSkylark(),
+                values: ["compilation_mode": "opt"]).toStarlark(),
             ConfigSetting(
                 name: "osxCase",
-                values: ["apple_platform_type": "macos"]).toSkylark(),
+                values: ["apple_platform_type": "macos"]).toStarlark(),
             ConfigSetting(
                 name: "tvosCase",
-                values: ["apple_platform_type": "tvos"]).toSkylark(),
+                values: ["apple_platform_type": "tvos"]).toStarlark(),
             ConfigSetting(
                 name: "watchosCase",
-                values: ["apple_platform_type": "watchos"]).toSkylark()
-        ])
+                values: ["apple_platform_type": "watchos"]).toStarlark()
+        ]
+        settings.append(contentsOf: Arch.allCases.map({
+            ConfigSetting(name: $0.rawValue, values: ["cpu": $0.rawValue]).toStarlark()
+        }))
+
+        return .lines([.lines(comment)] + settings)
     }
 }
