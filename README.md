@@ -33,7 +33,7 @@ Let Cocoapods download, resolve and setup everything for us. After that, it will
   - [ ] tvOS (soon)
 - Linking
   - [x] Static
-  - [x] Dynamic `use_frameworks!` (`-f` option. also check `--extra-sdk` if you facing missing sdk issues)
+  - [x] Dynamic `use_frameworks!` (`--frameworks` option. also check `--extra-sdk` if you facing missing sdk issues)
   - [ ] Mixed (?)
 - Pods: 
   - [x] Autodetect vendored frameworks architectures and ignore unsupported
