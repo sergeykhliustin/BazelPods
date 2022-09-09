@@ -36,13 +36,14 @@ Let Cocoapods download, resolve and setup everything for us. After that, it will
   - [x] Dynamic `use_frameworks!` (`-f` option. also check `--extra-sdk` if you facing missing sdk issues)
   - [ ] Mixed (?)
 - Pods: 
+  - [x] Autodetect vendored frameworks architectures and ignore unsupported
   - [x] Almost everything from top pods (vendored frameworks/xcframeworks/libraries, resources/bundles, xcconfigs)
-  - [x] Nested subspecs (possibly works, but not tested yet)
+  - [ ] Nested subspecs (possibly works, but not tested yet)
   - [ ] Local pods with custom paths (currently supports only pods located at the root of your repo)
 
 
 ### 🎸 Let's rock
-Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) first.
+Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) and [`rules_apple`](https://github.com/bazelbuild/rules_apple) first.
 
 Add `BazelPods` to your `WORKSPACE`
 ```starlark
