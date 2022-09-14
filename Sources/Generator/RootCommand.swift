@@ -10,6 +10,13 @@ import ArgumentParser
 import PodToBUILD
 import ObjcSupport
 
+fileprivate let IGNORE_FILELIST = [
+    "build.bazel",
+    "build",
+    "workspace",
+    "workspace.bazel"
+]
+
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Generator",
                                                     abstract: "Generates BUILD files for pods")
@@ -98,6 +105,8 @@ struct RootCommand: ParsableCommand {
                                                              withIntermediateDirectories: false)
                     let contents = (try? FileManager.default.contentsOfDirectory(atPath: src)) ?? []
                     contents.forEach({ file in
+                        guard !file.starts(with: ".") else { return }
+                        guard !IGNORE_FILELIST.contains(file.lowercased()) else { return }
                         let sourcePath = absolutePath(file)
                         let symlinkPath = absolutePath("Pods/\(specification.name)/\(file)")
                         do {
