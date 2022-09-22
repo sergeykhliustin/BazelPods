@@ -41,8 +41,9 @@ public struct PodBuildFile: StarlarkConvertible {
                     .compactMap({ $0 as? BazelTarget })
                     .map({ $0.loadNode })
                     .filter({ !$0.isEmpty })
-                )
-                .map({ StarlarkNode.starlark($0) })
+            )
+            .sorted(by: <)
+            .map({ StarlarkNode.starlark($0) })
         )
     }
 
@@ -89,6 +90,7 @@ public struct PodBuildFile: StarlarkConvertible {
 
         let extraDeps: [BazelTarget] = makeResourceBundles(spec: podSpec, subspecs: subspecs, options: buildOptions)
         let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
+            .sorted(by: { $0.name < $1.name })
         let conditionalDeps = frameworks.reduce([String: [Arch]]()) { partialResult, target in
             guard let target = target as? AppleFrameworkImport else { return partialResult }
             var result = partialResult
