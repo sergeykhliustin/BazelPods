@@ -1,12 +1,7 @@
 
 build --announce_rc
 build --spawn_strategy=local
-build --strategy=SwiftCompile=worker
 build --verbose_failures
 build --apple_platform_type=macos
 build --compilation_mode=dbg
-build --features=swift.use_global_module_cache
-build --objc_enable_binary_stripping=true
-build --features=dead_strip
 build --experimental_multi_threaded_digest
-build --disk_cache=./bazel-cache

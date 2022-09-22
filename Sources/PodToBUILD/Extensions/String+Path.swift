@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension String {
+public extension String {
     func appendingPath(_ str: String) -> String {
         return (self as NSString).appendingPathComponent(str)
     }
@@ -18,5 +18,9 @@ extension String {
 
     var pathExtenstion: String {
         return (self as NSString).pathExtension
+    }
+
+    var deletingLastPath: String {
+        return (self as NSString).deletingLastPathComponent
     }
 }
