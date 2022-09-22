@@ -55,8 +55,10 @@ struct RootCommand: ParsableCommand {
 
     func run() throws {
         _ = CrashReporter()
-        let data = try NSData(contentsOfFile: absolutePath(podsJson), options: [])
-        let json = try JSONDecoder().decode([String: PodConfig].self, from: data as Data)
+        let data = try NSData(contentsOfFile: absoluteSRCPath(podsJson), options: [])
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let json = try decoder.decode([String: PodConfig].self, from: data as Data)
 
         let specifications = PodSpecification.resolve(with: json).sorted(by: { $0.name < $1.name })
         let compiler: (PodSpecification) throws -> Void = { specification in
@@ -66,7 +68,7 @@ struct RootCommand: ParsableCommand {
             let podSpec: PodSpec
             var podSpecJson: JSONDict?
             if specification.podspec.hasSuffix(".json") {
-                let jsonData = try NSData(contentsOfFile: absolutePath(specification.podspec), options: []) as Data
+                let jsonData = try NSData(contentsOfFile: absoluteSRCPath(specification.podspec), options: []) as Data
                 let jsonFile = try JSONSerialization.jsonObject(with: jsonData, options: .allowFragments)
                 guard let jsonPodspec = jsonFile as? JSONDict else {
                     throw "Error parsing podspec at path \(specification.podspec)"
@@ -76,7 +78,7 @@ struct RootCommand: ParsableCommand {
             } else {
                 let jsonPodspec = try getJSONPodspec(shell: SystemShellContext(trace: false),
                                                      podspecName: specification.name,
-                                                     path: absolutePath(specification.podspec))
+                                                     path: absoluteSRCPath(specification.podspec))
                 podSpec = try PodSpec(JSONPodspec: jsonPodspec)
                 podSpecJson = jsonPodspec
             }
@@ -99,16 +101,21 @@ struct RootCommand: ParsableCommand {
                 print(starlarkString)
             }
             if !debug {
-                if specification.development &&
-                    !FileManager.default.fileExists(atPath: absolutePath("Pods/\(specification.name)")) {
-                    try? FileManager.default.createDirectory(atPath: absolutePath("Pods/\(specification.name)"),
+                if var developmentPath = specification.developmentPath {
+                    try? FileManager.default.removeItem(atPath: absoluteSRCPath("Pods/\(specification.name)"))
+                    try? FileManager.default.createDirectory(atPath: absoluteSRCPath("Pods/\(specification.name)"),
                                                              withIntermediateDirectories: false)
-                    let contents = (try? FileManager.default.contentsOfDirectory(atPath: src)) ?? []
+                    if developmentPath.lastPath.hasSuffix("podspec") || developmentPath.lastPath.hasSuffix("podspec.json") {
+                        developmentPath = developmentPath.deletingLastPath
+                    }
+
+                    let contents = (try? FileManager.default.contentsOfDirectory(atPath: absolutePath(developmentPath, base: src))) ?? []
                     contents.forEach({ file in
                         guard !file.starts(with: ".") else { return }
+                        guard !file.starts(with: "bazel-") else { return }
                         guard !IGNORE_FILELIST.contains(file.lowercased()) else { return }
-                        let sourcePath = absolutePath(file)
-                        let symlinkPath = absolutePath("Pods/\(specification.name)/\(file)")
+                        let sourcePath = absolutePath(file, base: developmentPath)
+                        let symlinkPath = absoluteSRCPath("Pods/\(specification.name)/\(file)")
                         do {
                             try FileManager.default.createSymbolicLink(atPath: symlinkPath,
                                                                        withDestinationPath: sourcePath)
@@ -119,7 +126,7 @@ struct RootCommand: ParsableCommand {
                 }
                 let filePath = "Pods/\(specification.name)/BUILD.bazel"
                 if let data = starlarkString.data(using: .utf8) {
-                    try data.write(to: URL(fileURLWithPath: absolutePath(filePath)))
+                    try data.write(to: URL(fileURLWithPath: absoluteSRCPath(filePath)))
                 } else {
                     throw "Error writing file: \(filePath)"
                 }
@@ -127,7 +134,7 @@ struct RootCommand: ParsableCommand {
                    let podSpecJson = podSpecJson,
                    let data = try? JSONSerialization.data(withJSONObject: podSpecJson, options: .prettyPrinted) {
                     try? data.write(to:
-                        URL(fileURLWithPath: absolutePath("Pods/\(specification.name)/\(specification.name).json"))
+                        URL(fileURLWithPath: absoluteSRCPath("Pods/\(specification.name)/\(specification.name).json"))
                     )
                 }
             }
@@ -157,13 +164,17 @@ struct RootCommand: ParsableCommand {
             })
         }
         if !debug {
-            try Data().write(to: URL(fileURLWithPath: absolutePath("Pods/BUILD.bazel")))
+            try Data().write(to: URL(fileURLWithPath: absoluteSRCPath("Pods/BUILD.bazel")))
         }
     }
 
-    func absolutePath(_ path: String) -> String {
+    func absoluteSRCPath(_ path: String) -> String {
+        return absolutePath(path, base: src)
+    }
+
+    func absolutePath(_ path: String, base: String) -> String {
         guard !path.starts(with: "/") else { return path }
-        return (src as NSString).appendingPathComponent(path)
+        return (base as NSString).appendingPathComponent(path)
     }
 
     func getJSONPodspec(shell: ShellContext, podspecName: String, path: String) throws -> JSONDict {

@@ -12,7 +12,7 @@ struct PodSpecification {
     let name: String
     let subspecs: [String]
     let podspec: String
-    let development: Bool
+    let developmentPath: String?
 
     static func resolve(with podConfigsMap: [String: PodConfig]) -> [PodSpecification] {
         let podConfigs = Array(podConfigsMap.values)
@@ -39,7 +39,7 @@ struct PodSpecification {
             PodSpecification(name: $0.key,
                              subspecs: subspecsByPodName[$0.key] ?? [],
                              podspec: $0.value,
-                             development: podConfigsMap[$0.key]?.development ?? false)
+                             developmentPath: podConfigsMap[$0.key]?.developmentPath)
         })
     }
 }

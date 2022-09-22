@@ -38,8 +38,9 @@ Let Cocoapods download, resolve and setup everything for us. After that, it will
 - Pods: 
   - [x] Autodetect vendored frameworks architectures and ignore unsupported
   - [x] Almost everything from top pods (vendored frameworks/xcframeworks/libraries, resources/bundles, xcconfigs)
+  - [x] Local pods with custom paths
   - [ ] Nested subspecs (possibly works, but not tested yet)
-  - [ ] Local pods with custom paths (currently supports only pods located at the root of your repo)
+  
 
 
 ### 🎸 Let's rock
@@ -62,12 +63,12 @@ Add `post_install` action to your `Podfile` and run `pod install`
 ```ruby
 post_install do |installer|
   puts "Generating Pods.json"
-  development_pods = installer.sandbox.development_pods.keys
+  development_pods = installer.sandbox.development_pods
   mapped_pods = installer.analysis_result.specifications.reduce({}) { |result, spec|
     result[spec.name] = {
       name: spec.name,
       podspec: "#{spec.defined_in_file.to_s}",
-      development: (development_pods.include? spec.name)
+      development_path: development_pods[spec.name]
     }
     result
   }
