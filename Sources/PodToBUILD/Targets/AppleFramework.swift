@@ -182,7 +182,7 @@ struct AppleFramework: BazelTarget {
                 result[conditon] = arr
             })
             return result
-        }
+        }.mapValues({ $0.sorted(by: <) })
 
         let deps: StarlarkNode
         if conditionalDepsMap.isEmpty {
