@@ -36,6 +36,9 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, parsing: .upToNextOption, help: "Extra sdk frameworks for all targets")
     var extraSDK: [String] = []
 
+    @Option(name: .long, parsing: .upToNextOption, help: "User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'")
+    var userOptions: [String] = []
+
     func run() throws {
         _ = CrashReporter()
         let jsonData = try NSData(contentsOfFile: podspecJson, options: []) as Data
@@ -52,6 +55,7 @@ struct RootCommand: ParsableCommand {
         let options = BasicBuildOptions(podName: assumedPodName,
                                         subspecs: subspecs,
                                         sourcePath: src,
+                                        userOptions: userOptions,
                                         iosPlatform: minIos,
                                         depsPrefix: depsPrefix,
                                         podsRoot: podsRoot,
