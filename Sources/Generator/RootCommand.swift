@@ -53,6 +53,9 @@ struct RootCommand: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Will add podspec.json to the pod directory. Just for debugging purposes.")
     var addPodspec: Bool = false
 
+    @Option(name: .long, parsing: .upToNextOption, help: "User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'")
+    var userOptions: [String] = []
+
     func run() throws {
         _ = CrashReporter()
         let data = try NSData(contentsOfFile: absoluteSRCPath(podsJson), options: [])
@@ -88,6 +91,7 @@ struct RootCommand: ParsableCommand {
                                                  subspecs: specification.subspecs,
                                                  podspecPath: specification.podspec,
                                                  sourcePath: src,
+                                                 userOptions: userOptions,
                                                  iosPlatform: minIos,
                                                  depsPrefix: depsPrefix,
                                                  podsRoot: podsRoot,

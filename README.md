@@ -33,7 +33,7 @@ Let Cocoapods download, resolve and setup everything for us. After that, it will
   - [ ] tvOS (soon)
 - Linking
   - [x] Static
-  - [x] Dynamic `use_frameworks!` (`--frameworks` option. also check `--extra-sdk` if you facing missing sdk issues)
+  - [x] Dynamic `use_frameworks!` (`--frameworks` option. also check `--extra-sdk` and `--user-options` if you facing missing sdk issues)
   - [ ] Mixed (?)
 - Pods: 
   - [x] Autodetect vendored frameworks architectures and ignore unsupported
@@ -86,7 +86,7 @@ Enjoy :)
 
 ### Generator options
 ```
-USAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--extra-sdk <extra-sdk> ...] [--frameworks] [--concurrent] [--print-output] [--debug] [--add-podspec]
+USAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--extra-sdk <extra-sdk> ...] [--frameworks] [--concurrent] [--print-output] [--debug] [--add-podspec] [--user-options <user-options> ...]
 
 ARGUMENTS:
   <pods-json>             Pods.json
@@ -103,11 +103,13 @@ OPTIONS:
   --print-output          Print BUILD files contents to terminal output
   --debug                 Debug mode. Files will not be written
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
+  --user-options <user-options>
+                          User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'
   -h, --help              Show help information.
 ```
 ### Compiler
 ```
-USAGE: Compiler <podspec-json> [--src <src>] [--subspecs <subspecs> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--extra-sdk <extra-sdk> ...]
+USAGE: Compiler <podspec-json> [--src <src>] [--subspecs <subspecs> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--extra-sdk <extra-sdk> ...] [--user-options <user-options> ...]
 
 ARGUMENTS:
   <podspec-json>          podspec.json
@@ -121,6 +123,8 @@ OPTIONS:
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --extra-sdk <extra-sdk> Extra sdk frameworks for all targets
+  --user-options <user-options>
+                          User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'
   -h, --help              Show help information.
 ```
 ## Contributing and issues

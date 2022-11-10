@@ -5,7 +5,13 @@
 //  Created by Sergey Khliustin on 04.08.2022.
 //
 
-struct AppleFramework: BazelTarget {
+public enum AppleFrameworkConfigurableKeys : String {
+    case sdkDylibs = "sdk_dylibs"
+    case sdkFrameworks = "sdk_frameworks"
+    case weakSdkFrameworks = "weak_sdk_frameworks"
+}
+
+struct AppleFramework: BazelTarget, UserConfigurable {
     let loadNode = "load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')"
 
     let name: String
@@ -39,9 +45,9 @@ struct AppleFramework: BazelTarget {
 
     let xcconfig: [String: StarlarkNode]
 
-    let sdkDylibs: AttrSet<Set<String>>
-    let sdkFrameworks: AttrSet<Set<String>>
-    let weakSdkFrameworks: AttrSet<Set<String>>
+    var sdkDylibs: AttrSet<Set<String>>
+    var sdkFrameworks: AttrSet<Set<String>>
+    var weakSdkFrameworks: AttrSet<Set<String>>
 
     let objcCopts: [String]
     let swiftCopts: [String]
@@ -130,6 +136,24 @@ struct AppleFramework: BazelTarget {
         self.linkOpts = xcconfigParser.linkOpts
 
         self.linkDynamic = options.dynamicFrameworks && sourceFiles.multi.ios?.isEmpty == false && !spec.staticFramework
+    }
+
+    mutating func add(configurableKey: String, value: Any) {
+        guard let key = AppleFrameworkConfigurableKeys(rawValue: configurableKey) else { return }
+        switch key {
+        case .sdkDylibs:
+            if let value = value as? String {
+                self.sdkDylibs = self.sdkDylibs <> AttrSet(basic: Set([value]))
+            }
+        case .sdkFrameworks:
+            if let value = value as? String {
+                self.sdkFrameworks = self.sdkFrameworks <> AttrSet(basic: Set([value]))
+            }
+        case .weakSdkFrameworks:
+            if let value = value as? String {
+                self.weakSdkFrameworks = self.weakSdkFrameworks <> AttrSet(basic: Set([value]))
+            }
+        }
     }
 
     var needsInfoPlist: Bool {
