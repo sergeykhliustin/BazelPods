@@ -33,9 +33,6 @@ struct RootCommand: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
-    @Option(name: .long, parsing: .upToNextOption, help: "Extra sdk frameworks for all targets")
-    var extraSDK: [String] = []
-
     @Option(name: .long, parsing: .upToNextOption, help: "User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'")
     var userOptions: [String] = []
 
@@ -59,7 +56,6 @@ struct RootCommand: ParsableCommand {
                                         iosPlatform: minIos,
                                         depsPrefix: depsPrefix,
                                         podsRoot: podsRoot,
-                                        extraSDKFrameworks: extraSDK,
                                         dynamicFrameworks: frameworks)
 
         let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()

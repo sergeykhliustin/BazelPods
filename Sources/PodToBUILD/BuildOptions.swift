@@ -17,7 +17,6 @@ public protocol BuildOptions {
 
     var depsPrefix: String { get }
     var podsRoot: String { get }
-    var extraSDKFrameworks: [String] { get }
 
     var dynamicFrameworks: Bool { get }
 
@@ -42,7 +41,6 @@ public struct BasicBuildOptions: BuildOptions {
     public let iosPlatform: String
     public let depsPrefix: String
     public let podsRoot: String
-    public let extraSDKFrameworks: [String]
     public let dynamicFrameworks: Bool
 
     public init(podName: String = "",
@@ -54,7 +52,6 @@ public struct BasicBuildOptions: BuildOptions {
                 iosPlatform: String = "13.0",
                 depsPrefix: String = "//Pods",
                 podsRoot: String = "Pods",
-                extraSDKFrameworks: [String] = [],
                 dynamicFrameworks: Bool = false) {
         self.podName = podName
         self.subspecs = subspecs
@@ -66,7 +63,6 @@ public struct BasicBuildOptions: BuildOptions {
         self.depsPrefix = depsPrefix
         self.podsRoot = podsRoot
         self.dynamicFrameworks = dynamicFrameworks
-        self.extraSDKFrameworks = extraSDKFrameworks
     }
 
     public static let empty = BasicBuildOptions(podName: "")
