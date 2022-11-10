@@ -127,7 +127,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
         sdkDylibs = spec.collectAttribute(with: subspecs, keyPath: \.libraries)
         sdkFrameworks = spec
-            .collectAttribute(with: subspecs, keyPath: \.frameworks) <> AttrSet(basic: Set(options.extraSDKFrameworks))
+            .collectAttribute(with: subspecs, keyPath: \.frameworks)
             .unpackToMulti()
         weakSdkFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.weakFrameworks)
 

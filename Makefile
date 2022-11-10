@@ -8,7 +8,16 @@ integration-generate:
 	bazel run :Generator -- "Pods/Pods.json" --src "$(shell pwd)/IntegrationTests" --deps-prefix "//IntegrationTests/Pods" --pods-root "IntegrationTests/Pods" -a -c
 
 integration-generate-dynamic:
-	bazel run :Generator -- "Pods/Pods.json" --src "$(shell pwd)/IntegrationTests" --deps-prefix "//IntegrationTests/Pods" --pods-root "IntegrationTests/Pods" -a -c -f --extra-sdk CoreGraphics CoreImage StoreKit QuartzCore WebKit Accelerate
+	bazel run :Generator -- "Pods/Pods.json" \
+	--src "$(shell pwd)/IntegrationTests" \
+	--deps-prefix "//IntegrationTests/Pods" \
+	--pods-root "IntegrationTests/Pods" -a -c -f \
+	--user-options \
+	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
+	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
+	"CocoaLumberjack.sdk_frameworks += CoreGraphics" \
+	"FBSDKCoreKit.sdk_frameworks += StoreKit"
+
 
 integration-build:
 	bazel build //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=x86_64
@@ -24,7 +33,9 @@ integration-static: integration-clean integration-setup integration-generate int
 
 integration-dynamic: integration-clean integration-setup integration-generate-dynamic integration-build
 
-integration: integration-static integration-dynamic
+integration: 
+	$(MAKE) integration-static
+	$(MAKE) integration-dynamic
 
 clean:
 	bazel clean

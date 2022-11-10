@@ -35,9 +35,6 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
     var podsRoot: String = "Pods"
 
-    @Option(name: .long, parsing: .upToNextOption, help: "Extra sdk frameworks for all targets")
-    var extraSDK: [String] = []
-
     @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
@@ -95,7 +92,6 @@ struct RootCommand: ParsableCommand {
                                                  iosPlatform: minIos,
                                                  depsPrefix: depsPrefix,
                                                  podsRoot: podsRoot,
-                                                 extraSDKFrameworks: extraSDK,
                                                  dynamicFrameworks: frameworks)
             let starlarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
