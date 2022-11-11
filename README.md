@@ -126,6 +126,7 @@ OPTIONS:
   -h, --help              Show help information.
 ```
 ## Contributing and issues
+`make xcodeproj`
 Just contribute and report your issues 
 ## Credits 
 - [`PodToBUILD`](https://github.com/pinterest/PodToBUILD)
