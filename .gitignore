@@ -1,10 +1,7 @@
 bazel-*
 .DS_Store
-project.tulsiproj
-project.xcodeproj
-BazelPods.tulsiproj
-BazelPods.xcodeproj
 IntegrationTests/Pods
 IntegrationTests/BUILD.bazel
 IntegrationTests/Podfile
 IntegrationTests/Podfile.lock
+xcodeproj/BazelPods.xcodeproj
