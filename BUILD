@@ -23,6 +23,7 @@ macos_command_line_application(
     name = "Compiler",
     minimum_os_version = "10.11",
     deps = [":CompilerLib"],
+    visibility = ["//xcodeproj:__pkg__"]
 )
 
 swift_library(
@@ -38,6 +39,7 @@ macos_command_line_application(
     name = "Generator",
     minimum_os_version = "10.11",
     deps = [":GeneratorLib"],
+    visibility = ["//xcodeproj:__pkg__"]
 )
 
 swift_library(

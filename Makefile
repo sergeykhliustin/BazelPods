@@ -43,3 +43,8 @@ clean:
 expunge:
 	bazel clean --expunge
 	rm -rf .bazel-cache
+
+.PHONY: xcodeproj
+
+xcodeproj:
+	bazel run xcodeproj
