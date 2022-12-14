@@ -27,9 +27,9 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let privateHeaders: AttrSet<GlobNode>
 
     // Resource files
-    let resources: AttrSet<Set<String>>
+    let resources: AttrSet<[String]>
     // .bundle in resource attribute
-    let bundles: AttrSet<Set<String>>
+    let bundles: AttrSet<[String]>
     // resource_bundles attribute
     let resourceBundles: AttrSet<[String: Set<String>]>
 
@@ -38,16 +38,16 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let vendoredXCFrameworks: AttrSet<[XCFramework]>
     let vendoredStaticFrameworks: AttrSet<Set<String>>
     let vendoredDynamicFrameworks: AttrSet<Set<String>>
-    let vendoredStaticLibraries: AttrSet<Set<String>>
+    let vendoredStaticLibraries: AttrSet<[String]>
 
     let objcDefines: AttrSet<[String]>
     let swiftDefines: AttrSet<[String]>
 
     let xcconfig: [String: StarlarkNode]
 
-    var sdkDylibs: AttrSet<Set<String>>
-    var sdkFrameworks: AttrSet<Set<String>>
-    var weakSdkFrameworks: AttrSet<Set<String>>
+    var sdkDylibs: AttrSet<[String]>
+    var sdkFrameworks: AttrSet<[String]>
+    var weakSdkFrameworks: AttrSet<[String]>
 
     let objcCopts: [String]
     let swiftCopts: [String]
@@ -90,10 +90,10 @@ struct AppleFramework: BazelTarget, UserConfigurable {
                                             options: options)
 
         let resources = spec.collectAttribute(with: subspecs, keyPath: \.resources).unpackToMulti()
-        self.resources = resources.map({ (value: Set<String>) -> Set<String> in
+        self.resources = resources.map({ value in
             value.filter({ !$0.hasSuffix(".bundle") })
         }).map(extractResources)
-        self.bundles = resources.map({ (value: Set<String>) -> Set<String> in
+        self.bundles = resources.map({ value in
             value.filter({ $0.hasSuffix(".bundle") })
         })
         self.resourceBundles = .empty
@@ -143,15 +143,15 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         switch key {
         case .sdkDylibs:
             if let value = value as? String {
-                self.sdkDylibs = self.sdkDylibs <> AttrSet(basic: Set([value]))
+                self.sdkDylibs = self.sdkDylibs <> AttrSet(basic: [value])
             }
         case .sdkFrameworks:
             if let value = value as? String {
-                self.sdkFrameworks = self.sdkFrameworks <> AttrSet(basic: Set([value]))
+                self.sdkFrameworks = self.sdkFrameworks <> AttrSet(basic: [value])
             }
         case .weakSdkFrameworks:
             if let value = value as? String {
-                self.weakSdkFrameworks = self.weakSdkFrameworks <> AttrSet(basic: Set([value]))
+                self.weakSdkFrameworks = self.weakSdkFrameworks <> AttrSet(basic: [value])
             }
         }
     }
@@ -235,7 +235,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         }) ?? .empty
 
         let resourceBundles = (self.resourceBundles.multi.ios ?? [:]).mapValues({
-            GlobNode(include: $0)
+            GlobNode(include: $0.sorted())
         })
 
         let moduleName = moduleName.unpackToMulti().multi.ios ?? ""
@@ -355,7 +355,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
                                                       options: options)
 
         return implFiles.zip(implExcludes).map {
-            GlobNode(include: .left($0.first ?? Set()), exclude: .left($0.second ?? Set()))
+            GlobNode(include: .left($0.first?.sorted() ?? []), exclude: .left($0.second?.sorted() ?? []))
         }
     }
 
@@ -367,11 +367,13 @@ struct AppleFramework: BazelTarget, UserConfigurable {
                                  options: BuildOptions) -> (includes: AttrSet<Set<String>>, excludes: AttrSet<Set<String>>) {
         let includePattern = spec.collectAttribute(with: subspecs, keyPath: includesKeyPath)
         let depsIncludes = extractFiles(fromPattern: includePattern, includingFileTypes: fileTypes, options: options)
+            .map({ Set($0) })
 
         let depsExcludes: AttrSet<Set<String>>
         if let excludesKeyPath = excludesKeyPath {
             let excludesPattern = spec.collectAttribute(with: subspecs, keyPath: excludesKeyPath)
             depsExcludes = extractFiles(fromPattern: excludesPattern, includingFileTypes: fileTypes, options: options)
+                .map({ Set($0) })
         } else {
             depsExcludes = .empty
         }

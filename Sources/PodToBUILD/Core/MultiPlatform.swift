@@ -367,11 +367,12 @@ extension PodSpec {
     }
 
     func collectAttribute(with subspecs: [PodSpec] = [],
-                          keyPath: KeyPath<PodSpecRepresentable, [String]>) -> AttrSet<Set<String>> {
+                          keyPath: KeyPath<PodSpecRepresentable, [String]>) -> AttrSet<[String]> {
         return (subspecs + [self])
             .reduce(into: AttrSet<Set<String>>.empty) { partialResult, spec in
                 partialResult = partialResult <> spec.attr(keyPath).unpackToMulti().map({ Set($0) })
             }
+            .map({ $0.sorted() })
     }
 
     func collectAttribute(with subspecs: [PodSpec] = [],

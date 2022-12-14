@@ -11,7 +11,7 @@ import Foundation
 struct ObjcImport: BazelTarget {
     let loadNode = ""
     let name: String // A unique name for this rule.
-    let archives: AttrSet<Set<String>> // The list of .a files provided to Objective-C targets that depend on this target.
+    let archives: AttrSet<[String]> // The list of .a files provided to Objective-C targets that depend on this target.
 
     func toStarlark() -> StarlarkNode {
         return StarlarkNode.functionCall(
