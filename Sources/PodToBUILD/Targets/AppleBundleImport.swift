@@ -23,7 +23,7 @@ public struct AppleBundleImport: BazelTarget {
             arguments: [
                 .named(name: "name", value: bazelLabel(fromString: name).toStarlark()),
                 .named(name: "bundle_imports",
-                       value: bundleImports.map { GlobNode(include: Set($0)) }.toStarlark() )
+                       value: bundleImports.map { GlobNode(include: $0.sorted()) }.toStarlark() )
                 ])
     }
 

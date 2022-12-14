@@ -10,21 +10,21 @@ import Foundation
 
 public struct GlobNode: StarlarkConvertible {
     // Bazel Glob function: glob(include, exclude=[], exclude_directories=1)
-    public let include: [Either<Set<String>, GlobNode>]
-    public let exclude: [Either<Set<String>, GlobNode>]
+    public let include: [Either<[String], GlobNode>]
+    public let exclude: [Either<[String], GlobNode>]
     public let excludeDirectories: Bool = true
-    static let emptyArg: Either<Set<String>, GlobNode>
-        = Either.left(Set([String]()))
+    static let emptyArg: Either<[String], GlobNode>
+        = Either.left([String]())
 
-    public init(include: Set<String> = Set(), exclude: Set<String> = Set()) {
-        self.init(include: [.left(include)], exclude: [.left(exclude)])
+    public init(include: [String] = [], exclude: [String] = []) {
+        self.init(include: [.left(include.sorted())], exclude: [.left(exclude.sorted())])
     }
 
-    public init(include: Either<Set<String>, GlobNode>, exclude: Either<Set<String>, GlobNode>) {
+    public init(include: Either<[String], GlobNode>, exclude: Either<[String], GlobNode>) {
         self.init(include: [include], exclude: [exclude])
     }
 
-    public init(include: [Either<Set<String>, GlobNode>] = [], exclude: [Either<Set<String>, GlobNode>] = []) {
+    public init(include: [Either<[String], GlobNode>] = [], exclude: [Either<[String], GlobNode>] = []) {
         // Upon allocation, form the most simple version of the glob
         self.include = include.simplify()
         self.exclude = exclude.simplify()
@@ -62,7 +62,7 @@ public struct GlobNode: StarlarkConvertible {
     }
 }
 
-extension Either: Equatable where T == Set<String>, U == GlobNode {
+extension Either: Equatable where T == [String], U == GlobNode {
     public static func == (lhs: Either, rhs: Either) -> Bool {
         if case let .left(lhsL) = lhs, case let .left(rhsL) = rhs {
             return lhsL == rhsL
@@ -76,10 +76,10 @@ extension Either: Equatable where T == Set<String>, U == GlobNode {
         return false
     }
 
-    public func map(_ transform: (String) -> String) -> Either<Set<String>, GlobNode> {
+    public func map(_ transform: (String) -> String) -> Either<[String], GlobNode> {
         switch self {
         case let .left(setVal):
-            return .left(Set(setVal.map(transform)))
+            return .left(setVal.map(transform))
         case let .right(globVal):
             return .right(GlobNode(
                 include: globVal.include.map {
@@ -91,10 +91,10 @@ extension Either: Equatable where T == Set<String>, U == GlobNode {
         }
     }
 
-    public func compactMapInclude(_ transform: (String) -> String?) -> Either<Set<String>, GlobNode> {
+    public func compactMapInclude(_ transform: (String) -> String?) -> Either<[String], GlobNode> {
         switch self {
         case let .left(setVal):
-            return .left(Set(setVal.compactMap(transform)))
+            return .left(setVal.compactMap(transform))
         case let .right(globVal):
             let inc = globVal.include.compactMap({
                     $0.compactMapInclude(transform)
@@ -106,14 +106,14 @@ extension Either: Equatable where T == Set<String>, U == GlobNode {
 
 }
 
-extension Array where Iterator.Element == Either<Set<String>, GlobNode> {
+extension Array where Iterator.Element == Either<[String], GlobNode> {
     var isEmpty: Bool {
         return self.allSatisfy {
             $0.isEmpty
         }
     }
 
-    public func simplify() -> [Either<Set<String>, GlobNode>] {
+    public func simplify() -> [Either<[String], GlobNode>] {
         // First simplify the elements and then filter the empty elements
         return self
             .map { $0.simplify() }
@@ -121,7 +121,7 @@ extension Array where Iterator.Element == Either<Set<String>, GlobNode> {
     }
 }
 
-extension Either where T == Set<String>, U == GlobNode {
+extension Either where T == [String], U == GlobNode {
     var isEmpty: Bool {
         switch self {
         case let .left(val):
@@ -131,7 +131,7 @@ extension Either where T == Set<String>, U == GlobNode {
         }
     }
 
-    public func simplify() -> Either<Set<String>, GlobNode> {
+    public func simplify() -> Either<[String], GlobNode> {
         // Recursivly simplfies the globs
         switch self {
         case let .left(val):
@@ -146,9 +146,9 @@ extension Either where T == Set<String>, U == GlobNode {
                 // 2. return a set if there are no other globs
                 // 3. otherwise, return a simplified glob with 1 set and
                 // remaining globs
-                var setAccum: Set<String> = Set()
+                var setAccum: [String] = []
                 let remainingGlobs = include
-                    .reduce(into: [Either<Set<String>, GlobNode>]()) { accum, next in
+                    .reduce(into: [Either<[String], GlobNode>]()) { accum, next in
                     switch next {
                     case let .left(val):
                         setAccum = setAccum <> val
@@ -186,7 +186,7 @@ extension GlobNode: EmptyAwareness {
     }
 
     public static var empty: GlobNode {
-        return GlobNode(include: Set(), exclude: Set())
+        return GlobNode(include: [String]())
     }
 }
 

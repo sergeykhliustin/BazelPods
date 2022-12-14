@@ -499,8 +499,8 @@ public func pattern(fromPattern pattern: String, includingFileTypes fileTypes: S
     }
 }
 
-public func extractResources(patterns: Set<String>) -> Set<String> {
-    return Set(extractResources(patterns: Array(patterns)))
+public func extractResources(patterns: Set<String>) -> [String] {
+    return extractResources(patterns: Array(patterns)).sorted()
 }
 
 public func extractResources(patterns: [String]) -> [String] {

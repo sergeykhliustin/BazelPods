@@ -45,7 +45,7 @@ struct AppleFrameworkImport: BazelTarget {
                 arguments: [StarlarkFunctionArgument]([
                     .named(name: "name", value: .string(name)),
                     .named(name: isXCFramework ? "xcframework_imports": "framework_imports",
-                           value: GlobNode(include: Set([frameworkImport.appendingPath("/**")])).toStarlark()),
+                           value: GlobNode(include: [frameworkImport.appendingPath("/**")]).toStarlark()),
                     .named(name: "visibility", value: .list(["//visibility:public"]))
                 ])
         )
