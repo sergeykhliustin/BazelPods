@@ -3,11 +3,11 @@ on: [push, pull_request]
 jobs:
   test:
     name: Tests
-    runs-on: macOS-12
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2.3.4
-      - name: GitHub Script
-        uses: actions/github-script@v6.3.3
-        with:
-          script: make prepare-tests tests
+        uses: actions/checkout@v3
+      - name: brew install bazelisk
+        run: brew install bazelisk
+      - name: make prepare-tests tests
+        run: make prepare-tests tests
