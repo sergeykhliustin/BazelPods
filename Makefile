@@ -34,11 +34,11 @@ tests:
     
 	@for dir in Tests/Recorded/*/; do \
 		if ! diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel" > /dev/null; then \
-			echo "`tput setaf 1`error:`tput sgr0` `basename $$dir` not equal";\
+			echo "`tput -T xterm-256color setaf 1`error:`tput -T xterm-256color sgr0` `basename $$dir` not equal";\
 			diff --color=always "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel"; \
 			$(eval EXIT_STATUS=1)\
 		else \
-			echo "`basename $$dir` `tput setaf 2`ok!`tput sgr0`";\
+			echo "`basename $$dir` `tput -T xterm-256color setaf 2`ok!`tput -T xterm-256color sgr0`";\
 		fi; \
 	done; \
 
