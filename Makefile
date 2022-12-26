@@ -37,7 +37,7 @@ diff-generated-files:
 		if ! diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel" > /dev/null; \
 		then \
 			echo "\033[31merror:\033[0m `basename $$dir` not equal"; \
-			diff --color=always "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel"; \
+			diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel"; \
 			exit_code=1; \
 		else \
 			echo "`basename $$dir` \033[32mok!\033[0m";\
