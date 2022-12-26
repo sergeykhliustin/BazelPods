@@ -13,7 +13,7 @@ expunge:
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/TopPods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
-	bazel run :Generator -- "Pods/Pods.json" \
+	bazel run :Generator --config=ci -- "Pods/Pods.json" \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
 	--pods-root "Tests/Pods" -a -c -f \
@@ -23,8 +23,7 @@ prepare-tests:
 	"CocoaLumberjack.sdk_frameworks += CoreGraphics" \
 	"FBSDKCoreKit.sdk_frameworks += StoreKit"
 
-.PHONY: tests
-tests:
+diff-generated-files:
 	@echo "Starting tests with $(shell find Tests/Recorded -type d | wc -l) test cases"
 
 	@if ! [ -n "$(shell find Tests/Recorded -type d)" ]; \
@@ -50,7 +49,9 @@ tests:
 	else \
 		echo "\033[32mTests success\033[0m"; \
 	fi
-	
+
+.PHONY: tests
+tests: prepare-tests diff-generated-files
 
 record-tests:
 	rm -rf Tests/Recorded
