@@ -26,28 +26,30 @@ prepare-tests:
 .PHONY: tests
 tests:
 	@echo "Starting tests with $(shell find Tests/Recorded -type d | wc -l) test cases"
-	@if ! [ -n "$(shell find Tests/Recorded -type d)" ]; then \
-        echo "Recorded tests are empty";\
+
+	@if ! [ -n "$(shell find Tests/Recorded -type d)" ]; \
+	then \
+        echo "Recorded tests are empty"; \
         exit 1;\
-    fi;\
-    $(eval EXIT_STATUS=0)\
-    
-	@for dir in Tests/Recorded/*/; do \
-		if ! diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel" > /dev/null; then \
-			echo "`tput -T xterm-256color setaf 1`error:`tput -T xterm-256color sgr0` `basename $$dir` not equal";\
+    fi; \
+    exit_code=0; \
+	for dir in Tests/Recorded/*/; \
+	do \
+		if ! diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel" > /dev/null; \
+		then \
+			echo "\033[31merror:\033[0m `basename $$dir` not equal"; \
 			diff --color=always "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel"; \
-			$(eval EXIT_STATUS=1)\
+			exit_code=1; \
 		else \
-			echo "`basename $$dir` `tput -T xterm-256color setaf 2`ok!`tput -T xterm-256color sgr0`";\
+			echo "`basename $$dir` \033[32mok!\033[0m";\
 		fi; \
 	done; \
-
-	@if [ $(EXIT_STATUS) -eq 1 ]; then \
-		echo "Tests failed"; \
+	if [ $$exit_code -eq 1 ]; then \
+		echo "\033[31mTests failed\033[0m"; \
 		exit 1; \
 	else \
-		echo "Tests success"; \
-	fi; \
+		echo "\033[32mTests success\033[0m"; \
+	fi
 	
 
 record-tests:
