@@ -1,0 +1,536 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+genrule(
+  name = "Appboy-iOS-SDK_InfoPlist",
+  srcs = [],
+  outs = [
+    "Appboy-iOS-SDK_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.Appboy-iOS-SDK</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Appboy-iOS-SDK</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.5.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+apple_framework(
+  name = "Appboy-iOS-SDK",
+  module_name = "Appboy_iOS_SDK",
+  bundle_id = "org.cocoapods.Appboy-iOS-SDK",
+  link_dynamic = True,
+  infoplists = [
+    ":Appboy-iOS-SDK_InfoPlist"
+  ],
+  platforms = {
+    "ios": "9.0"
+  },
+  srcs = glob(
+    [
+      "AppboyKit/ABKLocationManagerProvider.m",
+      "AppboyKit/ABKModalWebViewController.m",
+      "AppboyKit/ABKNoConnectionLocalization.m",
+      "AppboyKit/ABKSDWebImageProxy.m",
+      "AppboyKit/include/*.h",
+      "AppboyUI/ABKContentCards/*.S",
+      "AppboyUI/ABKContentCards/*.c",
+      "AppboyUI/ABKContentCards/*.cc",
+      "AppboyUI/ABKContentCards/*.cpp",
+      "AppboyUI/ABKContentCards/*.cxx",
+      "AppboyUI/ABKContentCards/*.h",
+      "AppboyUI/ABKContentCards/*.hpp",
+      "AppboyUI/ABKContentCards/*.hxx",
+      "AppboyUI/ABKContentCards/*.m",
+      "AppboyUI/ABKContentCards/*.mm",
+      "AppboyUI/ABKContentCards/*.s",
+      "AppboyUI/ABKContentCards/*.swift",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.S",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.c",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.cc",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.cpp",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.cxx",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.h",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.hpp",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.hxx",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.m",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.mm",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.s",
+      "AppboyUI/ABKContentCards/ViewControllers/**/*.swift",
+      "AppboyUI/ABKInAppMessage/*.S",
+      "AppboyUI/ABKInAppMessage/*.c",
+      "AppboyUI/ABKInAppMessage/*.cc",
+      "AppboyUI/ABKInAppMessage/*.cpp",
+      "AppboyUI/ABKInAppMessage/*.cxx",
+      "AppboyUI/ABKInAppMessage/*.h",
+      "AppboyUI/ABKInAppMessage/*.hpp",
+      "AppboyUI/ABKInAppMessage/*.hxx",
+      "AppboyUI/ABKInAppMessage/*.m",
+      "AppboyUI/ABKInAppMessage/*.mm",
+      "AppboyUI/ABKInAppMessage/*.s",
+      "AppboyUI/ABKInAppMessage/*.swift",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.S",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.c",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.cc",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.cpp",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.cxx",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.h",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.hpp",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.hxx",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.m",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.mm",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.s",
+      "AppboyUI/ABKInAppMessage/ViewControllers/*.swift",
+      "AppboyUI/ABKNewsFeed/*.S",
+      "AppboyUI/ABKNewsFeed/*.c",
+      "AppboyUI/ABKNewsFeed/*.cc",
+      "AppboyUI/ABKNewsFeed/*.cpp",
+      "AppboyUI/ABKNewsFeed/*.cxx",
+      "AppboyUI/ABKNewsFeed/*.h",
+      "AppboyUI/ABKNewsFeed/*.hpp",
+      "AppboyUI/ABKNewsFeed/*.hxx",
+      "AppboyUI/ABKNewsFeed/*.m",
+      "AppboyUI/ABKNewsFeed/*.mm",
+      "AppboyUI/ABKNewsFeed/*.s",
+      "AppboyUI/ABKNewsFeed/*.swift",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.S",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.c",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.cc",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.cpp",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.cxx",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.h",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.hpp",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.hxx",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.m",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.mm",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.s",
+      "AppboyUI/ABKNewsFeed/ViewControllers/**/*.swift",
+      "AppboyUI/ABKUIUtils/**/*.S",
+      "AppboyUI/ABKUIUtils/**/*.c",
+      "AppboyUI/ABKUIUtils/**/*.cc",
+      "AppboyUI/ABKUIUtils/**/*.cpp",
+      "AppboyUI/ABKUIUtils/**/*.cxx",
+      "AppboyUI/ABKUIUtils/**/*.h",
+      "AppboyUI/ABKUIUtils/**/*.hpp",
+      "AppboyUI/ABKUIUtils/**/*.hxx",
+      "AppboyUI/ABKUIUtils/**/*.m",
+      "AppboyUI/ABKUIUtils/**/*.mm",
+      "AppboyUI/ABKUIUtils/**/*.s",
+      "AppboyUI/ABKUIUtils/**/*.swift"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/SDWebImage",
+    ":Appboy-iOS-SDK_AppboyUI.ContentCards_Bundle",
+    ":Appboy-iOS-SDK_AppboyUI.InAppMessage_Bundle",
+    ":Appboy-iOS-SDK_AppboyUI.NewsFeed_Bundle",
+    ":Appboy-iOS-SDK_Appboy_Bundle"
+  ],
+  vendored_xcframeworks = [
+    {
+    "name": "AppboyKitLibrary",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_x86_64-maccatalyst/libAppboyKitLibrary.a",
+      "platform": "ios",
+      "platform_variant": "maccatalyst",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_i386_x86_64-simulator",
+      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_i386_x86_64-simulator/libAppboyKitLibrary.a",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "i386",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_armv7",
+      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_armv7/libAppboyKitLibrary.a",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64",
+        "armv7"
+      ]
+    }
+    ]
+  }
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = select(
+    {
+      "//conditions:default": [
+        "z"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "CoreText",
+    "QuartzCore",
+    "SystemConfiguration",
+    "WebKit"
+  ],
+  weak_sdk_frameworks = [
+    "CoreTelephony",
+    "UserNotifications"
+  ],
+  linkopts = [
+    "-ObjC"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "Appboy-iOS-SDK_AppboyUI.ContentCards_Bundle",
+  bundle_id = "org.cocoapods.AppboyUI.ContentCards",
+  bundle_name = "AppboyUI.ContentCards",
+  infoplists = [
+    ":Appboy-iOS-SDK_AppboyUI.ContentCards_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "AppboyUI/ABKContentCards/Resources/**/**"
+    ]
+  )
+)
+genrule(
+  name = "Appboy-iOS-SDK_AppboyUI.ContentCards_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "Appboy-iOS-SDK_AppboyUI.ContentCards_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.AppboyUI.ContentCards</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>AppboyUI.ContentCards</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.5.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+precompiled_apple_resource_bundle(
+  name = "Appboy-iOS-SDK_AppboyUI.InAppMessage_Bundle",
+  bundle_id = "org.cocoapods.AppboyUI.InAppMessage",
+  bundle_name = "AppboyUI.InAppMessage",
+  infoplists = [
+    ":Appboy-iOS-SDK_AppboyUI.InAppMessage_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "AppboyUI/ABKInAppMessage/Resources/**"
+    ]
+  )
+)
+genrule(
+  name = "Appboy-iOS-SDK_AppboyUI.InAppMessage_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "Appboy-iOS-SDK_AppboyUI.InAppMessage_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.AppboyUI.InAppMessage</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>AppboyUI.InAppMessage</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.5.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+precompiled_apple_resource_bundle(
+  name = "Appboy-iOS-SDK_AppboyUI.NewsFeed_Bundle",
+  bundle_id = "org.cocoapods.AppboyUI.NewsFeed",
+  bundle_name = "AppboyUI.NewsFeed",
+  infoplists = [
+    ":Appboy-iOS-SDK_AppboyUI.NewsFeed_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "AppboyUI/ABKNewsFeed/Resources/**/**"
+    ]
+  )
+)
+genrule(
+  name = "Appboy-iOS-SDK_AppboyUI.NewsFeed_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "Appboy-iOS-SDK_AppboyUI.NewsFeed_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.AppboyUI.NewsFeed</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>AppboyUI.NewsFeed</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.5.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+precompiled_apple_resource_bundle(
+  name = "Appboy-iOS-SDK_Appboy_Bundle",
+  bundle_id = "org.cocoapods.Appboy",
+  bundle_name = "Appboy",
+  infoplists = [
+    ":Appboy-iOS-SDK_Appboy_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "AppboyKit/Appboy.bundle/*.lproj",
+      "AppboyKit/Appboy.bundle/*.txt"
+    ]
+  )
+)
+genrule(
+  name = "Appboy-iOS-SDK_Appboy_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "Appboy-iOS-SDK_Appboy_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.Appboy</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Appboy</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.5.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

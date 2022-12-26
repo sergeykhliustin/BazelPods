@@ -1,0 +1,182 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+genrule(
+  name = "SDWebImage_InfoPlist",
+  srcs = [],
+  outs = [
+    "SDWebImage_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.SDWebImage</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>SDWebImage</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>5.13.2</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+apple_framework(
+  name = "SDWebImage",
+  module_name = "SDWebImage",
+  bundle_id = "org.cocoapods.SDWebImage",
+  link_dynamic = True,
+  infoplists = [
+    ":SDWebImage_InfoPlist"
+  ],
+  platforms = {
+    "ios": "9.0",
+    "osx": "10.11",
+    "tvos": "9.0",
+    "watchos": "2.0"
+  },
+  srcs = glob(
+    [
+      "SDWebImage/Core/*.h",
+      "SDWebImage/Core/*.m",
+      "SDWebImage/Private/*.h",
+      "SDWebImage/Private/*.m",
+      "WebImage/SDWebImage.h"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "SDWebImage/Private/*.h"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "CoreGraphics",
+    "CoreImage",
+    "QuartzCore",
+    "Accelerate"
+  ] + select(
+    {
+      "//conditions:default": [
+        "ImageIO"
+      ],
+      ":osxCase": [
+        "ImageIO"
+      ],
+      ":tvosCase": [
+        "ImageIO"
+      ],
+      ":watchosCase": [
+        "ImageIO"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
