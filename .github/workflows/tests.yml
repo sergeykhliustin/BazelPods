@@ -1,0 +1,41 @@
+name: Tests
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  test:
+    name: Tests
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache Pods
+        id: cache-pods
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-pods
+        with:
+          path: Tests/Pods
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+
+      - name: Cache Bazel output
+        id: cache-bazel-output
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-bazel-output
+        with:
+          path: bazel-output-base
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+
+      - name: brew install bazelisk
+        run: brew install bazelisk
+      - name: make tests
+        run: make tests

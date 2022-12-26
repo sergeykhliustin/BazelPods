@@ -13,7 +13,7 @@ expunge:
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/TopPods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
-	bazel run :Generator -- "Pods/Pods.json" \
+	bazel run :Generator --config=ci -- "Pods/Pods.json" \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
 	--pods-root "Tests/Pods" -a -c -f \
@@ -23,20 +23,35 @@ prepare-tests:
 	"CocoaLumberjack.sdk_frameworks += CoreGraphics" \
 	"FBSDKCoreKit.sdk_frameworks += StoreKit"
 
-.PHONY: tests
-tests:
-	@if ! [ -n "$(shell find Tests/Recorded -type d)" ]; then \
-        echo "Recorded tests are empty";\
+diff-generated-files:
+	@echo "Starting tests with $(shell find Tests/Recorded -type d | wc -l) test cases"
+
+	@if ! [ -n "$(shell find Tests/Recorded -type d)" ]; \
+	then \
+        echo "Recorded tests are empty"; \
         exit 1;\
-    fi
-	@for dir in Tests/Recorded/*/; do \
-		if ! diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel" > /dev/null; then \
-			echo "Error $(basename $$dir) not equal";\
-			diff --color=always "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel"; \
-			exit 1; \
+    fi; \
+    exit_code=0; \
+	for dir in Tests/Recorded/*/; \
+	do \
+		if ! diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel" > /dev/null; \
+		then \
+			echo "\033[31merror:\033[0m `basename $$dir` not equal"; \
+			diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel"; \
+			exit_code=1; \
+		else \
+			echo "`basename $$dir` \033[32mok!\033[0m";\
 		fi; \
-	done
-	@echo "Tests success"
+	done; \
+	if [ $$exit_code -eq 1 ]; then \
+		echo "\033[31mTests failed\033[0m"; \
+		exit 1; \
+	else \
+		echo "\033[32mTests success\033[0m"; \
+	fi
+
+.PHONY: tests
+tests: prepare-tests diff-generated-files
 
 record-tests:
 	rm -rf Tests/Recorded
