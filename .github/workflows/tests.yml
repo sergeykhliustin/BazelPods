@@ -1,0 +1,13 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    name: Tests
+    runs-on: macOS-12
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2.3.4
+      - name: GitHub Script
+        uses: actions/github-script@v6.3.3
+        with:
+          script: make prepare-tests tests
