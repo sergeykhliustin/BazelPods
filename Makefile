@@ -25,18 +25,30 @@ prepare-tests:
 
 .PHONY: tests
 tests:
+	@echo "Starting tests with $(shell find Tests/Recorded -type d | wc -l) test cases"
 	@if ! [ -n "$(shell find Tests/Recorded -type d)" ]; then \
         echo "Recorded tests are empty";\
         exit 1;\
-    fi
+    fi;\
+    $(eval EXIT_STATUS=0)\
+    
 	@for dir in Tests/Recorded/*/; do \
 		if ! diff "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel" > /dev/null; then \
-			echo "Error $(basename $$dir) not equal";\
+			echo "`tput setaf 1`error:`tput sgr0` `basename $$dir` not equal";\
 			diff --color=always "$$dir/BUILD.bazel" "Tests/Pods/`basename $$dir`/BUILD.bazel"; \
-			exit 1; \
+			$(eval EXIT_STATUS=1)\
+		else \
+			echo "`basename $$dir` `tput setaf 2`ok!`tput sgr0`";\
 		fi; \
-	done
-	@echo "Tests success"
+	done; \
+
+	@if [ $(EXIT_STATUS) -eq 1 ]; then \
+		echo "Tests failed"; \
+		exit 1; \
+	else \
+		echo "Tests success"; \
+	fi; \
+	
 
 record-tests:
 	rm -rf Tests/Recorded
