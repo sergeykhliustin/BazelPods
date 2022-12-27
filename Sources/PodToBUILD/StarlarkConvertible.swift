@@ -73,9 +73,7 @@ extension Optional: StarlarkConvertible where Wrapped: StarlarkConvertible {
 
 extension Dictionary: StarlarkConvertible where Key == String, Value: StarlarkConvertible {
     func toStarlark() -> StarlarkNode {
-        return .dict([:] <> self.map {
-            return ($0.key, $0.value.toStarlark())
-        })
+        return .dict(self.mapValues({ $0.toStarlark() }))
     }
 }
 

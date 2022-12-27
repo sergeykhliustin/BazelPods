@@ -1,0 +1,237 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+genrule(
+  name = "MTHawkeye_InfoPlist",
+  srcs = [],
+  outs = [
+    "MTHawkeye_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.MTHawkeye</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>MTHawkeye</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.12.7</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+apple_framework(
+  name = "MTHawkeye",
+  module_name = "MTHawkeye",
+  bundle_id = "org.cocoapods.MTHawkeye",
+  link_dynamic = True,
+  infoplists = [
+    ":MTHawkeye_InfoPlist"
+  ],
+  platforms = {
+    "ios": "9.0"
+  },
+  srcs = glob(
+    [
+      "MTHawkeye/Core/**/*.h",
+      "MTHawkeye/Core/**/*.m",
+      "MTHawkeye/DefaultPlugins/**/*.h",
+      "MTHawkeye/DefaultPlugins/**/*.m",
+      "MTHawkeye/DefaultPlugins/**/*.mm",
+      "MTHawkeye/EnergyPlugins/BackgroundTaskTrace/Core/*.h",
+      "MTHawkeye/EnergyPlugins/BackgroundTaskTrace/Core/*.m",
+      "MTHawkeye/EnergyPlugins/CPUTrace/Core/*.h",
+      "MTHawkeye/EnergyPlugins/CPUTrace/Core/*.m",
+      "MTHawkeye/EnergyPlugins/CPUTrace/Core/*.mm",
+      "MTHawkeye/FLEXExtension/**/*.h",
+      "MTHawkeye/FLEXExtension/**/*.m",
+      "MTHawkeye/MemoryPlugins/Allocations/Core/*.c",
+      "MTHawkeye/MemoryPlugins/Allocations/Core/*.cpp",
+      "MTHawkeye/MemoryPlugins/Allocations/Core/*.h",
+      "MTHawkeye/MemoryPlugins/Allocations/Core/*.m",
+      "MTHawkeye/MemoryPlugins/Allocations/Core/*.mm",
+      "MTHawkeye/MemoryPlugins/LivingObjectSniffer/Core/*.h",
+      "MTHawkeye/MemoryPlugins/LivingObjectSniffer/Core/*.m",
+      "MTHawkeye/MemoryPlugins/LivingObjectSniffer/Core/*.mm",
+      "MTHawkeye/NetworkPlugins/Inspect/Core/*.h",
+      "MTHawkeye/NetworkPlugins/Inspect/Core/*.m",
+      "MTHawkeye/NetworkPlugins/Monitor/Core/**/*.h",
+      "MTHawkeye/NetworkPlugins/Monitor/Core/**/*.m",
+      "MTHawkeye/StackBacktrace/**/*.cpp",
+      "MTHawkeye/StackBacktrace/**/*.h",
+      "MTHawkeye/StackBacktrace/**/*.m",
+      "MTHawkeye/StackBacktrace/**/*.mm",
+      "MTHawkeye/StorageMonitorPlugins/DirectoryWatcher/Core/*.h",
+      "MTHawkeye/StorageMonitorPlugins/DirectoryWatcher/Core/*.m",
+      "MTHawkeye/TimeConsumingPlugins/ANRTrace/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/ANRTrace/Core/*.m",
+      "MTHawkeye/TimeConsumingPlugins/ANRTrace/Core/*.mm",
+      "MTHawkeye/TimeConsumingPlugins/FPSTrace/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/FPSTrace/Core/*.m",
+      "MTHawkeye/TimeConsumingPlugins/ObjcCallTrace/Core/*.c",
+      "MTHawkeye/TimeConsumingPlugins/ObjcCallTrace/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/ObjcCallTrace/Core/*.m",
+      "MTHawkeye/TimeConsumingPlugins/UITimeProfiler/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/UITimeProfiler/Core/*.m",
+      "MTHawkeye/UISkeleton/**/*.h",
+      "MTHawkeye/UISkeleton/**/*.m",
+      "MTHawkeye/Utils/**/*.h",
+      "MTHawkeye/Utils/**/*.m",
+      "MTHawkeye/Utils/**/*.mm"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "MTHawkeye/Core/**/*.h",
+      "MTHawkeye/DefaultPlugins/**/*.h",
+      "MTHawkeye/EnergyPlugins/BackgroundTaskTrace/Core/*.h",
+      "MTHawkeye/EnergyPlugins/CPUTrace/Core/MTHCPUTracePublicHeader.h",
+      "MTHawkeye/FLEXExtension/**/*.h",
+      "MTHawkeye/MemoryPlugins/Allocations/Core/MTHAllocations.h",
+      "MTHawkeye/MemoryPlugins/LivingObjectSniffer/Core/*.h",
+      "MTHawkeye/NetworkPlugins/Inspect/Core/*.h",
+      "MTHawkeye/NetworkPlugins/Monitor/Core/**/*.h",
+      "MTHawkeye/StackBacktrace/MTHStackFrameSymbolicsRemote.h",
+      "MTHawkeye/StackBacktrace/mth_stack_backtrace.h",
+      "MTHawkeye/StorageMonitorPlugins/DirectoryWatcher/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/ANRTrace/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/FPSTrace/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/ObjcCallTrace/Core/*.h",
+      "MTHawkeye/TimeConsumingPlugins/UITimeProfiler/Core/*.h",
+      "MTHawkeye/UISkeleton/**/*.h",
+      "MTHawkeye/Utils/*.h"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/CocoaLumberjack",
+    "//Tests/Pods/FLEX",
+    "//Tests/Pods/MTAppenderFile",
+    "//Tests/Pods/fishhook"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "sqlite3",
+    "stdc++",
+    "z"
+  ],
+  sdk_frameworks = [
+    "CFNetwork",
+    "CoreGraphics",
+    "Foundation",
+    "ImageIO",
+    "QuartzCore",
+    "SceneKit",
+    "SystemConfiguration",
+    "UIKit",
+    "WebKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)

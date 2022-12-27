@@ -26,9 +26,9 @@ swift_rules_extra_dependencies()
 
 http_archive(
     name = "build_bazel_rules_ios",
-    sha256 = "ed9111f335bdbfe273da27f614448d764d9c710cd380e35f7c1bb413db339b84",
-    strip_prefix = "rules_ios-bb79e0327f8a7ff73b96be24f74dbd3b9a0d101c",
-    url = "https://github.com/bazel-ios/rules_ios/archive/bb79e0327f8a7ff73b96be24f74dbd3b9a0d101c.zip"
+    sha256 = "0c2bc221cd03c540e315b50f75b7a6c1c8b58dfca6b96c8aacc9f6bebf04505f",
+    strip_prefix = "rules_ios-dfb604dceacb18ff4e240b89300257c06711b3a5",
+    url = "https://github.com/bazel-ios/rules_ios/archive/dfb604dceacb18ff4e240b89300257c06711b3a5.zip"
 )
 
 load("@build_bazel_rules_ios//rules:repositories.bzl", "rules_ios_dependencies")

@@ -14,6 +14,8 @@ ios_application(
     minimum_os_version = "13.4",
     resources = glob([
       "TestApp_iOS/**"
+    ], exclude = [
+      "TestApp_iOS/Info.plist"
     ]),
     sdk_frameworks = [
       "UIKit",

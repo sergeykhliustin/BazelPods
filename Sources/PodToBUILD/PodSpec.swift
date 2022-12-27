@@ -138,9 +138,9 @@ protocol PodSpecRepresentable {
     var version: String? { get }
     var swiftVersions: Set<String>? { get }
     var staticFramework: Bool { get }
-    var platforms: [String: String]? { get }
-    var podTargetXcconfig: [String: String]? { get }
-    var userTargetXcconfig: [String: String]? { get }
+    var platforms: [String: String] { get }
+    var podTargetXcconfig: [String: String] { get }
+    var userTargetXcconfig: [String: String] { get }
     var sourceFiles: [String] { get }
     var excludeFiles: [String] { get }
     var frameworks: [String] { get }
@@ -155,7 +155,7 @@ protocol PodSpecRepresentable {
     var vendoredFrameworks: [String] { get }
     var vendoredLibraries: [String] { get }
     var headerDirectory: String? { get }
-    var xcconfig: [String: String]? { get }
+    var xcconfig: [String: String] { get }
     var moduleName: String? { get }
     var requiresArc: Either<Bool, [String]>? { get }
     var publicHeaders: [String] { get }
@@ -171,7 +171,7 @@ public struct PodSpec: PodSpecRepresentable {
     let version: String?
     let swiftVersions: Set<String>?
     let staticFramework: Bool
-    let platforms: [String: String]?
+    let platforms: [String: String]
     let sourceFiles: [String]
     let excludeFiles: [String]
     let frameworks: [String]
@@ -207,9 +207,9 @@ public struct PodSpec: PodSpecRepresentable {
     let resourceBundles: [String: [String]]
     let resources: [String]
 
-    let podTargetXcconfig: [String: String]?
-    let userTargetXcconfig: [String: String]?
-    let xcconfig: [String: String]?
+    let podTargetXcconfig: [String: String]
+    let userTargetXcconfig: [String: String]
+    let xcconfig: [String: String]
 
     let ios: PodSpecRepresentable?
     let osx: PodSpecRepresentable?
@@ -227,14 +227,14 @@ public struct PodSpec: PodSpecRepresentable {
             return .some((field, v))
         })
 
-        if let name = try? ExtractValue(fromJSON: fieldMap[.name]) as String {
+        if let name = try? extractValue(fromJSON: fieldMap[.name]) as String {
             self.name = name
         } else {
             // This is for "ios", "macos", etc
             name = ""
         }
-        staticFramework = (try? ExtractValue(fromJSON: fieldMap[.staticFramework]) as Bool) ?? false
-        version = try ExtractValue(fromJSON: fieldMap[.version]) as String?
+        staticFramework = (try? extractValue(fromJSON: fieldMap[.staticFramework]) as Bool) ?? false
+        version = try extractValue(fromJSON: fieldMap[.version]) as String?
         frameworks = strings(fromJSON: fieldMap[.frameworks])
         weakFrameworks = strings(fromJSON: fieldMap[.weakFrameworks])
         excludeFiles = strings(fromJSON: fieldMap[.excludeFiles])
@@ -293,10 +293,10 @@ public struct PodSpec: PodSpecRepresentable {
 
         license = PodSpecLicense.license(fromJSON: fieldMap[.license])
 
-        platforms = try? ExtractValue(fromJSON: fieldMap[.platforms])
-        xcconfig = try? ExtractValue(fromJSON: fieldMap[.xcconfig])
-        podTargetXcconfig = try? ExtractValue(fromJSON: fieldMap[.podTargetXcconfig])
-        userTargetXcconfig = try? ExtractValue(fromJSON: fieldMap[.userTargetXcconfig])
+        platforms = extractValue(fromJSON: fieldMap[.platforms], default: [:])
+        xcconfig = extractValue(fromJSON: fieldMap[.xcconfig], default: [:])
+        podTargetXcconfig = extractValue(fromJSON: fieldMap[.podTargetXcconfig], default: [:])
+        userTargetXcconfig = extractValue(fromJSON: fieldMap[.userTargetXcconfig], default: [:])
 
         ios = (fieldMap[.ios] as? JSONDict).flatMap { try? PodSpec(JSONPodspec: $0) }
         osx = (fieldMap[.osx] as? JSONDict).flatMap { try? PodSpec(JSONPodspec: $0) }
@@ -353,14 +353,14 @@ enum PodSpecSource {
     case http(url: URL)
 
     static func source(fromDict dict: JSONDict) -> PodSpecSource {
-        if let gitURLString: String = try? ExtractValue(fromJSON: dict["git"]) {
+        if let gitURLString: String = try? extractValue(fromJSON: dict["git"]) {
             guard let gitURL = URL(string: gitURLString) else {
                 fatalError("Invalid source URL for Git: \(gitURLString)")
             }
-            let tag: String? = try? ExtractValue(fromJSON: dict["tag"])
-            let commit: String? = try? ExtractValue(fromJSON: dict["commit"])
+            let tag: String? = try? extractValue(fromJSON: dict["tag"])
+            let commit: String? = try? extractValue(fromJSON: dict["commit"])
             return .git(url: gitURL, tag: tag, commit: commit)
-        } else if let httpURLString: String = try? ExtractValue(fromJSON: dict["http"]) {
+        } else if let httpURLString: String = try? extractValue(fromJSON: dict["http"]) {
             guard let httpURL = URL(string: httpURLString) else {
                 fatalError("Invalid source URL for HTTP: \(httpURLString)")
             }
@@ -385,9 +385,9 @@ struct PodSpecLicense {
     static func license(fromJSON value: Any?) -> PodSpecLicense {
         if let licenseJSON = value as? JSONDict {
             return PodSpecLicense(
-                    type: try? ExtractValue(fromJSON: licenseJSON["type"]),
-                    text: try? ExtractValue(fromJSON: licenseJSON["text"]),
-                    file: try? ExtractValue(fromJSON: licenseJSON["file"])
+                    type: try? extractValue(fromJSON: licenseJSON["type"]),
+                    text: try? extractValue(fromJSON: licenseJSON["text"]),
+                    file: try? extractValue(fromJSON: licenseJSON["file"])
                     )
         }
         if let licenseString = value as? String {
@@ -405,11 +405,19 @@ enum JSONError: Error {
     case unexpectedValueError
 }
 
-func ExtractValue<T>(fromJSON JSON: Any?) throws -> T {
+func extractValue<T>(fromJSON JSON: Any?) throws -> T {
     if let value = JSON as? T {
         return value
     }
     throw JSONError.unexpectedValueError
+}
+
+func extractValue<T>(fromJSON JSON: Any?, default: T) -> T {
+    if let value = JSON as? T {
+        return value
+    } else {
+        return `default`
+    }
 }
 
 // Pods intermixes arrays and strings all over

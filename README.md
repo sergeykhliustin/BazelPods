@@ -93,18 +93,25 @@ ARGUMENTS:
   <pods-json>             Pods.json
 
 OPTIONS:
-  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
-  --min-ios <min-ios>     Minimum iOS version if not listed in podspec (default: 13.0)
+  --src <src>             Sources root where Pods directory located (or renamed
+                          by podsRoot)
+  --min-ios <min-ios>     Minimum iOS version to bump old Pods
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
-  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
-  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  --pods-root <pods-root> Pods root relative to workspace. Used for headers
+                          search paths (default: Pods)
+  -f, --frameworks        Packaging pods in dynamic frameworks if possible
+                          (same as `use_frameworks!`)
   -c, --concurrent        Concurrent mode for generating files faster
   --print-output          Print BUILD files contents to terminal output
   --debug                 Debug mode. Files will not be written
-  -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
+  -a, --add-podspec       Will add podspec.json to the pod directory. Just for
+                          debugging purposes.
   --user-options <user-options>
-                          User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'
+                          User extra options. Current supported fields are
+                          'sdk_dylibs', 'sdk_frameworks',
+                          'weak_sdk_frameworks'. Format
+                          'SomePod.sdk_dylibs+=something'
   -h, --help              Show help information.
 ```
 ### Compiler
@@ -115,15 +122,21 @@ ARGUMENTS:
   <podspec-json>          podspec.json
 
 OPTIONS:
-  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
+  --src <src>             Sources root where Pods directory located (or renamed
+                          by podsRoot)
   --subspecs <subspecs>   Subspecs list
-  --min-ios <min-ios>     Minimum iOS version if not listed in podspec (default: 13.0)
+  --min-ios <min-ios>     Minimum iOS version to bump old Pods
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
-  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
-  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  --pods-root <pods-root> Pods root relative to workspace. Used for headers
+                          search paths (default: Pods)
+  -f, --frameworks        Packaging pods in dynamic frameworks if possible
+                          (same as `use_frameworks!`)
   --user-options <user-options>
-                          User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'
+                          User extra options. Current supported fields are
+                          'sdk_dylibs', 'sdk_frameworks',
+                          'weak_sdk_frameworks'. Format
+                          'SomePod.sdk_dylibs+=something'
   -h, --help              Show help information.
 ```
 ## Contributing and issues

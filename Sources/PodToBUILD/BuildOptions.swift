@@ -13,7 +13,7 @@ public protocol BuildOptions {
     var podspecPath: String { get }
     var sourcePath: String { get }
 
-    var iosPlatform: String { get }
+    var minIosPlatform: String? { get }
 
     var depsPrefix: String { get }
     var podsRoot: String { get }
@@ -38,7 +38,7 @@ public struct BasicBuildOptions: BuildOptions {
 
     public let userOptions: [String]
     public let globalCopts: [String]
-    public let iosPlatform: String
+    public let minIosPlatform: String?
     public let depsPrefix: String
     public let podsRoot: String
     public let dynamicFrameworks: Bool
@@ -49,7 +49,7 @@ public struct BasicBuildOptions: BuildOptions {
                 sourcePath: String = "",
                 userOptions: [String] = [],
                 globalCopts: [String] = [],
-                iosPlatform: String = "13.0",
+                minIosPlatform: String? = nil,
                 depsPrefix: String = "//Pods",
                 podsRoot: String = "Pods",
                 dynamicFrameworks: Bool = false) {
@@ -59,7 +59,7 @@ public struct BasicBuildOptions: BuildOptions {
         self.sourcePath = sourcePath
         self.userOptions = userOptions
         self.globalCopts = globalCopts
-        self.iosPlatform = iosPlatform
+        self.minIosPlatform = minIosPlatform
         self.depsPrefix = depsPrefix
         self.podsRoot = podsRoot
         self.dynamicFrameworks = dynamicFrameworks

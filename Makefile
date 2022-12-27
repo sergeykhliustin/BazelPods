@@ -16,7 +16,7 @@ prepare-tests:
 	bazel run :Generator --config=ci -- "Pods/Pods.json" \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
-	--pods-root "Tests/Pods" -a -c -f \
+	--pods-root "Tests/Pods" -a -f \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
@@ -65,23 +65,31 @@ record-tests:
 	done
 
 integration-setup:
-	cd IntegrationTests; \
-	swift generate_pods.swift; \
-	pod install
+	swift TestTools/generate_podfile.swift TestTools/TopPods_Integration.json TestTools/Podfile_template > IntegrationTests/Podfile
+	cd IntegrationTests && pod install
+	swift TestTools/generate_buildfile.swift TestTools/TopPods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
 integration-generate:
-	bazel run :Generator -- "Pods/Pods.json" --src "$(shell pwd)/IntegrationTests" --deps-prefix "//IntegrationTests/Pods" --pods-root "IntegrationTests/Pods" -a -c
+	bazel run :Generator -- "Pods/Pods.json" \
+	--src "$(shell pwd)/IntegrationTests" \
+	--deps-prefix "//IntegrationTests/Pods" \
+	--pods-root "IntegrationTests/Pods" \
+	--min-ios 13.0 \
+	-a -c
 
 integration-generate-dynamic:
 	bazel run :Generator -- "Pods/Pods.json" \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
-	--pods-root "IntegrationTests/Pods" -a -c -f \
+	--pods-root "IntegrationTests/Pods" \
+	-a -c -f \
+	--min-ios 13.0 \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
 	"CocoaLumberjack.sdk_frameworks += CoreGraphics" \
-	"FBSDKCoreKit.sdk_frameworks += StoreKit"
+	"FBSDKCoreKit.sdk_frameworks += StoreKit" \
+	"GoogleUtilities.sdk_frameworks += CoreTelephony"
 
 integration-build:
 	bazel build //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=x86_64
@@ -97,6 +105,7 @@ integration-static: integration-clean integration-setup integration-generate int
 
 integration-dynamic: integration-clean integration-setup integration-generate-dynamic integration-build
 
+.ONESHELL:
 integration: 
 	$(MAKE) integration-static
 	$(MAKE) integration-dynamic
