@@ -1,4 +1,4 @@
-name: Tests
+name: Snapshot Tests
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   test:
-    name: Tests
+    name: Snapshot Tests
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -20,9 +20,9 @@ jobs:
           cache-name: cache-pods
         with:
           path: Tests/Pods
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}
+            ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
 
       - name: Cache Bazel output
         id: cache-bazel-output
@@ -31,11 +31,9 @@ jobs:
           cache-name: cache-bazel-output
         with:
           path: bazel-output-base
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}
+            ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
 
-      - name: brew install bazelisk
-        run: brew install bazelisk
       - name: make tests
         run: make tests

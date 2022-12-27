@@ -1,0 +1,28 @@
+name: Integration Tests Static
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  test:
+    name: Integration Tests Static
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache Bazel output
+        id: cache-bazel-output
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-bazel-output
+        with:
+          path: bazel-output-base
+          key: ${{ runner.os }}-integration-static-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-integration-static-${{ env.cache-name }}
+
+      - name: make integration-static
+        run: make integration-static
