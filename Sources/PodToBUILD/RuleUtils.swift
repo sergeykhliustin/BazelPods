@@ -132,6 +132,7 @@ public func xcconfigSettingToList(_ value: String) -> [String] {
         .joined(separator: "=\\\"")
         .components(separatedBy: .whitespaces)
         .map { $0.removingPercentEncoding ?? "" }
+        .map { $0.replacingOccurrences(of: "\"", with: "") }
         .filter({ $0 != "$(inherited)"})
         .filter({ !$0.isEmpty })
 }

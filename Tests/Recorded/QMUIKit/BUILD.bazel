@@ -1,0 +1,267 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+genrule(
+  name = "QMUIKit_InfoPlist",
+  srcs = [],
+  outs = [
+    "QMUIKit_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.QMUIKit</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>QMUIKit</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.6.3</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+apple_framework(
+  name = "QMUIKit",
+  module_name = "QMUIKit",
+  bundle_id = "org.cocoapods.QMUIKit",
+  link_dynamic = True,
+  infoplists = [
+    ":QMUIKit_InfoPlist"
+  ],
+  platforms = {
+    "ios": "13.0"
+  },
+  srcs = glob(
+    [
+      "QMUIKit/QMUIComponents/QMUILog/*.h",
+      "QMUIKit/QMUIComponents/QMUILog/*.m",
+      "QMUIKit/QMUIComponents/QMUIWeakObjectContainer.h",
+      "QMUIKit/QMUIComponents/QMUIWeakObjectContainer.m",
+      "QMUIKit/QMUICore/**/*.S",
+      "QMUIKit/QMUICore/**/*.c",
+      "QMUIKit/QMUICore/**/*.cc",
+      "QMUIKit/QMUICore/**/*.cpp",
+      "QMUIKit/QMUICore/**/*.cxx",
+      "QMUIKit/QMUICore/**/*.h",
+      "QMUIKit/QMUICore/**/*.hpp",
+      "QMUIKit/QMUICore/**/*.hxx",
+      "QMUIKit/QMUICore/**/*.m",
+      "QMUIKit/QMUICore/**/*.mm",
+      "QMUIKit/QMUICore/**/*.s",
+      "QMUIKit/QMUICore/**/*.swift",
+      "QMUIKit/QMUIKit.h",
+      "QMUIKit/QMUIMainFrame/**/*.S",
+      "QMUIKit/QMUIMainFrame/**/*.c",
+      "QMUIKit/QMUIMainFrame/**/*.cc",
+      "QMUIKit/QMUIMainFrame/**/*.cpp",
+      "QMUIKit/QMUIMainFrame/**/*.cxx",
+      "QMUIKit/QMUIMainFrame/**/*.h",
+      "QMUIKit/QMUIMainFrame/**/*.hpp",
+      "QMUIKit/QMUIMainFrame/**/*.hxx",
+      "QMUIKit/QMUIMainFrame/**/*.m",
+      "QMUIKit/QMUIMainFrame/**/*.mm",
+      "QMUIKit/QMUIMainFrame/**/*.s",
+      "QMUIKit/QMUIMainFrame/**/*.swift",
+      "QMUIKit/UIKitExtensions/**/*.S",
+      "QMUIKit/UIKitExtensions/**/*.c",
+      "QMUIKit/UIKitExtensions/**/*.cc",
+      "QMUIKit/UIKitExtensions/**/*.cpp",
+      "QMUIKit/UIKitExtensions/**/*.cxx",
+      "QMUIKit/UIKitExtensions/**/*.h",
+      "QMUIKit/UIKitExtensions/**/*.hpp",
+      "QMUIKit/UIKitExtensions/**/*.hxx",
+      "QMUIKit/UIKitExtensions/**/*.m",
+      "QMUIKit/UIKitExtensions/**/*.mm",
+      "QMUIKit/UIKitExtensions/**/*.s",
+      "QMUIKit/UIKitExtensions/**/*.swift",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.S",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.c",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.cc",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.cpp",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.cxx",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.h",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.hpp",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.hxx",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.m",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.mm",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.s",
+      "QMUIKit/UIKitExtensions/QMUIBarProtocol/**/*.swift"
+    ]
+  ),
+  deps = [
+    ":QMUIKit_QMUIResources_Bundle"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "CoreGraphics",
+    "CoreImage",
+    "Foundation",
+    "ImageIO",
+    "UIKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "QMUIKit_QMUIResources_Bundle",
+  bundle_id = "org.cocoapods.QMUIResources",
+  bundle_name = "QMUIResources",
+  infoplists = [
+    ":QMUIKit_QMUIResources_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "QMUIKit/QMUIResources/**"
+    ]
+  )
+)
+genrule(
+  name = "QMUIKit_QMUIResources_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "QMUIKit_QMUIResources_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.QMUIResources</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>QMUIResources</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.6.3</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

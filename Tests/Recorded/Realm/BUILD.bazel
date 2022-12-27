@@ -1,0 +1,505 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+genrule(
+  name = "Realm_InfoPlist",
+  srcs = [],
+  outs = [
+    "Realm_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.Realm</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Realm</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>10.33.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>9.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+apple_framework(
+  name = "Realm",
+  module_name = "Realm",
+  bundle_id = "org.cocoapods.Realm",
+  link_dynamic = True,
+  infoplists = [
+    ":Realm_InfoPlist"
+  ],
+  platforms = {
+    "ios": "9.0",
+    "osx": "10.9",
+    "tvos": "9.0",
+    "watchos": "2.0"
+  },
+  srcs = glob(
+    [
+      "Realm/*.m",
+      "Realm/*.mm",
+      "Security/**/*.S",
+      "Security/**/*.c",
+      "Security/**/*.cc",
+      "Security/**/*.cpp",
+      "Security/**/*.cxx",
+      "Security/**/*.h",
+      "Security/**/*.hpp",
+      "Security/**/*.hxx",
+      "Security/**/*.m",
+      "Security/**/*.mm",
+      "Security/**/*.s",
+      "Security/**/*.swift",
+      "include/NSError+RLMSync.h",
+      "include/RLMAPIKeyAuth.h",
+      "include/RLMAccessor.h",
+      "include/RLMApp.h",
+      "include/RLMAppCredentials.h",
+      "include/RLMApp_Private.h",
+      "include/RLMArray.h",
+      "include/RLMArray_Private.h",
+      "include/RLMAsymmetricObject.h",
+      "include/RLMBSON.h",
+      "include/RLMBSON_Private.h",
+      "include/RLMCollection.h",
+      "include/RLMCollection_Private.h",
+      "include/RLMConstants.h",
+      "include/RLMCredentials.h",
+      "include/RLMDecimal128.h",
+      "include/RLMDictionary.h",
+      "include/RLMDictionary_Private.h",
+      "include/RLMEmailPasswordAuth.h",
+      "include/RLMEmbeddedObject.h",
+      "include/RLMEvent.h",
+      "include/RLMFindOneAndModifyOptions.h",
+      "include/RLMFindOptions.h",
+      "include/RLMMigration.h",
+      "include/RLMMongoClient.h",
+      "include/RLMMongoCollection.h",
+      "include/RLMMongoDatabase.h",
+      "include/RLMNetworkTransport.h",
+      "include/RLMObject.h",
+      "include/RLMObjectBase.h",
+      "include/RLMObjectBase_Dynamic.h",
+      "include/RLMObjectBase_Private.h",
+      "include/RLMObjectId.h",
+      "include/RLMObjectSchema.h",
+      "include/RLMObjectSchema_Private.h",
+      "include/RLMObjectStore.h",
+      "include/RLMObject_Private.h",
+      "include/RLMOptionalBase.h",
+      "include/RLMPlatform.h",
+      "include/RLMProperty.h",
+      "include/RLMPropertyBase.h",
+      "include/RLMProperty_Private.h",
+      "include/RLMProviderClient.h",
+      "include/RLMProviderClient_Private.h",
+      "include/RLMPushClient.h",
+      "include/RLMRealm+Sync.h",
+      "include/RLMRealm.h",
+      "include/RLMRealmConfiguration.h",
+      "include/RLMRealmConfiguration_Private.h",
+      "include/RLMRealm_Dynamic.h",
+      "include/RLMRealm_Private.h",
+      "include/RLMResults.h",
+      "include/RLMResults_Private.h",
+      "include/RLMSchema.h",
+      "include/RLMSchema_Private.h",
+      "include/RLMSectionedResults.h",
+      "include/RLMSet.h",
+      "include/RLMSet_Private.h",
+      "include/RLMSwiftCollectionBase.h",
+      "include/RLMSwiftProperty.h",
+      "include/RLMSwiftValueStorage.h",
+      "include/RLMSyncConfiguration.h",
+      "include/RLMSyncConfiguration_Private.h",
+      "include/RLMSyncManager.h",
+      "include/RLMSyncSession.h",
+      "include/RLMSyncSubscription.h",
+      "include/RLMSyncSubscription_Private.h",
+      "include/RLMSyncUtil.h",
+      "include/RLMSyncUtil_Private.h",
+      "include/RLMThreadSafeReference.h",
+      "include/RLMUpdateResult.h",
+      "include/RLMUpdateResult_Private.h",
+      "include/RLMUser.h",
+      "include/RLMUserAPIKey.h",
+      "include/RLMUser_Private.h",
+      "include/RLMValue.h",
+      "include/Realm.h"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "include/NSError+RLMSync.h",
+      "include/RLMAPIKeyAuth.h",
+      "include/RLMApp.h",
+      "include/RLMAppCredentials.h",
+      "include/RLMArray.h",
+      "include/RLMAsymmetricObject.h",
+      "include/RLMBSON.h",
+      "include/RLMCollection.h",
+      "include/RLMConstants.h",
+      "include/RLMCredentials.h",
+      "include/RLMDecimal128.h",
+      "include/RLMDictionary.h",
+      "include/RLMEmailPasswordAuth.h",
+      "include/RLMEmbeddedObject.h",
+      "include/RLMFindOneAndModifyOptions.h",
+      "include/RLMFindOptions.h",
+      "include/RLMMigration.h",
+      "include/RLMMongoClient.h",
+      "include/RLMMongoCollection.h",
+      "include/RLMMongoDatabase.h",
+      "include/RLMNetworkTransport.h",
+      "include/RLMObject.h",
+      "include/RLMObjectBase.h",
+      "include/RLMObjectBase_Dynamic.h",
+      "include/RLMObjectId.h",
+      "include/RLMObjectSchema.h",
+      "include/RLMPlatform.h",
+      "include/RLMProperty.h",
+      "include/RLMProviderClient.h",
+      "include/RLMPushClient.h",
+      "include/RLMRealm+Sync.h",
+      "include/RLMRealm.h",
+      "include/RLMRealmConfiguration.h",
+      "include/RLMRealm_Dynamic.h",
+      "include/RLMResults.h",
+      "include/RLMSchema.h",
+      "include/RLMSectionedResults.h",
+      "include/RLMSet.h",
+      "include/RLMSwiftCollectionBase.h",
+      "include/RLMSwiftValueStorage.h",
+      "include/RLMSyncConfiguration.h",
+      "include/RLMSyncManager.h",
+      "include/RLMSyncSession.h",
+      "include/RLMSyncSubscription.h",
+      "include/RLMSyncUtil.h",
+      "include/RLMThreadSafeReference.h",
+      "include/RLMUpdateResult.h",
+      "include/RLMUser.h",
+      "include/RLMUserAPIKey.h",
+      "include/RLMValue.h",
+      "include/Realm.h"
+    ],
+    exclude = [
+      "Security/**/*.h",
+      "Security/**/*.hpp",
+      "Security/**/*.hxx",
+      "include/RLMAccessor.h",
+      "include/RLMApp_Private.h",
+      "include/RLMArray_Private.h",
+      "include/RLMBSON_Private.h",
+      "include/RLMCollection_Private.h",
+      "include/RLMDictionary_Private.h",
+      "include/RLMEvent.h",
+      "include/RLMObjectBase_Private.h",
+      "include/RLMObjectSchema_Private.h",
+      "include/RLMObjectStore.h",
+      "include/RLMObject_Private.h",
+      "include/RLMOptionalBase.h",
+      "include/RLMPropertyBase.h",
+      "include/RLMProperty_Private.h",
+      "include/RLMProviderClient_Private.h",
+      "include/RLMRealmConfiguration_Private.h",
+      "include/RLMRealm_Private.h",
+      "include/RLMResults_Private.h",
+      "include/RLMSchema_Private.h",
+      "include/RLMSet_Private.h",
+      "include/RLMSwiftProperty.h",
+      "include/RLMSyncConfiguration_Private.h",
+      "include/RLMSyncSubscription_Private.h",
+      "include/RLMSyncUtil_Private.h",
+      "include/RLMUpdateResult_Private.h",
+      "include/RLMUser_Private.h"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "Security/**/*.h",
+      "Security/**/*.hpp",
+      "Security/**/*.hxx",
+      "include/RLMAccessor.h",
+      "include/RLMApp_Private.h",
+      "include/RLMArray_Private.h",
+      "include/RLMBSON_Private.h",
+      "include/RLMCollection_Private.h",
+      "include/RLMDictionary_Private.h",
+      "include/RLMEvent.h",
+      "include/RLMObjectBase_Private.h",
+      "include/RLMObjectSchema_Private.h",
+      "include/RLMObjectStore.h",
+      "include/RLMObject_Private.h",
+      "include/RLMOptionalBase.h",
+      "include/RLMPropertyBase.h",
+      "include/RLMProperty_Private.h",
+      "include/RLMProviderClient_Private.h",
+      "include/RLMRealmConfiguration_Private.h",
+      "include/RLMRealm_Private.h",
+      "include/RLMResults_Private.h",
+      "include/RLMSchema_Private.h",
+      "include/RLMSet_Private.h",
+      "include/RLMSwiftProperty.h",
+      "include/RLMSyncConfiguration_Private.h",
+      "include/RLMSyncSubscription_Private.h",
+      "include/RLMSyncUtil_Private.h",
+      "include/RLMUpdateResult_Private.h",
+      "include/RLMUser_Private.h"
+    ]
+  ),
+  vendored_xcframeworks = [
+    {
+    "name": "realm-monorepo",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "macos-x86_64_arm64",
+      "path": "core/realm-monorepo.xcframework/macos-x86_64_arm64/librealm-monorepo.a",
+      "platform": "macos",
+      "platform_variant": [],
+      "supported_archs": [
+        "x86_64",
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_armv7",
+      "path": "core/realm-monorepo.xcframework/ios-arm64_armv7/librealm-monorepo.a",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64",
+        "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_x86_64_i386-simulator",
+      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64_i386-simulator/librealm-monorepo.a",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "x86_64",
+        "i386"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64-maccatalyst/librealm-monorepo.a",
+      "platform": "ios",
+      "platform_variant": "maccatalyst",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "watchos-armv7k_arm64_32_arm64",
+      "path": "core/realm-monorepo.xcframework/watchos-armv7k_arm64_32_arm64/librealm-monorepo.a",
+      "platform": "watchos",
+      "platform_variant": [],
+      "supported_archs": [
+        "armv7k",
+        "arm64_32",
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "watchos-arm64_i386_x86_64-simulator",
+      "path": "core/realm-monorepo.xcframework/watchos-arm64_i386_x86_64-simulator/librealm-monorepo.a",
+      "platform": "watchos",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "arm64",
+        "i386",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "tvos-arm64",
+      "path": "core/realm-monorepo.xcframework/tvos-arm64/librealm-monorepo.a",
+      "platform": "tvos",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "tvos-arm64_x86_64-simulator",
+      "path": "core/realm-monorepo.xcframework/tvos-arm64_x86_64-simulator/librealm-monorepo.a",
+      "platform": "tvos",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
+      ]
+    }
+    ]
+  }
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++",
+    "compression",
+    "z"
+  ],
+  sdk_frameworks = [
+    "Security"
+  ],
+  objc_copts = [
+    "-fapplication-extension"
+  ],
+  swift_copts = [
+    "-application-extension"
+  ],
+  xcconfig = {
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++17",
+    "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "NO",
+    "OTHER_CPLUSPLUSFLAGS": [
+      "-isystem",
+      "Tests/Pods/Realm/include/core",
+      "-fvisibility-inlines-hidden"
+    ]
+  },
+  visibility = [
+    "//visibility:public"
+  ]
+)

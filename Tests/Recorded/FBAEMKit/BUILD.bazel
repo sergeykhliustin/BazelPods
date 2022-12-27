@@ -1,0 +1,178 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+apple_framework(
+  name = "FBAEMKit",
+  module_name = "FBAEMKit",
+  bundle_id = "org.cocoapods.FBAEMKit",
+  link_dynamic = False,
+  platforms = {
+    "ios": "12.0",
+    "tvos": "12.0"
+  },
+  deps = [
+    "//Tests/Pods/FBSDKCoreKit_Basics"
+  ],
+  vendored_xcframeworks = [
+    {
+    "name": "FBAEMKit",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64",
+      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64/FBAEMKit.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64_x86_64-simulator/FBAEMKit.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64_x86_64-maccatalyst/FBAEMKit.framework",
+      "platform": "ios",
+      "platform_variant": "maccatalyst",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "tvos-arm64_x86_64-simulator",
+      "path": "XCFrameworks/FBAEMKit.xcframework/tvos-arm64_x86_64-simulator/FBAEMKit.framework",
+      "platform": "tvos",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "tvos-arm64",
+      "path": "XCFrameworks/FBAEMKit.xcframework/tvos-arm64/FBAEMKit.framework",
+      "platform": "tvos",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    }
+    ]
+  }
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)

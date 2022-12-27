@@ -117,7 +117,7 @@ extension Optional: Monoid {
     public static func<>(lhs: Optional, rhs: Optional) -> Optional {
         switch (lhs, rhs) {
         case (.none, _): return rhs
-        case (.some, .some): return lhs <> rhs
+        case (.some(let l), .some(let r)): return l <> r
         case (.some, _): return lhs
         case (_, .some): return rhs
         }

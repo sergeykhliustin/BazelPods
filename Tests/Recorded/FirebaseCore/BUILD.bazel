@@ -83,7 +83,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>9.6.0</string>
+	<string>9.5.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -175,8 +175,7 @@ apple_framework(
         "UIKit"
       ],
       ":watchosCase": [
-        "Foundation",
-        "WatchKit"
+        "Foundation"
       ]
     }
   ),
@@ -189,7 +188,7 @@ apple_framework(
   ],
   xcconfig = {
     "GCC_PREPROCESSOR_DEFINITIONS": [
-      "Firebase_VERSION=9.6.0"
+      "Firebase_VERSION=9.5.0"
     ],
     "OTHER_CFLAGS": [
       "-fno-autolink"

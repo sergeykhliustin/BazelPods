@@ -26,8 +26,8 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Sources root where Pods directory located (or renamed by podsRoot)")
     var src: String
 
-    @Option(name: .long, help: "Minimum iOS version if not listed in podspec")
-    var minIos: String = "13.0"
+    @Option(name: .long, help: "Minimum iOS version to bump old Pods")
+    var minIos: String?
 
     @Option(name: .long, help: "Dependencies prefix")
     var depsPrefix: String = "//Pods"
@@ -89,7 +89,7 @@ struct RootCommand: ParsableCommand {
                                                  podspecPath: specification.podspec,
                                                  sourcePath: src,
                                                  userOptions: userOptions,
-                                                 iosPlatform: minIos,
+                                                 minIosPlatform: minIos,
                                                  depsPrefix: depsPrefix,
                                                  podsRoot: podsRoot,
                                                  dynamicFrameworks: frameworks)

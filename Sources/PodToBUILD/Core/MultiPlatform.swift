@@ -386,12 +386,12 @@ extension PodSpec {
     }
 
     func collectAttribute(with subspecs: [PodSpec] = [],
-                          keyPath: KeyPath<PodSpecRepresentable, [String: String]?>) -> AttrSet<[String: String]> {
+                          keyPath: KeyPath<PodSpecRepresentable, [String: String]>) -> AttrSet<[String: String]> {
         return (subspecs + [self])
             .reduce(into: AttrSet<[String: String]>.empty) { partialResult, spec in
                 partialResult = partialResult.zip(spec.attr(keyPath).unpackToMulti()).map({
                     if let second = $0.second {
-                        return ($0.first ?? [:]) <> (second ?? [:])
+                        return ($0.first ?? [:]) <> second
                     } else {
                         return $0.first ?? [:]
                     }
