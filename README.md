@@ -1,5 +1,5 @@
 #  BazelPods [![bazel-icon](https://user-images.githubusercontent.com/51409210/188334195-d558f4b3-cafb-4501-8dc7-ed4771508a09.svg)](https://bazel.build/) + [![favicon](https://user-images.githubusercontent.com/51409210/188334178-cbb1e7c9-aee3-4802-bcd2-81292d47d02d.png)](https://cocoapods.org/) 
-![Build status](https://github.com/sergeykhliustin/BazelPods/actions/workflows/tests.yml/badge.svg?branch=main)
+![Snapshot tests status](https://github.com/sergeykhliustin/BazelPods/actions/workflows/snapshot_tests.yml/badge.svg?branch=main) ![Integration tests static status](https://github.com/sergeykhliustin/BazelPods/actions/workflows/integration_tests_static.yml/badge.svg?branch=main) ![Integration tests dynamic status](https://github.com/sergeykhliustin/BazelPods/actions/workflows/integration_tests_dynamic.yml/badge.svg?branch=main)
 
 One more way to build CocoaPods with Bazel. It generates Bazel's `BUILD` files for pods using awesome [rules_ios](https://github.com/bazel-ios/rules_ios).  
 Core idea, Podspec parser, Starlark compiler are forked from Pinterest's [PodToBUILD](https://github.com/pinterest/PodToBUILD)

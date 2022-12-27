@@ -69,8 +69,9 @@ integration-setup:
 	cd IntegrationTests && pod install
 	swift TestTools/generate_buildfile.swift TestTools/TopPods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
-integration-generate:
-	bazel run :Generator -- "Pods/Pods.json" \
+integration-generate-static:
+	bazel run :Generator --config=ci \
+	-- "Pods/Pods.json" \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
@@ -78,7 +79,8 @@ integration-generate:
 	-a -c
 
 integration-generate-dynamic:
-	bazel run :Generator -- "Pods/Pods.json" \
+	bazel run :Generator --config=ci \
+	-- "Pods/Pods.json" \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
@@ -92,22 +94,32 @@ integration-generate-dynamic:
 	"GoogleUtilities.sdk_frameworks += CoreTelephony"
 
 integration-build:
-	bazel build //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=x86_64
-	bazel build //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=sim_arm64
+	bazel build --config=ci //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=x86_64
+	bazel build --config=ci //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=sim_arm64
 
 integration-clean:
-	cd IntegrationTests; \
+	-cd IntegrationTests; \
 	rm BUILD.bazel Podfile Podfile.lock; \
-	rm -rf Pods;
-	bazel clean
+	rm -rf Pods
 
-integration-static: integration-clean integration-setup integration-generate integration-build
+integration-static: 
+	$(MAKE) integration-clean
+	$(MAKE) integration-setup
+	$(MAKE) integration-generate-static
+	$(MAKE) integration-build
 
-integration-dynamic: integration-clean integration-setup integration-generate-dynamic integration-build
+integration-dynamic: 
+	$(MAKE) integration-clean
+	$(MAKE) integration-setup
+	$(MAKE) integration-generate-dynamic
+	$(MAKE) integration-build
 
-.ONESHELL:
 integration: 
-	$(MAKE) integration-static
-	$(MAKE) integration-dynamic
+	$(MAKE) integration-clean
+	$(MAKE) integration-setup
+	$(MAKE) integration-generate-static
+	$(MAKE) integration-build
+	$(MAKE) integration-generate-dynamic
+	$(MAKE) integration-build
 
 
