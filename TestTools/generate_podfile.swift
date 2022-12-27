@@ -14,7 +14,11 @@ let object = try JSONSerialization.jsonObject(with: data, options: .allowFragmen
 let keys = object.keys.sorted()
 
 let pods = keys.map({
-    "  pod '\($0)', '\(object[$0]!)'"
+    if let version = object[$0], !version.isEmpty {
+        return "  pod '\($0)', '\(version)'"
+    } else {
+        return "  pod '\($0)'"
+    }
 }).joined(separator: "\n")
 
 let podfile = try String(contentsOf: URL(fileURLWithPath: templateFile), encoding: .utf8).replacingOccurrences(of: "[[PODS]]", with: pods)
