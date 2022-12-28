@@ -40,22 +40,26 @@ enum Arch: String, CaseIterable {
     case ios_i386
     case ios_x86_64
 
-    static func archs(for framework: String, options: BuildOptions) -> [Arch] {
-        let path = frameworkExecutablePath(framework, options: options)
-        let archs = frameworkArchs(framework, options: options).map({
-            // TODO: Implement resolver
-            if $0 == "arm64" {
-                let output = SystemShellContext()
-                    .shellOut("otool -l -arch arm64 \(path) | grep -m 1 'LC_VERSION_MIN_'")
-                    .standardOutputAsString
-                if !output.contains("IPHONEOS") {
-                    return "sim_arm64"
-                } else {
-                    return $0
+    static func archs(forExecutable path: String, options: BuildOptions) -> [Arch] {
+        let archs = SystemShellContext().command("/usr/bin/lipo",
+                                                 arguments: ["-archs", path])
+            .standardOutputAsString
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .components(separatedBy: " ")
+            .filter({ !$0.isEmpty })
+            .map({
+                if $0 == "arm64" {
+                    let output = SystemShellContext()
+                        .shellOut("otool -l -arch arm64 \(path) | grep -m 1 'LC_VERSION_MIN_'")
+                        .standardOutputAsString
+                    if !output.contains("IPHONEOS") {
+                        return "sim_arm64"
+                    } else {
+                        return $0
+                    }
                 }
-            }
-            return $0
-        } as (String) -> String)
+                return $0
+            })
 
         return archs.compactMap({ Self.init(rawValue: "ios_" + $0) })
     }

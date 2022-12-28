@@ -38,7 +38,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let vendoredXCFrameworks: AttrSet<[XCFramework]>
     let vendoredStaticFrameworks: AttrSet<Set<String>>
     let vendoredDynamicFrameworks: AttrSet<Set<String>>
-    let vendoredStaticLibraries: AttrSet<[String]>
 
     let objcDefines: AttrSet<[String]>
     let swiftDefines: AttrSet<[String]>
@@ -118,8 +117,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.vendoredXCFrameworks = vendoredXCFrameworks// <> wrappedFrameworks
         self.vendoredDynamicFrameworks = .empty
         self.vendoredStaticFrameworks = .empty
-
-        self.vendoredStaticLibraries = spec.collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
 
         self.swiftDefines = AttrSet(basic: ["COCOAPODS"])
         self.objcDefines = AttrSet(basic: ["COCOAPODS=1"])
@@ -246,7 +243,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         let vendoredXCFrameworks = vendoredXCFrameworks.multi.ios ?? []
         let vendoredStaticFrameworks = vendoredStaticFrameworks.multi.ios ?? []
         let vendoredDynamicFrameworks = vendoredDynamicFrameworks.multi.ios ?? []
-        let vendoredStaticLibraries = vendoredStaticLibraries.multi.ios ?? []
 
         let lines: [StarlarkFunctionArgument] = [
             .named(name: "name", value: name.toStarlark()),
@@ -265,7 +261,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             .named(name: "vendored_xcframeworks", value: vendoredXCFrameworks.toStarlark()),
             .named(name: "vendored_static_frameworks", value: vendoredStaticFrameworks.toStarlark()),
             .named(name: "vendored_dynamic_frameworks", value: vendoredDynamicFrameworks.toStarlark()),
-            .named(name: "vendored_static_libraries", value: vendoredStaticLibraries.toStarlark()),
             .named(name: "objc_defines", value: objcDefines),
             .named(name: "swift_defines", value: swiftDefines),
             .named(name: "sdk_dylibs", value: sdkDylibs.toStarlark()),

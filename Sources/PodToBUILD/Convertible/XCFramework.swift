@@ -55,40 +55,40 @@ struct XCFramework: StarlarkConvertible {
             return nil
         }
     }
-    /// Wrap dynamic framework into xcframework.
-    /// Assume that framework can be either device + simulator (x86_64 + arm*) or only for device (arm*).
-    init?(framework: String, options: BuildOptions) {
-        guard framework.hasSuffix(".framework") else { return nil }
-        let isDynamic = isDynamicFramework(framework, options: options)
-        let archs = frameworkArchs(framework, options: options)
-        guard !archs.isEmpty else { return nil }
-
-        let frameworkURL = URL(fileURLWithPath: framework,
-                               relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
-        name = frameworkURL.deletingPathExtension().lastPathComponent
-        var libraries: [InputData.Library] = []
-        let deviceArchs = archs.filter({ $0 != "x86_64" }).sorted()
-        libraries.append(InputData.Library(LibraryIdentifier: "ios-\(deviceArchs.joined(separator: "_"))",
-                                           LibraryPath: framework,
-                                           SupportedArchitectures: deviceArchs,
-                                           SupportedPlatform: "ios",
-                                           SupportedPlatformVariant: nil,
-                                           path: framework,
-                                           linkage: isDynamic ? .dynamic : .static))
-        // TODO: Fix this
-        if archs.contains("x86_64") {
-            libraries.append(InputData.Library(LibraryIdentifier: "ios-x86_64-simulator",
-                                               LibraryPath: framework,
-                                               SupportedArchitectures: ["x86_64"],
-                                               SupportedPlatform: "ios",
-                                               SupportedPlatformVariant: "simulator",
-                                               path: framework,
-                                               linkage: isDynamic ? .dynamic : .static))
-
-        }
-
-        input = InputData(AvailableLibraries: libraries)
-    }
+//    /// Wrap dynamic framework into xcframework.
+//    /// Assume that framework can be either device + simulator (x86_64 + arm*) or only for device (arm*).
+//    init?(framework: String, options: BuildOptions) {
+//        guard framework.hasSuffix(".framework") else { return nil }
+//        let isDynamic = isDynamicFramework(framework, options: options)
+//        let archs = frameworkArchs(framework, options: options)
+//        guard !archs.isEmpty else { return nil }
+//
+//        let frameworkURL = URL(fileURLWithPath: framework,
+//                               relativeTo: URL(fileURLWithPath: options.podTargetAbsoluteRoot))
+//        name = frameworkURL.deletingPathExtension().lastPathComponent
+//        var libraries: [InputData.Library] = []
+//        let deviceArchs = archs.filter({ $0 != "x86_64" }).sorted()
+//        libraries.append(InputData.Library(LibraryIdentifier: "ios-\(deviceArchs.joined(separator: "_"))",
+//                                           LibraryPath: framework,
+//                                           SupportedArchitectures: deviceArchs,
+//                                           SupportedPlatform: "ios",
+//                                           SupportedPlatformVariant: nil,
+//                                           path: framework,
+//                                           linkage: isDynamic ? .dynamic : .static))
+//        // TODO: Fix this
+//        if archs.contains("x86_64") {
+//            libraries.append(InputData.Library(LibraryIdentifier: "ios-x86_64-simulator",
+//                                               LibraryPath: framework,
+//                                               SupportedArchitectures: ["x86_64"],
+//                                               SupportedPlatform: "ios",
+//                                               SupportedPlatformVariant: "simulator",
+//                                               path: framework,
+//                                               linkage: isDynamic ? .dynamic : .static))
+//
+//        }
+//
+//        input = InputData(AvailableLibraries: libraries)
+//    }
 
     func toStarlark() -> StarlarkNode {
         let slices = input.AvailableLibraries.map({
