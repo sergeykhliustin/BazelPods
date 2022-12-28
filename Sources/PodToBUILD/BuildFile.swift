@@ -90,12 +90,20 @@ public struct PodBuildFile: StarlarkConvertible {
 
         let extraDeps: [BazelTarget] = makeResourceBundles(spec: podSpec, subspecs: subspecs, options: buildOptions)
         let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
-            .sorted(by: { $0.name < $1.name })
-        let conditionalDeps = frameworks.reduce([String: [Arch]]()) { partialResult, target in
-            guard let target = target as? AppleFrameworkImport else { return partialResult }
-            var result = partialResult
-            result[target.name] = Arch.archs(for: target.frameworkImport, options: buildOptions)
-            return result
+        let libraries = ObjcImport.vendoredLibraries(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
+        let conditionalDeps = (frameworks + libraries).reduce([String: [Arch]]()) { partialResult, target in
+            if let target = target as? AppleFrameworkImport {
+                var result = partialResult
+                let path = frameworkExecutablePath(target.frameworkImport, options: buildOptions)
+                result[target.name] = Arch.archs(forExecutable: path, options: buildOptions)
+                return result
+            } else if let target = target as? ObjcImport {
+                var result = partialResult
+                let path = URL(fileURLWithPath: target.library, relativeTo: URL(fileURLWithPath: buildOptions.podTargetAbsoluteRoot)).path
+                result[target.name] = Arch.archs(forExecutable: path, options: buildOptions)
+                return result
+            }
+            return partialResult
         }
 
         let sourceLibs = makeSourceLibs(spec: podSpec,
@@ -104,7 +112,7 @@ public struct PodBuildFile: StarlarkConvertible {
                                         conditionalDeps: conditionalDeps,
                                         options: buildOptions)
 
-        var output: [BazelTarget] = sourceLibs + extraDeps + frameworks
+        var output: [BazelTarget] = sourceLibs + extraDeps + frameworks + libraries
 
         output = UserConfigurableTransform.transform(convertibles: output,
                                                      options: buildOptions,

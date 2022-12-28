@@ -133,6 +133,7 @@ public func xcconfigSettingToList(_ value: String) -> [String] {
         .components(separatedBy: .whitespaces)
         .map { $0.removingPercentEncoding ?? "" }
         .map { $0.replacingOccurrences(of: "\"", with: "") }
+        .map { $0.replacingOccurrences(of: "\\", with: "") }
         .filter({ $0 != "$(inherited)"})
         .filter({ !$0.isEmpty })
 }
@@ -149,14 +150,4 @@ public func isDynamicFramework(_ framework: String, options: BuildOptions) -> Bo
     // TODO: Find proper way
     let output = SystemShellContext().command("/usr/bin/file", arguments: [path]).standardOutputAsString
     return output.contains("dynamically")
-}
-
-public func frameworkArchs(_ framework: String, options: BuildOptions) -> [String] {
-    let path = frameworkExecutablePath(framework, options: options)
-    let archs = SystemShellContext().command("/usr/bin/lipo",
-                                             arguments: ["-archs", path])
-        .standardOutputAsString
-        .trimmingCharacters(in: .whitespacesAndNewlines)
-        .components(separatedBy: " ")
-    return archs.filter({ !$0.isEmpty })
 }

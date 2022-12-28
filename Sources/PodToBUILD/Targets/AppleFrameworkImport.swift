@@ -74,6 +74,6 @@ struct AppleFrameworkImport: BazelTarget {
                                             frameworkImport: $0)
             } as [AppleFrameworkImport]
         }
-        return (frameworks.basic ?? []) + (frameworks.multi.ios ?? [])
+        return (frameworks.basic ?? []) + (frameworks.multi.ios ?? []).sorted(by: { $0.name < $1.name })
     }
 }
