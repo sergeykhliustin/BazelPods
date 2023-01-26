@@ -72,7 +72,13 @@ public struct BasicBuildOptions: BuildOptions {
     }
 
     public var podTargetAbsoluteRoot: String {
-        return sourcePath.appendingPath(podsRoot.lastPath).appendingPath(podName)
+        var result = sourcePath
+        if podsRoot.hasPrefix("/") {
+            result = podsRoot
+        } else {
+            result = result.appendingPath(podsRoot.lastPath)
+        }
+        return result.appendingPath(podName)
     }
 
     public func getRulePrefix(name: String) -> String {

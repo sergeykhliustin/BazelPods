@@ -23,4 +23,22 @@ public extension String {
     var deletingLastPath: String {
         return (self as NSString).deletingLastPathComponent
     }
+
+    func deletingSuffix(_ suffix: String) -> String {
+        let reversedSuffix = String(suffix.reversed())
+        return String(
+            String(self.reversed())
+                .deletingPrefix(reversedSuffix)
+                .reversed()
+        )
+    }
+
+    func deletingPrefix(_ prefix: String) -> String {
+        if hasPrefix(prefix), let range = range(of: prefix) {
+            var vSelf = self
+            vSelf.replaceSubrange(range, with: "")
+            return vSelf
+        }
+        return self
+    }
 }
