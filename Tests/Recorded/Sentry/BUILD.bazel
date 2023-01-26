@@ -83,7 +83,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>7.31.5</string>
+	<string>8.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -94,7 +94,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>9.0</string>
+	<string>11.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -109,15 +109,16 @@ apple_framework(
   name = "Sentry",
   module_name = "Sentry",
   bundle_id = "org.cocoapods.Sentry",
+  swift_version = "5",
   link_dynamic = True,
   infoplists = [
     ":Sentry_InfoPlist"
   ],
   platforms = {
-    "ios": "9.0",
-    "osx": "10.10",
-    "tvos": "9.0",
-    "watchos": "2.0"
+    "ios": "11.0",
+    "osx": "10.13",
+    "tvos": "11.0",
+    "watchos": "4.0"
   },
   srcs = glob(
     [
@@ -132,7 +133,8 @@ apple_framework(
       "Sources/SentryCrash/**/*.h",
       "Sources/SentryCrash/**/*.hpp",
       "Sources/SentryCrash/**/*.m",
-      "Sources/SentryCrash/**/*.mm"
+      "Sources/SentryCrash/**/*.mm",
+      "Sources/Swift/Sentry.swift"
     ]
   ),
   public_headers = glob(
@@ -140,6 +142,9 @@ apple_framework(
       "Sources/Sentry/Public/*.h"
     ]
   ),
+  deps = [
+    "//Tests/Pods/SentryPrivate"
+  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(

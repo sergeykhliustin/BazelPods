@@ -64,10 +64,10 @@ config_setting(
   }
 )
 genrule(
-  name = "LookinServer_InfoPlist",
+  name = "SentryPrivate_InfoPlist",
   srcs = [],
   outs = [
-    "LookinServer_InfoPlist.plist"
+    "SentryPrivate_InfoPlist.plist"
   ],
   cmd = """cat <<EOF > $@
 <?xml version="1.0" encoding="UTF-8"?>
@@ -75,15 +75,15 @@ genrule(
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.LookinServer</string>
+	<string>org.cocoapods.SentryPrivate</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>LookinServer</string>
+	<string>SentryPrivate</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.5</string>
+	<string>8.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -94,7 +94,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>9.0</string>
+	<string>11.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -106,43 +106,23 @@ genrule(
 EOF"""
 )
 apple_framework(
-  name = "LookinServer",
-  module_name = "LookinServer",
-  bundle_id = "org.cocoapods.LookinServer",
+  name = "SentryPrivate",
+  module_name = "SentryPrivate",
+  bundle_id = "org.cocoapods.SentryPrivate",
+  swift_version = "5",
   link_dynamic = True,
   infoplists = [
-    ":LookinServer_InfoPlist"
+    ":SentryPrivate_InfoPlist"
   ],
   platforms = {
-    "ios": "9.0",
-    "tvos": "9.0"
+    "ios": "11.0",
+    "osx": "10.13",
+    "tvos": "11.0",
+    "watchos": "4.0"
   },
   srcs = glob(
     [
-      "Src/Base/**/*.S",
-      "Src/Base/**/*.c",
-      "Src/Base/**/*.cc",
-      "Src/Base/**/*.cpp",
-      "Src/Base/**/*.cxx",
-      "Src/Base/**/*.h",
-      "Src/Base/**/*.hpp",
-      "Src/Base/**/*.hxx",
-      "Src/Base/**/*.m",
-      "Src/Base/**/*.mm",
-      "Src/Base/**/*.s",
-      "Src/Base/**/*.swift",
-      "Src/Main/**/*.S",
-      "Src/Main/**/*.c",
-      "Src/Main/**/*.cc",
-      "Src/Main/**/*.cpp",
-      "Src/Main/**/*.cxx",
-      "Src/Main/**/*.h",
-      "Src/Main/**/*.hpp",
-      "Src/Main/**/*.hxx",
-      "Src/Main/**/*.m",
-      "Src/Main/**/*.mm",
-      "Src/Main/**/*.s",
-      "Src/Main/**/*.swift"
+      "Sources/Swift/**/*.swift"
     ]
   ),
   objc_defines = [
@@ -167,17 +147,23 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = [
-    "UIKit"
-  ],
-  xcconfig = {
-    "GCC_PREPROCESSOR_DEFINITIONS": [
-      "SHOULD_COMPILE_LOOKIN_SERVER=1"
-    ],
-    "SWIFT_ACTIVE_COMPILATION_CONDITIONS": [
-      "SHOULD_COMPILE_LOOKIN_SERVER"
-    ]
-  },
+  sdk_frameworks = select(
+    {
+      "//conditions:default": [
+        "Foundation"
+      ],
+      ":osxCase": [
+        "Foundation"
+      ],
+      ":tvosCase": [
+        "Foundation"
+      ],
+      ":watchosCase": [
+        "Foundation",
+        "WatchKit"
+      ]
+    }
+  ),
   visibility = [
     "//visibility:public"
   ]
