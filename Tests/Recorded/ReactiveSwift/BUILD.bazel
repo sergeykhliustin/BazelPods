@@ -83,7 +83,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>7.1.0</string>
+	<string>7.1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -116,9 +116,9 @@ apple_framework(
   ],
   platforms = {
     "ios": "10.0",
-    "osx": "10.12",
-    "tvos": "10.0",
-    "watchos": "3.0"
+    "osx": "10.13",
+    "tvos": "11.0",
+    "watchos": "4.0"
   },
   srcs = glob(
     [
@@ -148,6 +148,12 @@ apple_framework(
       ]
     }
   ),
+  objc_copts = [
+    "-fapplication-extension"
+  ],
+  swift_copts = [
+    "-application-extension"
+  ],
   visibility = [
     "//visibility:public"
   ]

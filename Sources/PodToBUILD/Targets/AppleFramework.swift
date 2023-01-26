@@ -96,7 +96,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         }).map(extractResources)
         self.bundles = resources.map({ value in
             value.filter({ $0.hasSuffix(".bundle") })
-        })
+        }).map({ extractBundles(patterns: $0, options: options) })
         self.resourceBundles = .empty
 
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)

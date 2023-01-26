@@ -522,6 +522,26 @@ public func extractResources(patterns: [String]) -> [String] {
     }
 }
 
+public func extractBundles(patterns: [String], options: BuildOptions) -> [String] {
+    Array(
+        patterns.reduce([String: String]()) { partialResult, pattern in
+            var result = partialResult
+            let absolutePattern = options.podTargetAbsoluteRoot.appendingPath(pattern)
+            podGlob(pattern: absolutePattern)
+                .map({ $0.deletingSuffix("/").deletingPrefix(options.podTargetAbsoluteRoot).deletingPrefix("/") })
+                .filter({ !$0.isEmpty })
+                .forEach({
+                    if result[$0.lastPath] != nil {
+                        //print("WARNING: duplicate bundle \($0.lastPath). Will use first matched.")
+                    } else {
+                        result[$0.lastPath] = $0
+                    }
+                })
+            return result
+        }.values
+    )
+}
+
 // Glob with the semantics of pod `source_file` globs.
 // @note the original PodSpec globs are based on the ruby glob semantics
 public func podGlob(pattern: String) -> [String] {
