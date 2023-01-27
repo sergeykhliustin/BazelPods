@@ -40,8 +40,13 @@ struct XCFramework: StarlarkConvertible {
             var input = try PropertyListDecoder().decode(InputData.self, from: data)
             input.AvailableLibraries = input.AvailableLibraries.map({
                 var lib = $0
-                lib.path = xcframework.appendingPath($0.LibraryIdentifier).appendingPath($0.LibraryPath)
-                lib.linkage = $0.LibraryPath.hasSuffix("framework") ? .dynamic : .static
+                let path = xcframework.appendingPath($0.LibraryIdentifier).appendingPath($0.LibraryPath)
+                lib.path = path
+                if $0.LibraryPath.hasSuffix("framework") {
+                    lib.linkage = isDynamicFramework(path, options: options) ? .dynamic : .static
+                } else {
+                    lib.linkage = .static
+                }
                 if lib.SupportedPlatformVariant == "simulator" && lib.SupportedPlatform == "ios" {
                     lib.SupportedArchitectures = lib.SupportedArchitectures.map({
                         $0.replacingOccurrences(of: "arm64", with: "sim_arm64")

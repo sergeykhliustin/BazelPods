@@ -80,7 +80,7 @@ apple_framework(
     "slices": [
       {
       "build_type": {
-        "linkage": "dynamic",
+        "linkage": "static",
         "packaging": "framework"
       },
       "identifier": "ios-arm64_x86_64-simulator",
@@ -94,7 +94,7 @@ apple_framework(
     },
       {
       "build_type": {
-        "linkage": "dynamic",
+        "linkage": "static",
         "packaging": "framework"
       },
       "identifier": "ios-arm64",
@@ -112,7 +112,7 @@ apple_framework(
     "slices": [
       {
       "build_type": {
-        "linkage": "dynamic",
+        "linkage": "static",
         "packaging": "framework"
       },
       "identifier": "ios-arm64_x86_64-simulator",
@@ -126,7 +126,7 @@ apple_framework(
     },
       {
       "build_type": {
-        "linkage": "dynamic",
+        "linkage": "static",
         "packaging": "framework"
       },
       "identifier": "ios-arm64",
@@ -144,7 +144,7 @@ apple_framework(
     "slices": [
       {
       "build_type": {
-        "linkage": "dynamic",
+        "linkage": "static",
         "packaging": "framework"
       },
       "identifier": "ios-arm64_x86_64-simulator",
@@ -158,7 +158,7 @@ apple_framework(
     },
       {
       "build_type": {
-        "linkage": "dynamic",
+        "linkage": "static",
         "packaging": "framework"
       },
       "identifier": "ios-arm64",
