@@ -95,7 +95,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>7.0</string>
+	<string>10.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -115,7 +115,7 @@ apple_framework(
     ":CoconutKit_InfoPlist"
   ],
   platforms = {
-    "ios": "7.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [
@@ -219,7 +219,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>7.0</string>
+	<string>10.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

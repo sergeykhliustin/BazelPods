@@ -68,6 +68,9 @@ apple_framework(
   module_name = "Sourcery",
   bundle_id = "org.cocoapods.Sourcery",
   link_dynamic = False,
+  platforms = {
+    "ios": "10.0"
+  },
   objc_defines = [
     "COCOAPODS=1"
   ] + select(

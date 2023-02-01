@@ -70,7 +70,7 @@ apple_framework(
   bundle_id = "org.cocoapods.UMCommon",
   link_dynamic = False,
   platforms = {
-    "ios": "6.0"
+    "ios": "10.0"
   },
   deps = [
     "//Tests/Pods/UMDevice"

@@ -52,7 +52,7 @@ final class InfoPlist: GenRule {
             CFBundleName: bundle.bundleName,
             CFBundleShortVersionString: spec.version ?? "1.0",
             CFBundlePackageType: .BNDL,
-            MinimumOSVersion: spec.platforms["ios"] ?? options.minIosPlatform,
+            MinimumOSVersion: options.resolvePlatforms(spec.platforms)["ios"],
             CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
             UIDeviceFamily: [1, 2]
         )
@@ -65,7 +65,7 @@ final class InfoPlist: GenRule {
             CFBundleName: framework.name,
             CFBundleShortVersionString: spec.version ?? "1.0",
             CFBundlePackageType: .FMWK,
-            MinimumOSVersion: spec.platforms["ios"] ?? options.minIosPlatform,
+            MinimumOSVersion: options.resolvePlatforms(spec.platforms)["ios"],
             CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
             UIDeviceFamily: [1, 2]
         )

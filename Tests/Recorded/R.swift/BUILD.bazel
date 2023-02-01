@@ -70,7 +70,7 @@ apple_framework(
   swift_version = "5",
   link_dynamic = False,
   platforms = {
-    "ios": "9.0",
+    "ios": "10.0",
     "tvos": "9.0",
     "watchos": "2.2"
   },
