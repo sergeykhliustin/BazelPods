@@ -69,7 +69,7 @@ apple_framework(
   bundle_id = "org.cocoapods.Facebook-iOS-SDK",
   link_dynamic = False,
   platforms = {
-    "ios": "8.0",
+    "ios": "10.0",
     "tvos": "9.0"
   },
   deps = [

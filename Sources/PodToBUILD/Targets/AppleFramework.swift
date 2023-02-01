@@ -63,13 +63,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.name = podName
         self.version = spec.version ?? "1.0"
         self.moduleName = Self.resolveModuleName(spec: spec)
-        var platforms = spec.platforms
-        if let iosPlatform = platforms["ios"],
-           let minIosPlatform = options.minIosPlatform,
-           iosPlatform.compareVersion(minIosPlatform) == .orderedAscending {
-            platforms["ios"] = minIosPlatform
-        }
-        self.platforms = platforms
+        self.platforms = options.resolvePlatforms(spec.platforms)
         self.swiftVersion = Self.resolveSwiftVersion(spec: spec)
 
         sourceFiles = Self.getFilesNodes(from: spec,

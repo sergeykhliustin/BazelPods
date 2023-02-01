@@ -93,6 +93,8 @@ genrule(
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -111,6 +113,9 @@ apple_framework(
   infoplists = [
     ":Base64_InfoPlist"
   ],
+  platforms = {
+    "ios": "10.0"
+  },
   srcs = glob(
     [
       "Base64/MF_Base64Additions.h",

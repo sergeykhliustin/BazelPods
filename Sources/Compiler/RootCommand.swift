@@ -21,7 +21,7 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, parsing: .upToNextOption, help: "Subspecs list")
     var subspecs: [String] = []
 
-    @Option(name: .long, help: "Minimum iOS version to bump old Pods")
+    @Option(name: .long, help: "Minimum iOS version to bump if lower")
     var minIos: String?
 
     @Option(name: .long, help: "Dependencies prefix")

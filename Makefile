@@ -17,6 +17,7 @@ prepare-tests:
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
 	--pods-root "Tests/Pods" -a -f \
+	--min-ios "10.0" \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
@@ -75,7 +76,7 @@ integration-generate-static:
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
-	--min-ios 13.0 \
+	--min-ios "13.0" \
 	-a -c
 
 integration-generate-dynamic:
@@ -85,7 +86,7 @@ integration-generate-dynamic:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	-a -c -f \
-	--min-ios 13.0 \
+	--min-ios "13.0" \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \

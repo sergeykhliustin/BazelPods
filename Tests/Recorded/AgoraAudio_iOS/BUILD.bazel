@@ -69,7 +69,7 @@ apple_framework(
   bundle_id = "org.cocoapods.AgoraAudio_iOS",
   link_dynamic = False,
   platforms = {
-    "ios": "8.0"
+    "ios": "10.0"
   },
   vendored_xcframeworks = [
     {
