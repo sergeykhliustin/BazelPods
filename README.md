@@ -87,7 +87,7 @@ Enjoy :)
 
 ### Generator options
 ```
-USAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--concurrent] [--print-output] [--debug] [--add-podspec] [--color <color>] [--user-options <user-options> ...]
+USAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--concurrent] [--print-output] [--dry-run] [--add-podspec] [--color <color>] [--user-options <user-options> ...]
 
 ARGUMENTS:
   <pods-json>             Pods.json
@@ -101,7 +101,7 @@ OPTIONS:
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   -c, --concurrent        Concurrent mode for generating files faster
   --print-output          Print BUILD files contents to terminal output
-  --debug                 Debug mode. Files will not be written
+  --dry-run               Dry run. Files will not be written
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
   --color <color>         Logs color (auto|yes|no) (default: auto)
   --user-options <user-options>
