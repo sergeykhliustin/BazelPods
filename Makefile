@@ -16,8 +16,9 @@ prepare-tests:
 	bazel run :Generator --config=ci -- "Pods/Pods.json" \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
-	--pods-root "Tests/Pods" -a -f \
+	--pods-root "Tests/Pods" -a -f -c \
 	--min-ios "10.0" \
+	--color yes \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
@@ -77,7 +78,8 @@ integration-generate-static:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	--min-ios "13.0" \
-	-a -c
+	-a -c \
+	--color yes
 
 integration-generate-dynamic:
 	bazel run :Generator --config=ci \
@@ -86,6 +88,7 @@ integration-generate-dynamic:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	-a -c -f \
+	--color yes \
 	--min-ios "13.0" \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \

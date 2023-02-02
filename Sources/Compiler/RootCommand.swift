@@ -7,7 +7,7 @@
 
 import Foundation
 import ArgumentParser
-import PodToBUILD
+import CompilerCore
 import ObjcSupport
 
 struct RootCommand: ParsableCommand {

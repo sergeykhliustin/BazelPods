@@ -40,7 +40,7 @@ final class InfoPlist: GenRule {
             let encoded = try encoder.encode(data)
             xml = String(data: encoded, encoding: .utf8) ?? ""
         } catch {
-            print("Error encode Info.plist: \(error)")
+            log_error("encode Info.plist: \(error)")
         }
         let cmd = "cat <<EOF > $@\n\(xml)\nEOF"
         super.init(name: name, outs: ["\(name).plist"], cmd: cmd)

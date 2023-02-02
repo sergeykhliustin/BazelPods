@@ -67,9 +67,9 @@ swift_library(
 def bazelpods_dependencies():
     namespaced_http_archive(
         name = "swift-argument-parser",
-        url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.1.3.tar.gz",
-        strip_prefix = "swift-argument-parser-1.1.3",
-        sha256 = "e52c0ac4e17cfad9f13f87a63ddc850805695e17e98bf798cce85144764cdcaa",
+        url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.2.1.tar.gz",
+        strip_prefix = "swift-argument-parser-1.2.1",
+        sha256 = "0bc8c0b40f647456d3885c45588c20e4c52788f458cb9f320a59b3190ba6904c",
         build_file_content = namespaced_build_file([
             namespaced_swift_library(
                 name = "ArgumentParser",

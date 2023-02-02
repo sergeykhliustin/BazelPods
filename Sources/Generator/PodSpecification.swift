@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import PodToBUILD
+import CompilerCore
 
 struct PodSpecification {
     let name: String
