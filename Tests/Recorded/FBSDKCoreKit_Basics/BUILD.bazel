@@ -68,6 +68,7 @@ apple_framework(
   module_name = "FBSDKCoreKit_Basics",
   bundle_id = "org.cocoapods.FBSDKCoreKit_Basics",
   link_dynamic = False,
+  testonly = False,
   platforms = {
     "ios": "12.0",
     "tvos": "12.0"

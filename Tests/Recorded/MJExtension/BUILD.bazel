@@ -110,6 +110,7 @@ apple_framework(
   module_name = "MJExtension",
   bundle_id = "org.cocoapods.MJExtension",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":MJExtension_InfoPlist"
   ],

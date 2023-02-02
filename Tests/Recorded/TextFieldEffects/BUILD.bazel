@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.TextFieldEffects",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":TextFieldEffects_InfoPlist"
   ],

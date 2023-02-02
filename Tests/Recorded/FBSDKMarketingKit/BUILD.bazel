@@ -111,6 +111,7 @@ apple_framework(
   module_name = "FBSDKMarketingKit",
   bundle_id = "org.cocoapods.FBSDKMarketingKit",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FBSDKMarketingKit_InfoPlist"
   ],

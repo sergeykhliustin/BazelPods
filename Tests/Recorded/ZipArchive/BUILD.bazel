@@ -110,6 +110,7 @@ apple_framework(
   module_name = "ZipArchive",
   bundle_id = "org.cocoapods.ZipArchive",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":ZipArchive_InfoPlist"
   ],

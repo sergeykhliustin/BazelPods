@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FLAnimatedImage",
   bundle_id = "org.cocoapods.FLAnimatedImage",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FLAnimatedImage_InfoPlist"
   ],

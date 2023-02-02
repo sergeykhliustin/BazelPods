@@ -110,6 +110,7 @@ apple_framework(
   module_name = "MTAppenderFile",
   bundle_id = "org.cocoapods.MTAppenderFile",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":MTAppenderFile_InfoPlist"
   ],

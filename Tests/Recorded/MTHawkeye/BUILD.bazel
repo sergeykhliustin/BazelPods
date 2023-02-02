@@ -110,6 +110,7 @@ apple_framework(
   module_name = "MTHawkeye",
   bundle_id = "org.cocoapods.MTHawkeye",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":MTHawkeye_InfoPlist"
   ],

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "AFNetworking",
   bundle_id = "org.cocoapods.AFNetworking",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":AFNetworking_InfoPlist"
   ],

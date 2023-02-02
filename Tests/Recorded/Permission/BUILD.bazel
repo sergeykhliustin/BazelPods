@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.Permission",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Permission_InfoPlist"
   ],

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "DoubleConversion",
   bundle_id = "org.cocoapods.DoubleConversion",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":DoubleConversion_InfoPlist"
   ],

@@ -111,6 +111,7 @@ apple_framework(
   module_name = "CoconutKit",
   bundle_id = "org.cocoapods.CoconutKit",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":CoconutKit_InfoPlist"
   ],

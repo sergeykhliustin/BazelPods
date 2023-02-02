@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FBRetainCycleDetector",
   bundle_id = "org.cocoapods.FBRetainCycleDetector",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FBRetainCycleDetector_InfoPlist"
   ],

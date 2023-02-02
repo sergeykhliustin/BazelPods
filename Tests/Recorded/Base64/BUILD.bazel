@@ -110,6 +110,7 @@ apple_framework(
   module_name = "Base64",
   bundle_id = "org.cocoapods.Base64",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Base64_InfoPlist"
   ],

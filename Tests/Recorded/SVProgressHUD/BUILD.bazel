@@ -110,6 +110,7 @@ apple_framework(
   module_name = "SVProgressHUD",
   bundle_id = "org.cocoapods.SVProgressHUD",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":SVProgressHUD_InfoPlist"
   ],

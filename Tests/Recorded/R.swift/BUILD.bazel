@@ -69,6 +69,7 @@ apple_framework(
   bundle_id = "org.cocoapods.R.swift",
   swift_version = "5",
   link_dynamic = False,
+  testonly = False,
   platforms = {
     "ios": "10.0",
     "tvos": "9.0",

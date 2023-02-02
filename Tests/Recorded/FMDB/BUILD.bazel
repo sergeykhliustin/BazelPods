@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FMDB",
   bundle_id = "org.cocoapods.FMDB",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FMDB_InfoPlist"
   ],

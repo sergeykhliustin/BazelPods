@@ -110,6 +110,7 @@ apple_framework(
   module_name = "Bagel",
   bundle_id = "org.cocoapods.Bagel",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Bagel_InfoPlist"
   ],

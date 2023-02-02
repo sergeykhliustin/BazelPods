@@ -110,6 +110,7 @@ apple_framework(
   module_name = "Growing",
   bundle_id = "org.cocoapods.Growing",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Growing_InfoPlist"
   ],

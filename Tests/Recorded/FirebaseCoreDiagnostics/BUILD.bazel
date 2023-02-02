@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FirebaseCoreDiagnostics",
   bundle_id = "org.cocoapods.FirebaseCoreDiagnostics",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FirebaseCoreDiagnostics_InfoPlist"
   ],

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "SDWebImage",
   bundle_id = "org.cocoapods.SDWebImage",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":SDWebImage_InfoPlist"
   ],

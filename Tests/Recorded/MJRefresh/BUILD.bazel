@@ -110,6 +110,7 @@ apple_framework(
   module_name = "MJRefresh",
   bundle_id = "org.cocoapods.MJRefresh",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":MJRefresh_InfoPlist"
   ],

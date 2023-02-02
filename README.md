@@ -105,7 +105,12 @@ OPTIONS:
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
   --color <color>         Logs color (auto|yes|no) (default: auto)
   --user-options <user-options>
-                          User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'
+                          User extra options.
+                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'.
+                          Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
+                          Example:
+                          'SomePod.sdk_dylibs += something'
+                          'SomePod.testonly := true'
   -h, --help              Show help information.
 ```
 ### Compiler
@@ -124,7 +129,12 @@ OPTIONS:
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --user-options <user-options>
-                          User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'
+                          User extra options.
+                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'.
+                          Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
+                          Example:
+                          'SomePod.sdk_dylibs += something'
+                          'SomePod.testonly := true'
   -h, --help              Show help information.
 ```
 ## Contributing and issues

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "JWT",
   bundle_id = "org.cocoapods.JWT",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":JWT_InfoPlist"
   ],

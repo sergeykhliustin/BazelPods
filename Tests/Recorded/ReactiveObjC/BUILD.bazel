@@ -110,6 +110,7 @@ apple_framework(
   module_name = "ReactiveObjC",
   bundle_id = "org.cocoapods.ReactiveObjC",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":ReactiveObjC_InfoPlist"
   ],

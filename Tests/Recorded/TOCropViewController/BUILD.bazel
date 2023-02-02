@@ -111,6 +111,7 @@ apple_framework(
   module_name = "TOCropViewController",
   bundle_id = "org.cocoapods.TOCropViewController",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":TOCropViewController_InfoPlist"
   ],

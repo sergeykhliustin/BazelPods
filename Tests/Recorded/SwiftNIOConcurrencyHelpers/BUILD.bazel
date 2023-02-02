@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.SwiftNIOConcurrencyHelpers",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":SwiftNIOConcurrencyHelpers_InfoPlist"
   ],

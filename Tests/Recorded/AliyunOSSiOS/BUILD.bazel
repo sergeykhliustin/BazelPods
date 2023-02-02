@@ -110,6 +110,7 @@ apple_framework(
   module_name = "AliyunOSSiOS",
   bundle_id = "org.cocoapods.AliyunOSSiOS",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":AliyunOSSiOS_InfoPlist"
   ],

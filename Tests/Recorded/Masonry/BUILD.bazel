@@ -110,6 +110,7 @@ apple_framework(
   module_name = "Masonry",
   bundle_id = "org.cocoapods.Masonry",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Masonry_InfoPlist"
   ],

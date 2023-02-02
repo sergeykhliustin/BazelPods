@@ -69,6 +69,7 @@ apple_framework(
   module_name = "GrowingAutoTrackKit",
   bundle_id = "org.cocoapods.GrowingAutoTrackKit",
   link_dynamic = False,
+  testonly = False,
   platforms = {
     "ios": "10.0"
   },

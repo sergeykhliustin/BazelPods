@@ -110,6 +110,7 @@ apple_framework(
   module_name = "MLeaksFinder",
   bundle_id = "org.cocoapods.MLeaksFinder",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":MLeaksFinder_InfoPlist"
   ],

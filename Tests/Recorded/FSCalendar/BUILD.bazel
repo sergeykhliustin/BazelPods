@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FSCalendar",
   bundle_id = "org.cocoapods.FSCalendar",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FSCalendar_InfoPlist"
   ],

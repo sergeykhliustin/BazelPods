@@ -110,6 +110,7 @@ apple_framework(
   module_name = "BlocksKit",
   bundle_id = "org.cocoapods.BlocksKit",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":BlocksKit_InfoPlist"
   ],

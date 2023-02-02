@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.Nuke",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Nuke_InfoPlist"
   ],

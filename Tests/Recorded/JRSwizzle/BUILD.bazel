@@ -110,6 +110,7 @@ apple_framework(
   module_name = "JRSwizzle",
   bundle_id = "org.cocoapods.JRSwizzle",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":JRSwizzle_InfoPlist"
   ],

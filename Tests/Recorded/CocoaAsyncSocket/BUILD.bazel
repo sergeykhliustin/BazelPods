@@ -110,6 +110,7 @@ apple_framework(
   module_name = "CocoaAsyncSocket",
   bundle_id = "org.cocoapods.CocoaAsyncSocket",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":CocoaAsyncSocket_InfoPlist"
   ],

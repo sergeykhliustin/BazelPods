@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FBMemoryProfiler",
   bundle_id = "org.cocoapods.FBMemoryProfiler",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FBMemoryProfiler_InfoPlist"
   ],
