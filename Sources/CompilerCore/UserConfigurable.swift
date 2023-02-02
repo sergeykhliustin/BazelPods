@@ -27,6 +27,10 @@ enum UserConfigurableOpt: String {
     /// EX: "Some.copts += -foo, -bar"
     case Append = "+="
 
+    /// Remove values
+    /// EX: "Some.deps -= dep"
+    case Delete = "-="
+
     /// Override value
     /// EX: "Some.testonly := true"
     case Override = ":="
@@ -37,6 +41,9 @@ protocol UserConfigurable: BazelTarget {
 
     /// Add a given value to a key
     mutating func add(configurableKey: String, value: Any)
+
+    /// Remove a given value
+    mutating func delete(configurableKey: String, value: Any)
 
     /// Override a given key with new value
     mutating func override(configurableKey: String, value: Any)
@@ -64,6 +71,16 @@ extension UserConfigurable {
                 for value in values {
                     let value = value.trimmingCharacters(in: .whitespaces)
                     copy.add(configurableKey: key, value: value)
+                }
+            } else if keyPathOperator.contains(UserConfigurableOpt.Delete.rawValue) {
+                let components = keyPathOperator.components(separatedBy: UserConfigurableOpt.Delete.rawValue)
+                guard components.count > 1 else { continue }
+
+                let key = components[0].trimmingCharacters(in: .whitespaces)
+                let values = components[1].components(separatedBy: ",")
+                for value in values {
+                    let value = value.trimmingCharacters(in: .whitespaces)
+                    copy.delete(configurableKey: key, value: value)
                 }
             } else if keyPathOperator.contains(UserConfigurableOpt.Override.rawValue) {
                 let components = keyPathOperator.components(separatedBy: UserConfigurableOpt.Override.rawValue)

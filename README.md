@@ -87,7 +87,7 @@ Enjoy :)
 
 ### Generator options
 ```
-USAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--concurrent] [--print-output] [--dry-run] [--add-podspec] [--color <color>] [--user-options <user-options> ...]
+UUSAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--concurrent] [--print-output] [--dry-run] [--add-podspec] [--color <color>] [--user-options <user-options> ...]
 
 ARGUMENTS:
   <pods-json>             Pods.json
@@ -106,10 +106,11 @@ OPTIONS:
   --color <color>         Logs color (auto|yes|no) (default: auto)
   --user-options <user-options>
                           User extra options.
-                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'.
+                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
+                          Supported fields for '-=' (remove): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
                           Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
                           Example:
-                          'SomePod.sdk_dylibs += something'
+                          'SomePod.sdk_dylibs += something,something'
                           'SomePod.testonly := true'
   -h, --help              Show help information.
 ```
@@ -133,7 +134,7 @@ OPTIONS:
                           Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'.
                           Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
                           Example:
-                          'SomePod.sdk_dylibs += something'
+                          'SomePod.sdk_dylibs += something,something'
                           'SomePod.testonly := true'
   -h, --help              Show help information.
 ```
