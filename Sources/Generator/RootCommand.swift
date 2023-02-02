@@ -50,8 +50,8 @@ struct RootCommand: ParsableCommand {
     @Flag(name: .long, help: "Print BUILD files contents to terminal output")
     var printOutput: Bool = false
 
-    @Flag(name: .long, help: "Debug mode. Files will not be written")
-    var debug: Bool = false
+    @Flag(name: .long, help: "Dry run. Files will not be written")
+    var dryRun: Bool = false
 
     @Flag(name: .shortAndLong, help: "Will add podspec.json to the pod directory. Just for debugging purposes.")
     var addPodspec: Bool = false
@@ -108,7 +108,7 @@ struct RootCommand: ParsableCommand {
             if printOutput {
                 print(starlarkString)
             }
-            if !debug {
+            if !dryRun {
                 if var developmentPath = specification.developmentPath {
                     try? FileManager.default.removeItem(atPath: absoluteSRCPath("Pods/\(specification.name)"))
                     try? FileManager.default.createDirectory(atPath: absoluteSRCPath("Pods/\(specification.name)"),
@@ -173,7 +173,7 @@ struct RootCommand: ParsableCommand {
                 }
             })
         }
-        if !debug {
+        if !dryRun {
             try Data().write(to: URL(fileURLWithPath: absoluteSRCPath("Pods/BUILD.bazel")))
         }
     }
