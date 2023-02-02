@@ -68,6 +68,7 @@ apple_framework(
   module_name = "boost",
   bundle_id = "org.cocoapods.boost-for-react-native",
   link_dynamic = False,
+  testonly = False,
   platforms = {
     "ios": "10.0",
     "tvos": "9.2"

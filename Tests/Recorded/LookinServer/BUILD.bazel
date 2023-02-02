@@ -110,6 +110,7 @@ apple_framework(
   module_name = "LookinServer",
   bundle_id = "org.cocoapods.LookinServer",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":LookinServer_InfoPlist"
   ],

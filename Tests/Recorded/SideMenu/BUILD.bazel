@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.SideMenu",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":SideMenu_InfoPlist"
   ],

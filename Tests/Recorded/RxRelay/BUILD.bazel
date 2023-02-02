@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.RxRelay",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":RxRelay_InfoPlist"
   ],

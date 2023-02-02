@@ -110,6 +110,7 @@ apple_framework(
   module_name = "JLRoutes",
   bundle_id = "org.cocoapods.JLRoutes",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":JLRoutes_InfoPlist"
   ],

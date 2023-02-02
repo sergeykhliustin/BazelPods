@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.Eureka",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Eureka_InfoPlist"
   ],

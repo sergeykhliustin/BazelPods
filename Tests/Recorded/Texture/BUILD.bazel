@@ -110,6 +110,7 @@ apple_framework(
   module_name = "AsyncDisplayKit",
   bundle_id = "org.cocoapods.Texture",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Texture_InfoPlist"
   ],

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "Aspects",
   bundle_id = "org.cocoapods.Aspects",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Aspects_InfoPlist"
   ],

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FLEX",
   bundle_id = "org.cocoapods.FLEX",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FLEX_InfoPlist"
   ],

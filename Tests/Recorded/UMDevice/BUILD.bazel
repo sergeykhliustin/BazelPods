@@ -69,6 +69,7 @@ apple_framework(
   module_name = "UMDevice",
   bundle_id = "org.cocoapods.UMDevice",
   link_dynamic = False,
+  testonly = False,
   platforms = {
     "ios": "10.0"
   },

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "glog",
   bundle_id = "org.cocoapods.glog",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":glog_InfoPlist"
   ],

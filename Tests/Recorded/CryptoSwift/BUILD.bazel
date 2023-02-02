@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.CryptoSwift",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":CryptoSwift_InfoPlist"
   ],

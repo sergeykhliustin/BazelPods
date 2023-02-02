@@ -110,6 +110,7 @@ apple_framework(
   module_name = "Realm",
   bundle_id = "org.cocoapods.Realm",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Realm_InfoPlist"
   ],

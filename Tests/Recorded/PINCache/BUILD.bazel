@@ -110,6 +110,7 @@ apple_framework(
   module_name = "PINCache",
   bundle_id = "org.cocoapods.PINCache",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":PINCache_InfoPlist"
   ],

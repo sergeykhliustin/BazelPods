@@ -111,6 +111,7 @@ apple_framework(
   module_name = "Appboy_iOS_SDK",
   bundle_id = "org.cocoapods.Appboy-iOS-SDK",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Appboy-iOS-SDK_InfoPlist"
   ],

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "libwebp",
   bundle_id = "org.cocoapods.libwebp",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":libwebp_InfoPlist"
   ],

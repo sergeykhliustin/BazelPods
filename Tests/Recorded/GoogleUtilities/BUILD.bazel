@@ -110,6 +110,7 @@ apple_framework(
   module_name = "GoogleUtilities",
   bundle_id = "org.cocoapods.GoogleUtilities",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":GoogleUtilities_InfoPlist"
   ],

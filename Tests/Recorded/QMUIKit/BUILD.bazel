@@ -111,6 +111,7 @@ apple_framework(
   module_name = "QMUIKit",
   bundle_id = "org.cocoapods.QMUIKit",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":QMUIKit_InfoPlist"
   ],

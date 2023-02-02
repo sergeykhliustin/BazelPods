@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.Loading",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Loading_InfoPlist"
   ],

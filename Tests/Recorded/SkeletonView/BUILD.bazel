@@ -111,6 +111,7 @@ apple_framework(
   bundle_id = "org.cocoapods.SkeletonView",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":SkeletonView_InfoPlist"
   ],

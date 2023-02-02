@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FBLPromises",
   bundle_id = "org.cocoapods.PromisesObjC",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":PromisesObjC_InfoPlist"
   ],

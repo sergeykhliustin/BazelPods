@@ -110,6 +110,7 @@ apple_framework(
   module_name = "folly",
   bundle_id = "org.cocoapods.Folly",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Folly_InfoPlist"
   ],

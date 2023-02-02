@@ -33,7 +33,16 @@ struct RootCommand: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
-    @Option(name: .long, parsing: .upToNextOption, help: "User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'")
+    @Option(name: .long, parsing: .upToNextOption,
+            help: """
+User extra options.
+Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'.
+Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
+Example:
+'SomePod.sdk_dylibs += something'
+'SomePod.testonly := true'
+"""
+    )
     var userOptions: [String] = []
 
     func run() throws {

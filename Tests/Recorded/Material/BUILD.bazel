@@ -112,6 +112,7 @@ apple_framework(
   bundle_id = "org.cocoapods.Material",
   swift_version = "5",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Material_InfoPlist"
   ],

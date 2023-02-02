@@ -110,6 +110,7 @@ apple_framework(
   module_name = "YYImage",
   bundle_id = "org.cocoapods.YYImage",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":YYImage_InfoPlist"
   ],

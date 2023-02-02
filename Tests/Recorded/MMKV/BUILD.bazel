@@ -110,6 +110,7 @@ apple_framework(
   module_name = "MMKV",
   bundle_id = "org.cocoapods.MMKV",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":MMKV_InfoPlist"
   ],

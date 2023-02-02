@@ -110,6 +110,7 @@ apple_framework(
   module_name = "MBProgressHUD",
   bundle_id = "org.cocoapods.MBProgressHUD",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":MBProgressHUD_InfoPlist"
   ],

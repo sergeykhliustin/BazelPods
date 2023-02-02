@@ -110,6 +110,7 @@ apple_framework(
   module_name = "YYText",
   bundle_id = "org.cocoapods.YYText",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":YYText_InfoPlist"
   ],

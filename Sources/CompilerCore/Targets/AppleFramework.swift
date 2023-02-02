@@ -5,10 +5,15 @@
 //  Created by Sergey Khliustin on 04.08.2022.
 //
 
-public enum AppleFrameworkConfigurableKeys : String {
+public enum AppleFrameworkConfigurableAddKeys : String {
     case sdkDylibs = "sdk_dylibs"
     case sdkFrameworks = "sdk_frameworks"
     case weakSdkFrameworks = "weak_sdk_frameworks"
+}
+
+public enum AppleFrameworkConfigurableOverriderKeys: String {
+    case testonly = "testonly"
+    case linkDynamic = "link_dynamic"
 }
 
 struct AppleFramework: BazelTarget, UserConfigurable {
@@ -17,7 +22,8 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let name: String
     let version: String
     let moduleName: AttrSet<String>
-    let linkDynamic: Bool
+    var linkDynamic: Bool
+    var testonly: Bool
     var infoplists: [String] = []
     let platforms: [String: String]?
     let swiftVersion: AttrSet<String?>
@@ -129,10 +135,14 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.linkOpts = xcconfigParser.linkOpts
 
         self.linkDynamic = options.dynamicFrameworks && sourceFiles.multi.ios?.isEmpty == false && !spec.staticFramework
+        self.testonly = (sdkFrameworks <> weakSdkFrameworks)
+            .trivialize(into: false, { result, value in
+                result = result || value.contains("XCTest")
+        })
     }
 
     mutating func add(configurableKey: String, value: Any) {
-        guard let key = AppleFrameworkConfigurableKeys(rawValue: configurableKey) else { return }
+        guard let key = AppleFrameworkConfigurableAddKeys(rawValue: configurableKey) else { return }
         switch key {
         case .sdkDylibs:
             if let value = value as? String {
@@ -145,6 +155,20 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         case .weakSdkFrameworks:
             if let value = value as? String {
                 self.weakSdkFrameworks = self.weakSdkFrameworks <> AttrSet(basic: [value])
+            }
+        }
+    }
+
+    mutating func override(configurableKey: String, value: Any) {
+        guard let key = AppleFrameworkConfigurableOverriderKeys(rawValue: configurableKey) else { return }
+        switch key {
+        case .testonly:
+            if let value = value as? String, let bool = Bool(value) {
+                self.testonly = bool
+            }
+        case .linkDynamic:
+            if let value = value as? String, let bool = Bool(value) {
+                self.linkDynamic = bool
             }
         }
     }
@@ -244,6 +268,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             .named(name: "bundle_id", value: bundleId.toStarlark()),
             .named(name: "swift_version", value: swiftVersion.toStarlark()),
             .named(name: "link_dynamic", value: linkDynamic.toStarlark()),
+            .named(name: "testonly", value: testonly.toStarlark()),
             .named(name: "infoplists", value: infoplists.toStarlark()),
             .named(name: "platforms", value: platforms.toStarlark()),
             .named(name: "srcs", value: sourceFiles.toStarlark()),

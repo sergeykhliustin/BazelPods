@@ -110,6 +110,7 @@ apple_framework(
   module_name = "GoogleDataTransport",
   bundle_id = "org.cocoapods.GoogleDataTransport",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":GoogleDataTransport_InfoPlist"
   ],

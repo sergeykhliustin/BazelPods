@@ -110,6 +110,7 @@ apple_framework(
   module_name = "YYCache",
   bundle_id = "org.cocoapods.YYCache",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":YYCache_InfoPlist"
   ],

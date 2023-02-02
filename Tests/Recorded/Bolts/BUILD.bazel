@@ -110,6 +110,7 @@ apple_framework(
   module_name = "Bolts",
   bundle_id = "org.cocoapods.Bolts",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Bolts_InfoPlist"
   ],

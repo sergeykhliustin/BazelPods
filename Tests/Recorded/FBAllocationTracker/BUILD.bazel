@@ -110,6 +110,7 @@ apple_framework(
   module_name = "FBAllocationTracker",
   bundle_id = "org.cocoapods.FBAllocationTracker",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":FBAllocationTracker_InfoPlist"
   ],

@@ -110,6 +110,7 @@ apple_framework(
   module_name = "PINOperation",
   bundle_id = "org.cocoapods.PINOperation",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":PINOperation_InfoPlist"
   ],

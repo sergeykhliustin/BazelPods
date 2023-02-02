@@ -110,6 +110,7 @@ apple_framework(
   module_name = "fishhook",
   bundle_id = "org.cocoapods.fishhook",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":fishhook_InfoPlist"
   ],

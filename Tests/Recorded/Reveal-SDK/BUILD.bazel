@@ -68,6 +68,7 @@ apple_framework(
   module_name = "Reveal_SDK",
   bundle_id = "org.cocoapods.Reveal-SDK",
   link_dynamic = False,
+  testonly = False,
   platforms = {
     "ios": "11.4",
     "tvos": "10.2"

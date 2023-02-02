@@ -110,6 +110,7 @@ apple_framework(
   module_name = "yoga",
   bundle_id = "org.cocoapods.Yoga",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":Yoga_InfoPlist"
   ],

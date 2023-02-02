@@ -110,6 +110,7 @@ apple_framework(
   module_name = "nanopb",
   bundle_id = "org.cocoapods.nanopb",
   link_dynamic = True,
+  testonly = False,
   infoplists = [
     ":nanopb_InfoPlist"
   ],
