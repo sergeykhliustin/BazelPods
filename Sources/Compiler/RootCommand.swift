@@ -36,10 +36,11 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, parsing: .upToNextOption,
             help: """
 User extra options.
-Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'.
+Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
+Supported fields for '-=' (remove): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
 Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
 Example:
-'SomePod.sdk_dylibs += something'
+'SomePod.sdk_dylibs += something,something'
 'SomePod.testonly := true'
 """
     )

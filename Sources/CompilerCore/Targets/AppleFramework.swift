@@ -5,10 +5,11 @@
 //  Created by Sergey Khliustin on 04.08.2022.
 //
 
-public enum AppleFrameworkConfigurableAddKeys : String {
+public enum AppleFrameworkConfigurableAddDeleteKeys : String {
     case sdkDylibs = "sdk_dylibs"
     case sdkFrameworks = "sdk_frameworks"
     case weakSdkFrameworks = "weak_sdk_frameworks"
+    case deps = "deps"
 }
 
 public enum AppleFrameworkConfigurableOverriderKeys: String {
@@ -40,7 +41,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let resourceBundles: AttrSet<[String: Set<String>]>
 
     var deps: AttrSet<[String]>
-    let conditionalDeps: [String: [Arch]]
+    var conditionalDeps: [String: [Arch]]
     let vendoredXCFrameworks: AttrSet<[XCFramework]>
     let vendoredStaticFrameworks: AttrSet<Set<String>>
     let vendoredDynamicFrameworks: AttrSet<Set<String>>
@@ -142,7 +143,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     }
 
     mutating func add(configurableKey: String, value: Any) {
-        guard let key = AppleFrameworkConfigurableAddKeys(rawValue: configurableKey) else { return }
+        guard let key = AppleFrameworkConfigurableAddDeleteKeys(rawValue: configurableKey) else { return }
         switch key {
         case .sdkDylibs:
             if let value = value as? String {
@@ -155,6 +156,33 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         case .weakSdkFrameworks:
             if let value = value as? String {
                 self.weakSdkFrameworks = self.weakSdkFrameworks <> AttrSet(basic: [value])
+            }
+        case .deps:
+            if let value = value as? String {
+                self.deps = self.deps <> AttrSet(basic: [value])
+            }
+        }
+    }
+
+    mutating func delete(configurableKey: String, value: Any) {
+        guard let key = AppleFrameworkConfigurableAddDeleteKeys(rawValue: configurableKey) else { return }
+        switch key {
+        case .sdkDylibs:
+            if let value = value as? String {
+                self.sdkDylibs = self.sdkDylibs.map({ $0.filter({ $0 != value }) })
+            }
+        case .sdkFrameworks:
+            if let value = value as? String {
+                self.sdkFrameworks = self.sdkFrameworks.map({ $0.filter({ $0 != value }) })
+            }
+        case .weakSdkFrameworks:
+            if let value = value as? String {
+                self.weakSdkFrameworks = self.weakSdkFrameworks.map({ $0.filter({ $0 != value }) })
+            }
+        case .deps:
+            if let value = value as? String {
+                self.deps = self.deps.map({ $0.filter({ $0 != value }) })
+                self.conditionalDeps = self.conditionalDeps.filter({ $0.key != value })
             }
         }
     }
