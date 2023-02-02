@@ -31,20 +31,20 @@ private extension LogLevel {
     var terminalColor: String {
         switch self {
         case .debug:
-            return "38m" //blue
+            return "[34m" //blue
         case .info:
-            return "35m" //green
+            return "[32m" //green
         case .warning:
-            return "178m" //yellow
+            return "[33m" //yellow
         case .error:
-            return "197m" //red
+            return "[31m" //red
         }
     }
 
     var coloredString: String {
-        let reset = "\u{001b}[0m"
-        let escape = "\u{001b}[38;5;"
-        return escape + terminalColor + string + reset
+        let reset = "[0m"
+        let escape = "\u{001b}"
+        return escape + terminalColor + string + escape + reset
     }
 }
 
