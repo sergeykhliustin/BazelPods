@@ -49,7 +49,7 @@ extension UserConfigurable {
         // https://clang.llvm.org/doxygen/classclang_1_1tooling_1_1CommonOptionsParser.html
         for keyPathOperator in keyPathOperators {
             guard let opt = UserConfigurableOpt(rawValue: "+=") else {
-                print("Invalid operator")
+                log_error("UserConfigurable invalid operator")
                 fatalError()
             }
 

@@ -56,7 +56,7 @@ struct XCFramework: StarlarkConvertible {
             })
             self.input = input
         } catch {
-            print("Unable to process \(xcframework): \(error)")
+            log_error("Unable to process \(xcframework): \(error)")
             return nil
         }
     }

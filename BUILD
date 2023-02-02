@@ -27,11 +27,21 @@ objc_library(
     includes = ["Sources/ObjcSupport/include"]
 )
 
-# PodToBUILD is a core library enabling Starlark code generation
+# Logger
 swift_library(
-    name = "PodToBUILD",
-    srcs = glob(["Sources/PodToBUILD/**/*.swift"]),
-    deps = [":ObjcSupport"],
+    name = "Logger",
+    srcs = glob(["Sources/Logger/**/*.swift"]),
+    copts = ["-swift-version", "5"],
+)
+
+# CompilerCore is a core library enabling Starlark code generation
+swift_library(
+    name = "CompilerCore",
+    srcs = glob([
+        "Sources/CompilerCore/**/*.swift",
+        "Sources/Shared/**/*.swift"
+    ]),
+    deps = [":ObjcSupport", ":Logger"],
     copts = ["-swift-version", "5"],
     visibility = ["//Tests:__pkg__"]
 )
@@ -46,8 +56,11 @@ macos_command_line_application(
 
 swift_library(
     name = "CompilerLib",
-    srcs = glob(["Sources/Compiler/**/*.swift"]),
-    deps = [":PodToBUILD", "@bazelpods-swift-argument-parser//:ArgumentParser"],
+    srcs = glob([
+        "Sources/Compiler/**/*.swift",
+        "Sources/Shared/**/*.swift"
+    ]),
+    deps = [":CompilerCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
     copts = ["-swift-version", "5"],
 )
 
@@ -62,7 +75,10 @@ macos_command_line_application(
 
 swift_library(
     name = "GeneratorLib",
-    srcs = glob(["Sources/Generator/**/*.swift"]),
-    deps = [":PodToBUILD", "@bazelpods-swift-argument-parser//:ArgumentParser"],
+    srcs = glob([
+        "Sources/Generator/**/*.swift",
+        "Sources/Shared/**/*.swift"
+    ]),
+    deps = [":CompilerCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
     copts = ["-swift-version", "5"],
 )

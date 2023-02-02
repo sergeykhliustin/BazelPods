@@ -7,7 +7,7 @@
 
 import Foundation
 import ArgumentParser
-import PodToBUILD
+import CompilerCore
 import ObjcSupport
 
 fileprivate let IGNORE_FILELIST = [
@@ -16,6 +16,12 @@ fileprivate let IGNORE_FILELIST = [
     "workspace",
     "workspace.bazel"
 ]
+
+enum ColorMode: String, ExpressibleByArgument {
+    case auto
+    case yes
+    case no
+}
 
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Generator",
@@ -50,6 +56,9 @@ struct RootCommand: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Will add podspec.json to the pod directory. Just for debugging purposes.")
     var addPodspec: Bool = false
 
+    @Option(help: "Logs color (auto|yes|no)")
+    var color: ColorMode = .auto
+
     @Option(name: .long, parsing: .upToNextOption, help: "User extra options. Current supported fields are 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'. Format 'SomePod.sdk_dylibs+=something'")
     var userOptions: [String] = []
 
@@ -62,9 +71,8 @@ struct RootCommand: ParsableCommand {
 
         let specifications = PodSpecification.resolve(with: json).sorted(by: { $0.name < $1.name })
         let compiler: (PodSpecification) throws -> Void = { specification in
-            print("Generating: \(specification.name)" +
-                  (specification.subspecs.isEmpty ? "" : " \n\tsubspecs: " +
-                   specification.subspecs.joined(separator: " ")))
+            logger.log_info("Generating..." + (specification.subspecs.isEmpty ? "" : " subspecs: " +
+                                               specification.subspecs.joined(separator: " ")))
             let podSpec: PodSpec
             var podSpecJson: JSONDict?
             if specification.podspec.hasSuffix(".json") {
@@ -120,7 +128,7 @@ struct RootCommand: ParsableCommand {
                             try FileManager.default.createSymbolicLink(atPath: symlinkPath,
                                                                        withDestinationPath: sourcePath)
                         } catch {
-                            print("Error creating symlink: \(error)")
+                            log_error("creating symlink: \(error)")
                         }
                     })
                 }
@@ -145,10 +153,11 @@ struct RootCommand: ParsableCommand {
             specifications.forEach({ specification in
                 dGroup.enter()
                 DispatchQueue.global().async {
+                    configureLogger(specification.name)
                     do {
                         try compiler(specification)
                     } catch {
-                        print("Error generating \(specification.name): \(error)")
+                        log_error(error)
                     }
                     dGroup.leave()
                 }
@@ -156,16 +165,29 @@ struct RootCommand: ParsableCommand {
             dGroup.wait()
         } else {
             specifications.forEach({ specification in
+                configureLogger(specification.name)
                 do {
                     try compiler(specification)
                 } catch {
-                    print("Error generating \(specification.name): \(error)")
+                    log_error(error)
                 }
             })
         }
         if !debug {
             try Data().write(to: URL(fileURLWithPath: absoluteSRCPath("Pods/BUILD.bazel")))
         }
+    }
+
+    func configureLogger(_ prefix: String?) {
+        switch color {
+        case .auto:
+            logger.colors = getenv("TERM") != nil
+        case .yes:
+            logger.colors = true
+        case .no:
+            logger.colors = false
+        }
+        logger.prefix = prefix
     }
 
     func absoluteSRCPath(_ path: String) -> String {

@@ -532,7 +532,7 @@ public func extractBundles(patterns: [String], options: BuildOptions) -> [String
                 .filter({ !$0.isEmpty })
                 .forEach({
                     if result[$0.lastPath] != nil {
-                        //print("WARNING: duplicate bundle \($0.lastPath). Will use first matched.")
+                        log_warning("duplicate bundle \($0.lastPath). Will use first matched.")
                     } else {
                         result[$0.lastPath] = $0
                     }
