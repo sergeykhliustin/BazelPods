@@ -7,18 +7,27 @@
 
 import Foundation
 
+public enum Platform: String {
+    case ios
+    case osx
+    case tvos
+    case watchos
+}
+
 public protocol BuildOptions {
     var podName: String { get }
     var subspecs: [String] { get }
     var podspecPath: String { get }
     var sourcePath: String { get }
 
+    var platforms: [Platform] { get }
+
     var minIosPlatform: String? { get }
 
     var depsPrefix: String { get }
     var podsRoot: String { get }
 
-    var dynamicFrameworks: Bool { get }
+    var useFrameworks: Bool { get }
 
     var userOptions: [String] { get }
     var globalCopts: [String] { get }
@@ -31,6 +40,19 @@ public protocol BuildOptions {
 }
 
 extension BuildOptions {
+    func defaultVersion(for platform: Platform) -> String {
+        switch platform {
+        case .ios:
+            return minIosPlatform ?? "13.0"
+        case .osx:
+            return "10.13"
+        case .tvos:
+            return "13.0"
+        case .watchos:
+            return "8.0"
+        }
+    }
+
     func resolvePlatforms(_ platforms: [String: String]) -> [String: String] {
         var platforms = platforms
         if let iosPlatform = platforms["ios"],
@@ -49,18 +71,20 @@ public struct BasicBuildOptions: BuildOptions {
     public let subspecs: [String]
     public let podspecPath: String
     public let sourcePath: String
+    public let platforms: [Platform]
 
     public let userOptions: [String]
     public let globalCopts: [String]
     public let minIosPlatform: String?
     public let depsPrefix: String
     public let podsRoot: String
-    public let dynamicFrameworks: Bool
+    public let useFrameworks: Bool
 
     public init(podName: String = "",
                 subspecs: [String] = [],
                 podspecPath: String = "",
                 sourcePath: String = "",
+                platforms: [Platform] = [.ios],
                 userOptions: [String] = [],
                 globalCopts: [String] = [],
                 minIosPlatform: String? = nil,
@@ -71,12 +95,13 @@ public struct BasicBuildOptions: BuildOptions {
         self.subspecs = subspecs
         self.podspecPath = podspecPath
         self.sourcePath = sourcePath
+        self.platforms = platforms
         self.userOptions = userOptions
         self.globalCopts = globalCopts
         self.minIosPlatform = minIosPlatform
         self.depsPrefix = depsPrefix
         self.podsRoot = podsRoot
-        self.dynamicFrameworks = dynamicFrameworks
+        self.useFrameworks = dynamicFrameworks
     }
 
     public static let empty = BasicBuildOptions(podName: "")

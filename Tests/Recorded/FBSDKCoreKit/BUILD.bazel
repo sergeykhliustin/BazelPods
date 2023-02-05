@@ -116,8 +116,7 @@ apple_framework(
     ":FBSDKCoreKit_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "tvos": "10.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [

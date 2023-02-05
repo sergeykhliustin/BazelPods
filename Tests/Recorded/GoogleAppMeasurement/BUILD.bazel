@@ -70,9 +70,7 @@ apple_framework(
   link_dynamic = False,
   testonly = False,
   platforms = {
-    "ios": "10.0",
-    "osx": "10.12",
-    "tvos": "12.0"
+    "ios": "10.0"
   },
   deps = [
     "//Tests/Pods/GoogleUtilities",

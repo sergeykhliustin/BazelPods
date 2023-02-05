@@ -89,6 +89,19 @@ struct MultiPlatform<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAw
                                 tvos: tvos.map(transform))
     }
 
+    func platform(_ platform: Platform) -> T? {
+        switch platform {
+        case .ios:
+            return ios
+        case .osx:
+            return osx
+        case .tvos:
+            return tvos
+        case .watchos:
+            return watchos
+        }
+    }
+
     func toStarlark() -> StarlarkNode {
         precondition(ios != nil || osx != nil || watchos != nil || tvos != nil, "MultiPlatform empty can't be rendered")
 
@@ -204,6 +217,10 @@ struct AttrSet<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAwarenes
                 tvos: AttrTuple(self.multi.tvos, other.multi.tvos)
             )
         )
+    }
+
+    func platform(_ platform: Platform) -> T? {
+        return unpackToMulti().multi.platform(platform)
     }
 
     static var empty: AttrSet<T> { return AttrSet(basic: nil, multi: MultiPlatform.empty) }
@@ -397,6 +414,43 @@ extension PodSpec {
                     }
                 })
             }
+    }
+
+    func getFilesNodes(subspecs: [PodSpec] = [],
+                       includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
+                       excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
+                       fileTypes: Set<String>,
+                       options: BuildOptions) -> AttrSet<GlobNode> {
+        let (implFiles, implExcludes) = getFiles(subspecs: subspecs,
+                                                 includesKeyPath: includesKeyPath,
+                                                 excludesKeyPath: excludesKeyPath,
+                                                 fileTypes: fileTypes,
+                                                 options: options)
+        
+        return implFiles.zip(implExcludes).map {
+            GlobNode(include: .left($0.first?.sorted() ?? []), exclude: .left($0.second?.sorted() ?? []))
+        }
+    }
+
+    func getFiles(subspecs: [PodSpec] = [],
+                  includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
+                  excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
+                  fileTypes: Set<String>,
+                  options: BuildOptions) -> (includes: AttrSet<Set<String>>, excludes: AttrSet<Set<String>>) {
+        let includePattern = self.collectAttribute(with: subspecs, keyPath: includesKeyPath)
+        let depsIncludes = extractFiles(fromPattern: includePattern, includingFileTypes: fileTypes, options: options)
+            .map({ Set($0) })
+
+        let depsExcludes: AttrSet<Set<String>>
+        if let excludesKeyPath = excludesKeyPath {
+            let excludesPattern = self.collectAttribute(with: subspecs, keyPath: excludesKeyPath)
+            depsExcludes = extractFiles(fromPattern: excludesPattern, includingFileTypes: fileTypes, options: options)
+                .map({ Set($0) })
+        } else {
+            depsExcludes = .empty
+        }
+        
+        return (depsIncludes, depsExcludes)
     }
 }
 

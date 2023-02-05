@@ -143,11 +143,11 @@ public class Glob: Collection {
                 }
             } catch {
                 directories = []
-                fputs("Error parsing file system item: \(error)", __stderrp)
+                log_debug("Error parsing file system item: \(error)")
             }
         } else {
             directories = []
-            fputs("Error parsing file system item: EMPTY\n", __stderrp)
+            log_debug("Error parsing file system item: EMPTY\n")
         }
 
         if behavior.includesFilesFromRootOfGlobstar {
@@ -540,6 +540,20 @@ public func extractBundles(patterns: [String], options: BuildOptions) -> [String
             return result
         }.values
     )
+}
+
+public func extractPodGlob(patterns: [String], options: BuildOptions) -> [String] {
+    patterns.reduce([String](), { partialResult, pattern in
+        var result = partialResult
+        let absolutePattern = options.podTargetAbsoluteRoot.appendingPath(pattern)
+        let paths = podGlob(pattern: absolutePattern)
+            .map({
+                $0.deletingSuffix("/").deletingPrefix(options.podTargetAbsoluteRoot).deletingPrefix("/")
+            })
+            .filter({ !$0.isEmpty })
+        result.append(contentsOf: paths)
+        return result
+    })
 }
 
 // Glob with the semantics of pod `source_file` globs.

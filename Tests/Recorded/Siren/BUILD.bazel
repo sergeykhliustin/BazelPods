@@ -116,8 +116,7 @@ apple_framework(
     ":Siren_InfoPlist"
   ],
   platforms = {
-    "ios": "13.0",
-    "tvos": "13.0"
+    "ios": "13.0"
   },
   srcs = glob(
     [

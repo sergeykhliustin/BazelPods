@@ -70,8 +70,7 @@ apple_framework(
   link_dynamic = False,
   testonly = False,
   platforms = {
-    "ios": "11.4",
-    "tvos": "10.2"
+    "ios": "11.4"
   },
   vendored_xcframeworks = [
     {

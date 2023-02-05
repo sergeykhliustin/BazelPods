@@ -71,9 +71,7 @@ apple_framework(
   link_dynamic = False,
   testonly = False,
   platforms = {
-    "ios": "10.0",
-    "tvos": "9.0",
-    "watchos": "2.2"
+    "ios": "10.0"
   },
   deps = [
     "//Tests/Pods/R.swift.Library"

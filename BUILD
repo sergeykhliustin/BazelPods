@@ -82,3 +82,22 @@ swift_library(
     deps = [":CompilerCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
     copts = ["-swift-version", "5"],
 )
+
+# Analyzer
+
+macos_command_line_application(
+    name = "Analyzer",
+    minimum_os_version = "10.11",
+    deps = [":AnalyzerLib"],
+    visibility = ["//xcodeproj:__pkg__"]
+)
+
+swift_library(
+    name = "AnalyzerLib",
+    srcs = glob([
+        "Sources/Analyzer/**/*.swift",
+        "Sources/Shared/**/*.swift"
+    ]),
+    deps = [":CompilerCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
+    copts = ["-swift-version", "5"],
+)

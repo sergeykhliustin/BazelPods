@@ -116,10 +116,7 @@ apple_framework(
     ":Nuke_InfoPlist"
   ],
   platforms = {
-    "ios": "11.0",
-    "osx": "10.13",
-    "tvos": "11.0",
-    "watchos": "4.0"
+    "ios": "11.0"
   },
   srcs = glob(
     [

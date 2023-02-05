@@ -116,9 +116,7 @@ apple_framework(
     ":Charts_InfoPlist"
   ],
   platforms = {
-    "ios": "12.0",
-    "osx": "10.13",
-    "tvos": "12.0"
+    "ios": "12.0"
   },
   srcs = glob(
     [

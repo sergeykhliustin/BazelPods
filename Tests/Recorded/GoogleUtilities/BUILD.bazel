@@ -115,10 +115,7 @@ apple_framework(
     ":GoogleUtilities_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "osx": "10.12",
-    "tvos": "10.0",
-    "watchos": "6.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [

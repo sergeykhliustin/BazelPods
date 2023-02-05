@@ -21,17 +21,9 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let loadNode = "load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')"
 
     let name: String
-    let version: String
-    let moduleName: AttrSet<String>
-    var linkDynamic: Bool
-    var testonly: Bool
-    var infoplists: [String] = []
-    let platforms: [String: String]?
-    let swiftVersion: AttrSet<String?>
-
-    let sourceFiles: AttrSet<GlobNode>
-    let publicHeaders: AttrSet<GlobNode>
-    let privateHeaders: AttrSet<GlobNode>
+    
+    let info: BaseInfoAnalyzerResult
+    let sources: SourcesAnalyzerResult
 
     // Resource files
     let resources: AttrSet<[String]>
@@ -59,37 +51,23 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let swiftCopts: [String]
     let linkOpts: [String]
 
-    init(spec: PodSpec,
+    var linkDynamic: Bool
+    var testonly: Bool
+    var infoplists: [String] = []
+
+    init(info: BaseInfoAnalyzerResult,
+         sources: SourcesAnalyzerResult,
+         spec: PodSpec,
          subspecs: [PodSpec],
          deps: Set<String> = [],
          conditionalDeps: [String: [Arch]] = [:],
          dataDeps: Set<String> = [],
          options: BuildOptions) {
 
-        let podName = spec.name
-        self.name = podName
-        self.version = spec.version ?? "1.0"
-        self.moduleName = Self.resolveModuleName(spec: spec)
-        self.platforms = options.resolvePlatforms(spec.platforms)
-        self.swiftVersion = Self.resolveSwiftVersion(spec: spec)
+        self.name = info.name
 
-        sourceFiles = Self.getFilesNodes(from: spec,
-                                         subspecs: subspecs,
-                                         includesKeyPath: \.sourceFiles,
-                                         excludesKeyPath: \.excludeFiles,
-                                         fileTypes: AnyFileTypes,
-                                         options: options)
-        publicHeaders = Self.getFilesNodes(from: spec,
-                                           subspecs: subspecs,
-                                           includesKeyPath: \.publicHeaders,
-                                           excludesKeyPath: \.privateHeaders,
-                                           fileTypes: HeaderFileTypes,
-                                           options: options)
-        privateHeaders = Self.getFilesNodes(from: spec,
-                                            subspecs: subspecs,
-                                            includesKeyPath: \.privateHeaders,
-                                            fileTypes: HeaderFileTypes,
-                                            options: options)
+        self.info = info
+        self.sources = sources
 
         let resources = spec.collectAttribute(with: subspecs, keyPath: \.resources).unpackToMulti()
         self.resources = resources.map({ value in
@@ -103,7 +81,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
             .map({
                 $0.map({
-                    getDependencyName(podDepName: $0, podName: podName, options: options)
+                    getDependencyName(podDepName: $0, podName: info.name, options: options)
                 }).filter({ !($0.hasPrefix(":") && !$0.hasPrefix(options.depsPrefix)) })
             })
 
@@ -135,11 +113,12 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.swiftCopts = xcconfigParser.swiftCopts
         self.linkOpts = xcconfigParser.linkOpts
 
-        self.linkDynamic = options.dynamicFrameworks && sourceFiles.multi.ios?.isEmpty == false && !spec.staticFramework
         self.testonly = (sdkFrameworks <> weakSdkFrameworks)
             .trivialize(into: false, { result, value in
                 result = result || value.contains("XCTest")
         })
+
+        self.linkDynamic = sources.linkDynamic
     }
 
     mutating func add(configurableKey: String, value: Any) {
@@ -270,21 +249,11 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             }
         }
 
-        // TODO: Make headers conditional
-        let publicHeaders = (self.publicHeaders.multi.ios ?? .empty)
-        let privateHeaders = self.privateHeaders.multi.ios ?? .empty
-
-        // TODO: Make sources conditional
-        let sourceFiles = self.sourceFiles.multi.ios.map({
-            GlobNode(include: $0.include)
-        }) ?? .empty
-
         let resourceBundles = (self.resourceBundles.multi.ios ?? [:]).mapValues({
             GlobNode(include: $0.sorted())
         })
 
-        let moduleName = moduleName.unpackToMulti().multi.ios ?? ""
-        let bundleId = "org.cocoapods.\(name)"
+        let bundleId = "org.cocoapods.\(info.name)"
 
         let vendoredXCFrameworks = vendoredXCFrameworks.multi.ios ?? []
         let vendoredStaticFrameworks = vendoredStaticFrameworks.multi.ios ?? []
@@ -292,16 +261,16 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
         let lines: [StarlarkFunctionArgument] = [
             .named(name: "name", value: name.toStarlark()),
-            .named(name: "module_name", value: moduleName.toStarlark()),
+            .named(name: "module_name", value: info.moduleName.toStarlark()),
             .named(name: "bundle_id", value: bundleId.toStarlark()),
-            .named(name: "swift_version", value: swiftVersion.toStarlark()),
+            .named(name: "swift_version", value: info.swiftVersion.toStarlark()),
             .named(name: "link_dynamic", value: linkDynamic.toStarlark()),
             .named(name: "testonly", value: testonly.toStarlark()),
             .named(name: "infoplists", value: infoplists.toStarlark()),
-            .named(name: "platforms", value: platforms.toStarlark()),
-            .named(name: "srcs", value: sourceFiles.toStarlark()),
-            .named(name: "public_headers", value: publicHeaders.toStarlark()),
-            .named(name: "private_headers", value: privateHeaders.toStarlark()),
+            .named(name: "platforms", value: info.platforms.toStarlark()),
+            .named(name: "srcs", value: sources.sourceFiles.toStarlark()),
+            .named(name: "public_headers", value: sources.publicHeaders.toStarlark()),
+            .named(name: "private_headers", value: sources.privateHeaders.toStarlark()),
             .named(name: "data", value: packData()),
             .named(name: "resource_bundles", value: resourceBundles.toStarlark()),
             .named(name: "deps", value: deps.toStarlark()),
@@ -383,45 +352,5 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             }
             return nil
         }
-    }
-
-    private static func getFilesNodes(from spec: PodSpec,
-                                      subspecs: [PodSpec] = [],
-                                      includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
-                                      excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
-                                      fileTypes: Set<String>,
-                                      options: BuildOptions) -> AttrSet<GlobNode> {
-        let (implFiles, implExcludes) = Self.getFiles(from: spec,
-                                                      subspecs: subspecs,
-                                                      includesKeyPath: includesKeyPath,
-                                                      excludesKeyPath: excludesKeyPath,
-                                                      fileTypes: fileTypes,
-                                                      options: options)
-
-        return implFiles.zip(implExcludes).map {
-            GlobNode(include: .left($0.first?.sorted() ?? []), exclude: .left($0.second?.sorted() ?? []))
-        }
-    }
-
-    private static func getFiles(from spec: PodSpec,
-                                 subspecs: [PodSpec] = [],
-                                 includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
-                                 excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
-                                 fileTypes: Set<String>,
-                                 options: BuildOptions) -> (includes: AttrSet<Set<String>>, excludes: AttrSet<Set<String>>) {
-        let includePattern = spec.collectAttribute(with: subspecs, keyPath: includesKeyPath)
-        let depsIncludes = extractFiles(fromPattern: includePattern, includingFileTypes: fileTypes, options: options)
-            .map({ Set($0) })
-
-        let depsExcludes: AttrSet<Set<String>>
-        if let excludesKeyPath = excludesKeyPath {
-            let excludesPattern = spec.collectAttribute(with: subspecs, keyPath: excludesKeyPath)
-            depsExcludes = extractFiles(fromPattern: excludesPattern, includingFileTypes: fileTypes, options: options)
-                .map({ Set($0) })
-        } else {
-            depsExcludes = .empty
-        }
-
-        return (depsIncludes, depsExcludes)
     }
 }

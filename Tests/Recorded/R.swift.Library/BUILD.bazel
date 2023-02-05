@@ -116,9 +116,7 @@ apple_framework(
     ":R.swift.Library_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "tvos": "9.0",
-    "watchos": "2.2"
+    "ios": "10.0"
   },
   srcs = glob(
     [

@@ -47,14 +47,18 @@ public struct PodBuildFile: StarlarkConvertible {
         )
     }
 
-    static func makeSourceLibs(spec: PodSpec,
+    static func makeSourceLibs(info: BaseInfoAnalyzerResult,
+                               sources: SourcesAnalyzerResult,
+                               spec: PodSpec,
                                subspecs: [PodSpec] = [],
                                deps: [BazelTarget] = [],
                                conditionalDeps: [String: [Arch]] = [:],
                                dataDeps: [BazelTarget] = [],
                                options: BuildOptions) -> [BazelTarget] {
         var result: [BazelTarget] = []
-        var framework = AppleFramework(spec: spec,
+        var framework = AppleFramework(info: info,
+                                       sources: sources,
+                                       spec: spec,
                                        subspecs: subspecs,
                                        deps: Set((deps + dataDeps).map({ $0.name })),
                                        conditionalDeps: conditionalDeps,
@@ -87,6 +91,14 @@ public struct PodBuildFile: StarlarkConvertible {
     static func makeConvertables(fromPodspec podSpec: PodSpec,
                                  buildOptions: BuildOptions = BasicBuildOptions.empty) -> [StarlarkConvertible] {
         let subspecs = podSpec.selectedSubspecs(subspecs: buildOptions.subspecs)
+        let baseInfo = BaseInfoAnalyzer(platform: .ios,
+                                        spec: podSpec,
+                                        subspecs: subspecs,
+                                        options: buildOptions).result
+        let sourcesInfo = SourcesAnalyzer(platform: .ios,
+                                          spec: podSpec,
+                                          subspecs: subspecs,
+                                          options: buildOptions).result
 
         let extraDeps: [BazelTarget] = makeResourceBundles(spec: podSpec, subspecs: subspecs, options: buildOptions)
         let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
@@ -106,7 +118,9 @@ public struct PodBuildFile: StarlarkConvertible {
             return partialResult
         }
 
-        let sourceLibs = makeSourceLibs(spec: podSpec,
+        let sourceLibs = makeSourceLibs(info: baseInfo,
+                                        sources: sourcesInfo,
+                                        spec: podSpec,
                                         subspecs: subspecs,
                                         deps: extraDeps.filter({ !($0 is InfoPlist) }),
                                         conditionalDeps: conditionalDeps,

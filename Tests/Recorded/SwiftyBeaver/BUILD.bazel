@@ -116,10 +116,7 @@ apple_framework(
     ":SwiftyBeaver_InfoPlist"
   ],
   platforms = {
-    "ios": "13.4",
-    "osx": "10.15.4",
-    "tvos": "13.4",
-    "watchos": "6.2"
+    "ios": "13.4"
   },
   srcs = glob(
     [

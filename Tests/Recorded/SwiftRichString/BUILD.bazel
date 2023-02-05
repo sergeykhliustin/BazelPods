@@ -116,10 +116,7 @@ apple_framework(
     ":SwiftRichString_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "osx": "10.11",
-    "tvos": "9.2",
-    "watchos": "2.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [

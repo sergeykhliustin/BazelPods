@@ -52,6 +52,7 @@ let ObjcLikeFileTypes = Set([".m", ".c", ".s", ".S"])
 let CppLikeFileTypes  = Set([".mm", ".cpp", ".cxx", ".cc"])
 let SwiftLikeFileTypes  = Set([".swift"])
 let HeaderFileTypes = Set([".h", ".hpp", ".hxx"])
+let ObjcCppLikeFileTypes = ObjcLikeFileTypes.union(CppLikeFileTypes)
 let AnyFileTypes = ObjcLikeFileTypes
     .union(CppLikeFileTypes)
     .union(SwiftLikeFileTypes)

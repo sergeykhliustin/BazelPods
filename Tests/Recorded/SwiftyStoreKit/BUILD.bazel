@@ -116,10 +116,7 @@ apple_framework(
     ":SwiftyStoreKit_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "osx": "10.10",
-    "tvos": "9.0",
-    "watchos": "6.2"
+    "ios": "10.0"
   },
   srcs = glob(
     [

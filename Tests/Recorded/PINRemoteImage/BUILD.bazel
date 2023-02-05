@@ -115,8 +115,7 @@ apple_framework(
     ":PINRemoteImage_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "tvos": "9.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [

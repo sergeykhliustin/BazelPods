@@ -115,8 +115,7 @@ apple_framework(
     ":Bagel_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "tvos": "11.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [

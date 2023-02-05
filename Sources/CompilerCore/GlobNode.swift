@@ -30,6 +30,14 @@ public struct GlobNode: StarlarkConvertible {
         self.exclude = exclude.simplify()
     }
 
+    func map(_ transform: (String) -> String) -> GlobNode {
+        return GlobNode(include: include.map({ $0.map(transform) }), exclude: exclude.map({ $0.map(transform) }))
+    }
+
+    func absolutePaths(_ options: BuildOptions) -> GlobNode {
+        return map({ options.podTargetAbsoluteRoot.appendingPath($0) })
+    }
+
     public func toStarlark() -> StarlarkNode {
         // An empty glob doesn't need to be rendered
         guard isEmpty == false else {
@@ -199,28 +207,29 @@ extension GlobNode: Monoid {
 
 extension GlobNode {
     /// Evaluates the glob for all the sources on disk
-    public func sourcesOnDisk() -> Set<String> {
-        let includedFiles = self.include.reduce(into: Set<String>()) { accum, next in
+    public func sourcesOnDisk(_ options: BuildOptions) -> Set<String> {
+        let absoluteSelf = self.absolutePaths(options)
+        let includedFiles = absoluteSelf.include.reduce(into: Set<String>()) { accum, next in
             switch next {
             case .left(let setVal):
                  setVal.forEach { podGlob(pattern: $0).forEach { accum.insert($0) } }
             case .right(let globVal):
-                 globVal.sourcesOnDisk().forEach { accum.insert($0) }
+                 globVal.sourcesOnDisk(options).forEach { accum.insert($0) }
             }
         }
 
-        let excludedFiles = self.exclude.reduce(into: Set<String>()) { accum, next in
+        let excludedFiles = absoluteSelf.exclude.reduce(into: Set<String>()) { accum, next in
             switch next {
             case .left(let setVal):
                  setVal.forEach { podGlob(pattern: $0).forEach { accum.insert($0) } }
             case .right(let globVal):
-                 globVal.sourcesOnDisk().forEach { accum.insert($0) }
+                 globVal.sourcesOnDisk(options).forEach { accum.insert($0) }
             }
         }
         return includedFiles.subtracting(excludedFiles)
     }
 
-    func hasSourcesOnDisk() -> Bool {
-        return sourcesOnDisk().count > 0
+    func hasSourcesOnDisk(_ options: BuildOptions) -> Bool {
+        return sourcesOnDisk(options).count > 0
     }
 }
