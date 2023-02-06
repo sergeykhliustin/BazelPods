@@ -85,7 +85,7 @@ public struct ResourcesAnalyzer {
             var result = partialResult
             let absolutePattern = options.podTargetAbsoluteRoot.appendingPath(pattern)
             podGlob(pattern: absolutePattern)
-                .map({ $0.deletingSuffix("/").deletingPrefix(options.podTargetAbsoluteRoot).deletingPrefix("/") })
+                .map({ options.relativePath(from: $0) })
                 .filter({ !$0.isEmpty })
                 .forEach({
                     if result[$0.lastPath] != nil {

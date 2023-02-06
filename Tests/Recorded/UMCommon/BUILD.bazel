@@ -75,7 +75,23 @@ apple_framework(
   },
   deps = [
     "//Tests/Pods/UMDevice"
-  ],
+  ] + select(
+    {
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":UMCommon_UMCommon_VendoredFramework"
+      ],
+      ":ios_armv7": [
+        ":UMCommon_UMCommon_VendoredFramework"
+      ],
+      ":ios_i386": [
+        ":UMCommon_UMCommon_VendoredFramework"
+      ],
+      ":ios_x86_64": [
+        ":UMCommon_UMCommon_VendoredFramework"
+      ]
+    }
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -111,10 +127,10 @@ apple_framework(
   ]
 )
 apple_static_framework_import(
-  name = "UMCommon_*_VendoredFramework",
+  name = "UMCommon_UMCommon_VendoredFramework",
   framework_imports = glob(
     [
-      "UMCommon_7.3.8/*.framework/**"
+      "UMCommon_7.3.8/UMCommon.framework/**"
     ]
   ),
   visibility = [

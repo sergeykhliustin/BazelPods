@@ -58,6 +58,12 @@ public protocol BuildOptions {
 }
 
 extension BuildOptions {
+    func relativePath(from absolute: String) -> String {
+        return absolute
+            .deletingSuffix("/")
+            .deletingPrefix(podTargetAbsoluteRoot)
+            .deletingPrefix("/")
+    }
     func defaultVersion(for platform: Platform) -> String {
         switch platform {
         case .ios:

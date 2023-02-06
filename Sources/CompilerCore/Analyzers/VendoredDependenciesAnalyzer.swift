@@ -46,10 +46,10 @@ public struct VendoredDependenciesAnalyzer {
 
     private func run() -> Result {
         let frameworksAttr = spec
-            .collectAttribute(with: subspecs, keyPath: \.frameworks)
+            .collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
             .platform(platform) ?? []
-        let frameworks = frameworksAttr.filter({ $0.pathExtention == ".framework" })
-        let xcFrameworks = frameworksAttr.filter({ $0.pathExtention == ".xcframework" })
+        let frameworks = frameworksAttr.filter({ $0.pathExtention == "framework" })
+        let xcFrameworks = frameworksAttr.filter({ $0.pathExtention == "xcframework" })
         let libraries = spec
             .collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
             .platform(platform) ?? []
@@ -66,18 +66,23 @@ public struct VendoredDependenciesAnalyzer {
             }
             return result
         }
-        let resultFrameworks = frameworks.reduce([Result.Framework]()) { partialResult, path in
+        let resultFrameworks = frameworks.reduce([Result.Framework]()) { partialResult, pattern in
             var result = partialResult
-            let name = path.deletingPathExtension.lastPath
-            let absolutePath = options.podTargetAbsoluteRoot.appendingPath(path)
-            let executable = absolutePath.appendingPath(name)
-            let dynamic = isDynamicFramework(executable)
-            let archs = Arch
-                .archs(forExecutable: executable)
-                .filter({ platformArchs.contains($0) })
-            if !archs.isEmpty {
-                result.append(.init(name: name, path: path, archs: archs, dynamic: dynamic))
-            }
+            podGlob(pattern: options.podTargetAbsoluteRoot.appendingPath(pattern)).forEach({ absolutePath in
+                let name = absolutePath.deletingPathExtension.lastPath
+                let executable = absolutePath.appendingPath(name)
+                let dynamic = isDynamicFramework(executable)
+                let archs = Arch
+                    .archs(forExecutable: executable)
+                    .filter({ platformArchs.contains($0) })
+                if !archs.isEmpty {
+                    result.append(.init(name: name,
+                                        path: options.relativePath(from: absolutePath),
+                                        archs: archs,
+                                        dynamic: dynamic))
+                }
+            })
+
             return result
         }
 

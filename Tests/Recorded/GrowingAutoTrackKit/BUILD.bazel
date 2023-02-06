@@ -75,7 +75,23 @@ apple_framework(
   },
   deps = [
     "//Tests/Pods/GrowingCoreKit"
-  ],
+  ] + select(
+    {
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":GrowingAutoTrackKit_GrowingAutoTrackKit_VendoredFramework"
+      ],
+      ":ios_armv7": [
+        ":GrowingAutoTrackKit_GrowingAutoTrackKit_VendoredFramework"
+      ],
+      ":ios_i386": [
+        ":GrowingAutoTrackKit_GrowingAutoTrackKit_VendoredFramework"
+      ],
+      ":ios_x86_64": [
+        ":GrowingAutoTrackKit_GrowingAutoTrackKit_VendoredFramework"
+      ]
+    }
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -110,10 +126,10 @@ apple_framework(
   ]
 )
 apple_static_framework_import(
-  name = "GrowingAutoTrackKit_*_VendoredFramework",
+  name = "GrowingAutoTrackKit_GrowingAutoTrackKit_VendoredFramework",
   framework_imports = glob(
     [
-      "GrowingIO-iOS-AutoTrackKit/*.framework/**"
+      "GrowingIO-iOS-AutoTrackKit/GrowingAutoTrackKit.framework/**"
     ]
   ),
   visibility = [

@@ -90,12 +90,26 @@ public struct PodBuildFile: StarlarkConvertible {
         return (targets, infoplists)
     }
 
-//    static func makeVendoredTargets(info: BaseInfoAnalyzerResult,
-//                                    vendored: VendoredDependenciesAnalyzer.Result) {
-//        var targets = vendored.libraries.reduce(([BazelTarget](), [String: [Arch]]())) { partialResult, library in
-//            let name = "\(info.name)"
-//        }
-//    }
+    static func makeVendoredTargets(info: BaseInfoAnalyzerResult,
+                                    vendored: VendoredDependenciesAnalyzer.Result) -> (targets: [BazelTarget], conditions: [String: [Arch]]) {
+        var result = vendored.libraries.reduce(([BazelTarget](), [String: [Arch]]())) { partialResult, library in
+            var targets = partialResult.0
+            var conditions = partialResult.1
+            let name = "\(info.moduleName)_\(library.name)_VendoredLibrary"
+            conditions[name] = library.archs
+            targets.append(ObjcImport(name: name, library: library.path))
+            return (targets, conditions)
+        }
+        result = vendored.frameworks.reduce(result, { partialResult, framework in
+            var targets = partialResult.0
+            var conditions = partialResult.1
+            let name = "\(info.moduleName)_\(framework.name)_VendoredFramework"
+            conditions[name] = framework.archs
+            targets.append(AppleFrameworkImport(name: name, isDynamic: framework.dynamic, isXCFramework: false, frameworkImport: framework.path))
+            return (targets, conditions)
+        })
+        return result
+    }
 
     static func makeConvertables(fromPodspec podSpec: PodSpec,
                                  buildOptions: BuildOptions = BasicBuildOptions.empty) -> [StarlarkConvertible] {
@@ -124,23 +138,7 @@ public struct PodBuildFile: StarlarkConvertible {
                                                             options: buildOptions).result
 
         let (resourceTargets, resourceInfoplists) = makeResourceBundles(info: baseInfo, resources: resourcesInfo)
-
-        let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
-        let libraries = ObjcImport.vendoredLibraries(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
-        let conditionalDeps = (frameworks + libraries).reduce([String: [Arch]]()) { partialResult, target in
-            if let target = target as? AppleFrameworkImport {
-                var result = partialResult
-                let path = frameworkExecutablePath(target.frameworkImport, options: buildOptions)
-                result[target.name] = Arch.archs(forExecutable: path)
-                return result
-            } else if let target = target as? ObjcImport {
-                var result = partialResult
-                let path = URL(fileURLWithPath: target.library, relativeTo: URL(fileURLWithPath: buildOptions.podTargetAbsoluteRoot)).path
-                result[target.name] = Arch.archs(forExecutable: path)
-                return result
-            }
-            return partialResult
-        }
+        let (vendoredTargets, conditions) = makeVendoredTargets(info: baseInfo, vendored: vendoredDepsInfo)
 
         let (sourceTargets, infoplists) = makeSourceLibs(info: baseInfo,
                                                          sources: sourcesInfo,
@@ -149,13 +147,12 @@ public struct PodBuildFile: StarlarkConvertible {
                                                          spec: podSpec,
                                                          subspecs: subspecs,
                                                          deps: resourceTargets,
-                                                         conditionalDeps: conditionalDeps,
+                                                         conditionalDeps: conditions,
                                                          options: buildOptions)
         var output: [BazelTarget] = []
         output += sourceTargets
         output += resourceTargets
-        output += frameworks
-        output += libraries
+        output += vendoredTargets
         output += infoplists
         output += resourceInfoplists
 
