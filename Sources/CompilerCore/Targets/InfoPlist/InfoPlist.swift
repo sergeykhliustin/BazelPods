@@ -59,7 +59,7 @@ final class InfoPlist: GenRule {
         self.init(name: name, data: data)
     }
 
-    convenience init(framework info: BaseInfoAnalyzerResult) {
+    convenience init(name: String, framework info: BaseInfoAnalyzerResult) {
         let data = PlistData(
             CFBundleIdentifier: "org.cocoapods.\(info.name)",
             CFBundleName: info.name,
@@ -69,6 +69,6 @@ final class InfoPlist: GenRule {
             CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS], // TODO: Support platforms
             UIDeviceFamily: [1, 2] // TODO: Investigate
         )
-        self.init(name: info.name + "_InfoPlist", data: data)
+        self.init(name: name, data: data)
     }
 }

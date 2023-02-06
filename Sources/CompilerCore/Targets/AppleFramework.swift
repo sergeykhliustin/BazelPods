@@ -25,6 +25,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let info: BaseInfoAnalyzerResult
     let sources: SourcesAnalyzerResult
     let resources: ResourcesAnalyzer.Result
+    let infoplists: [String]
 
     var deps: AttrSet<[String]>
     var conditionalDeps: [String: [Arch]]
@@ -47,11 +48,12 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
     var linkDynamic: Bool
     var testonly: Bool
-    var infoplists: [String] = []
 
-    init(info: BaseInfoAnalyzerResult,
+    init(name: String,
+         info: BaseInfoAnalyzerResult,
          sources: SourcesAnalyzerResult,
          resources: ResourcesAnalyzer.Result,
+         infoplists: [String],
          spec: PodSpec,
          subspecs: [PodSpec],
          deps: Set<String> = [],
@@ -59,11 +61,12 @@ struct AppleFramework: BazelTarget, UserConfigurable {
          dataDeps: Set<String> = [],
          options: BuildOptions) {
 
-        self.name = info.name
+        self.name = name
 
         self.info = info
         self.sources = sources
         self.resources = resources
+        self.infoplists = infoplists
 
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
             .map({
@@ -167,10 +170,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         }
     }
 
-    mutating func addInfoPlist(_ target: BazelTarget) {
-        self.infoplists.append(":" + target.name)
-    }
-
     func toStarlark() -> StarlarkNode {
         let basicSwiftDefines: StarlarkNode =
             .functionCall(name: "select",
@@ -245,7 +244,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             .named(name: "swift_version", value: info.swiftVersion.toStarlark()),
             .named(name: "link_dynamic", value: linkDynamic.toStarlark()),
             .named(name: "testonly", value: testonly.toStarlark()),
-            .named(name: "infoplists", value: infoplists.toStarlark()),
+            .named(name: "infoplists", value: infoplists.map({ ":" + $0 }).toStarlark()),
             .named(name: "platforms", value: info.platforms.toStarlark()),
             .named(name: "srcs", value: sources.sourceFiles.toStarlark()),
             .named(name: "public_headers", value: sources.publicHeaders.toStarlark()),

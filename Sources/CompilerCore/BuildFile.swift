@@ -57,21 +57,23 @@ public struct PodBuildFile: StarlarkConvertible {
                                dataDeps: [BazelTarget] = [],
                                options: BuildOptions) -> [BazelTarget] {
         var result: [BazelTarget] = []
-        var framework = AppleFramework(info: info,
+        var infoplists: [InfoPlist] = []
+        if sources.linkDynamic {
+            let ruleName = "\(info.name)_InfoPlist"
+            infoplists.append(InfoPlist(name: ruleName, framework: info))
+        }
+        let framework = AppleFramework(name: info.name,
+                                       info: info,
                                        sources: sources,
                                        resources: resources,
+                                       infoplists: infoplists.map({ $0.name }),
                                        spec: spec,
                                        subspecs: subspecs,
                                        deps: Set((deps + dataDeps).map({ $0.name })),
                                        conditionalDeps: conditionalDeps,
                                        options: options)
-        if sources.linkDynamic {
-            let infoplist = InfoPlist(framework: info)
-            framework.addInfoPlist(infoplist)
-            result.append(infoplist)
-        }
+        result.append(contentsOf: infoplists)
         result.append(framework)
-
         return result
     }
 

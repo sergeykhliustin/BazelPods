@@ -499,63 +499,6 @@ public func pattern(fromPattern pattern: String, includingFileTypes fileTypes: S
     }
 }
 
-public func extractResources(patterns: Set<String>) -> [String] {
-    return extractResources(patterns: Array(patterns)).sorted()
-}
-
-public func extractResources(patterns: [String]) -> [String] {
-    return patterns.flatMap { (p: String) -> [String] in
-        pattern(fromPattern: p, includingFileTypes: []).map({
-            var components = $0.components(separatedBy: "/")
-            if let last = components.last {
-                var fixed = last
-                    .replacingOccurrences(of: "xcassets", with: "xcassets/**")
-//                    .replacingOccurrences(of: "lproj", with: "lproj")
-                if fixed.isEmpty || fixed == "*" {
-                    fixed = "**"
-                }
-                components.removeLast()
-                components.append(fixed)
-            }
-            return components.joined(separator: "/")
-        })
-    }
-}
-
-public func extractBundles(patterns: [String], options: BuildOptions) -> [String] {
-    Array(
-        patterns.reduce([String: String]()) { partialResult, pattern in
-            var result = partialResult
-            let absolutePattern = options.podTargetAbsoluteRoot.appendingPath(pattern)
-            podGlob(pattern: absolutePattern)
-                .map({ $0.deletingSuffix("/").deletingPrefix(options.podTargetAbsoluteRoot).deletingPrefix("/") })
-                .filter({ !$0.isEmpty })
-                .forEach({
-                    if result[$0.lastPath] != nil {
-                        log_warning("duplicate bundle \($0.lastPath). Will use first matched.")
-                    } else {
-                        result[$0.lastPath] = $0
-                    }
-                })
-            return result
-        }.values
-    )
-}
-
-public func extractPodGlob(patterns: [String], options: BuildOptions) -> [String] {
-    patterns.reduce([String](), { partialResult, pattern in
-        var result = partialResult
-        let absolutePattern = options.podTargetAbsoluteRoot.appendingPath(pattern)
-        let paths = podGlob(pattern: absolutePattern)
-            .map({
-                $0.deletingSuffix("/").deletingPrefix(options.podTargetAbsoluteRoot).deletingPrefix("/")
-            })
-            .filter({ !$0.isEmpty })
-        result.append(contentsOf: paths)
-        return result
-    })
-}
-
 // Glob with the semantics of pod `source_file` globs.
 // @note the original PodSpec globs are based on the ruby glob semantics
 public func podGlob(pattern: String) -> [String] {
