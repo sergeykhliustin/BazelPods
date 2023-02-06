@@ -43,25 +43,28 @@ public struct SourcesAnalyzer {
     }
 
     private func run() -> SourcesAnalyzerResult {
-        let sourceFiles = spec.getFilesNodes(subspecs: subspecs,
-                                             includesKeyPath: \.sourceFiles,
-                                             excludesKeyPath: \.excludeFiles,
-                                             fileTypes: AnyFileTypes,
-                                             options: options)
+        let sourceFiles = getFilesNodes(spec: spec,
+                                        subspecs: subspecs,
+                                        includesKeyPath: \.sourceFiles,
+                                        excludesKeyPath: \.excludeFiles,
+                                        fileTypes: AnyFileTypes,
+                                        options: options)
             .platform(platform)
             .map({ GlobNode(include: $0.include) }) // TODO: Think about it
 
-        let publicHeaders = spec.getFilesNodes(subspecs: subspecs,
-                                               includesKeyPath: \.publicHeaders,
-                                               excludesKeyPath: \.privateHeaders,
-                                               fileTypes: HeaderFileTypes,
-                                               options: options)
+        let publicHeaders = getFilesNodes(spec: spec,
+                                          subspecs: subspecs,
+                                          includesKeyPath: \.publicHeaders,
+                                          excludesKeyPath: \.privateHeaders,
+                                          fileTypes: HeaderFileTypes,
+                                          options: options)
             .platform(platform)
 
-        let privateHeaders = spec.getFilesNodes(subspecs: subspecs,
-                                                includesKeyPath: \.privateHeaders,
-                                                fileTypes: HeaderFileTypes,
-                                                options: options)
+        let privateHeaders = getFilesNodes(spec: spec,
+                                           subspecs: subspecs,
+                                           includesKeyPath: \.privateHeaders,
+                                           fileTypes: HeaderFileTypes,
+                                           options: options)
             .platform(platform)
         let allSources = [sourceFiles, publicHeaders, privateHeaders].reduce(Set<String>()) { partialResult, node in
             guard let node else { return partialResult }
@@ -94,5 +97,45 @@ public struct SourcesAnalyzer {
             sourcesType: sourcesType,
             linkDynamic: linkDynamic
         )
+    }
+
+    func getFilesNodes(spec: PodSpec,
+                       subspecs: [PodSpec] = [],
+                       includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
+                       excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
+                       fileTypes: Set<String>,
+                       options: BuildOptions) -> AttrSet<GlobNode> {
+        let (implFiles, implExcludes) = getFiles(spec: spec,
+                                                 subspecs: subspecs,
+                                                 includesKeyPath: includesKeyPath,
+                                                 excludesKeyPath: excludesKeyPath,
+                                                 fileTypes: fileTypes,
+                                                 options: options)
+
+        return implFiles.zip(implExcludes).map {
+            GlobNode(include: .left($0.first?.sorted() ?? []), exclude: .left($0.second?.sorted() ?? []))
+        }
+    }
+
+    func getFiles(spec: PodSpec,
+                  subspecs: [PodSpec] = [],
+                  includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
+                  excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
+                  fileTypes: Set<String>,
+                  options: BuildOptions) -> (includes: AttrSet<Set<String>>, excludes: AttrSet<Set<String>>) {
+        let includePattern = spec.collectAttribute(with: subspecs, keyPath: includesKeyPath)
+        let depsIncludes = extractFiles(fromPattern: includePattern, includingFileTypes: fileTypes, options: options)
+            .map({ Set($0) })
+
+        let depsExcludes: AttrSet<Set<String>>
+        if let excludesKeyPath = excludesKeyPath {
+            let excludesPattern = spec.collectAttribute(with: subspecs, keyPath: excludesKeyPath)
+            depsExcludes = extractFiles(fromPattern: excludesPattern, includingFileTypes: fileTypes, options: options)
+                .map({ Set($0) })
+        } else {
+            depsExcludes = .empty
+        }
+
+        return (depsIncludes, depsExcludes)
     }
 }

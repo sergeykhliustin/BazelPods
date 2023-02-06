@@ -24,13 +24,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     
     let info: BaseInfoAnalyzerResult
     let sources: SourcesAnalyzerResult
-
-    // Resource files
-    let resources: AttrSet<[String]>
-    // .bundle in resource attribute
-    let bundles: AttrSet<[String]>
-    // resource_bundles attribute
-    let resourceBundles: AttrSet<[String: Set<String>]>
+    let resources: ResourcesAnalyzer.Result
 
     var deps: AttrSet<[String]>
     var conditionalDeps: [String: [Arch]]
@@ -57,6 +51,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
     init(info: BaseInfoAnalyzerResult,
          sources: SourcesAnalyzerResult,
+         resources: ResourcesAnalyzer.Result,
          spec: PodSpec,
          subspecs: [PodSpec],
          deps: Set<String> = [],
@@ -68,15 +63,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
         self.info = info
         self.sources = sources
-
-        let resources = spec.collectAttribute(with: subspecs, keyPath: \.resources).unpackToMulti()
-        self.resources = resources.map({ value in
-            value.filter({ !$0.hasSuffix(".bundle") })
-        }).map(extractResources)
-        self.bundles = resources.map({ value in
-            value.filter({ $0.hasSuffix(".bundle") })
-        }).map({ extractBundles(patterns: $0, options: options) })
-        self.resourceBundles = .empty
+        self.resources = resources
 
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
             .map({
@@ -180,10 +167,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         }
     }
 
-    var needsInfoPlist: Bool {
-        return linkDynamic && resourceBundles.multi.ios?[self.name] == nil
-    }
-
     mutating func addInfoPlist(_ target: BazelTarget) {
         self.infoplists.append(":" + target.name)
     }
@@ -249,10 +232,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             }
         }
 
-        let resourceBundles = (self.resourceBundles.multi.ios ?? [:]).mapValues({
-            GlobNode(include: $0.sorted())
-        })
-
         let bundleId = "org.cocoapods.\(info.name)"
 
         let vendoredXCFrameworks = vendoredXCFrameworks.multi.ios ?? []
@@ -272,7 +251,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             .named(name: "public_headers", value: sources.publicHeaders.toStarlark()),
             .named(name: "private_headers", value: sources.privateHeaders.toStarlark()),
             .named(name: "data", value: packData()),
-            .named(name: "resource_bundles", value: resourceBundles.toStarlark()),
             .named(name: "deps", value: deps.toStarlark()),
             .named(name: "vendored_xcframeworks", value: vendoredXCFrameworks.toStarlark()),
             .named(name: "vendored_static_frameworks", value: vendoredStaticFrameworks.toStarlark()),
@@ -305,8 +283,8 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
     private func packData() -> StarlarkNode {
         let data: StarlarkNode
-        let resources = self.resources.multi.ios ?? []
-        let bundles = self.bundles.multi.ios ?? []
+        let resources = self.resources.resources
+        let bundles = self.resources.precompiledBundles
         let resourcesNode = GlobNode(include: resources).toStarlark()
         let bundlesNode = bundles.toStarlark()
 
@@ -321,36 +299,5 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             data = StarlarkNode.expr(lhs: resourcesNode, op: "+", rhs: bundlesNode)
         }
         return data
-    }
-
-    private static func resolveModuleName(spec: PodSpec) -> AttrSet<String> {
-        let transformer: (String) -> String = {
-            $0.replacingOccurrences(of: "-", with: "_")
-        }
-        let moduleNameAttr = spec.attr(\.moduleName)
-        if moduleNameAttr.isEmpty {
-            return AttrSet(basic: transformer(spec.name))
-        }
-        return spec.attr(\.moduleName).map({
-            if let value = $0, !value.isEmpty {
-                return value
-            }
-            return transformer(spec.name)
-        })
-    }
-
-    private static func resolveSwiftVersion(spec: PodSpec) -> AttrSet<String?> {
-        return spec.attr(\.swiftVersions).map {
-            if let versions = $0?.compactMap({ Double($0) }) {
-                if versions.contains(where: { $0 >= 5.0 }) {
-                    return "5"
-                } else if versions.contains(where: { $0 >= 4.2 }) {
-                    return "4.2"
-                } else if !versions.isEmpty {
-                    return "4"
-                }
-            }
-            return nil
-        }
     }
 }

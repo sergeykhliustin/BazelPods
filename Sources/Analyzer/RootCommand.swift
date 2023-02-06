@@ -66,9 +66,13 @@ Example:
                                         podsRoot: podsRoot,
                                         dynamicFrameworks: frameworks)
 
-        let sourcesResult = SourcesAnalyzer(platform: .ios, spec: podSpec, subspecs: podSpec.selectedSubspecs(subspecs: subspecs), options: options).result
-        let baseInfoResult = BaseInfoAnalyzer(platform: .ios, spec: podSpec, subspecs: podSpec.selectedSubspecs(subspecs: subspecs), options: options).result
+        let podSubSpecs = podSpec.selectedSubspecs(subspecs: subspecs)
+
+        let sourcesResult = SourcesAnalyzer(platform: .ios, spec: podSpec, subspecs: podSubSpecs, options: options).result
+        let baseInfoResult = BaseInfoAnalyzer(platform: .ios, spec: podSpec, subspecs: podSubSpecs, options: options).result
+        let resourcesResult = ResourcesAnalyzer(platform: .ios, spec: podSpec, subspecs: podSubSpecs, options: options).result
         print(sourcesResult)
         print(baseInfoResult)
+        print(resourcesResult)
     }
 }

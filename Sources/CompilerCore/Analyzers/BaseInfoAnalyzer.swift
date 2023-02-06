@@ -16,7 +16,7 @@ public struct BaseInfoAnalyzerResult {
 }
 
 public struct BaseInfoAnalyzer {
-    private let platform: Platform
+    let platform: Platform
     private let spec: PodSpec
     private let subspecs: [PodSpec]
     private let options: BuildOptions
@@ -37,8 +37,8 @@ public struct BaseInfoAnalyzer {
 
     private func run() -> BaseInfoAnalyzerResult {
         let name = spec.name
-        let moduleName: String
         let version = spec.version ?? "1.0"
+        let moduleName: String
         if let specModuleName = spec.moduleName ?? spec.platformRepresentable(platform)?.moduleName {
             moduleName = specModuleName
         } else {

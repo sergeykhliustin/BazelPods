@@ -86,6 +86,7 @@ public class DefaultLogger: LoggerProtocol {
     }
 
     func log(_ level: LogLevel, message: @autoclosure () -> Any) {
+        guard level.rawValue >= self.level.rawValue else { return }
         var result = ""
         if let prefix {
             result += "[\(prefix)] "

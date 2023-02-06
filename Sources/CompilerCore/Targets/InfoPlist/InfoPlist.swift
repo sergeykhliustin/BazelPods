@@ -46,29 +46,29 @@ final class InfoPlist: GenRule {
         super.init(name: name, outs: ["\(name).plist"], cmd: cmd)
     }
 
-    convenience init(bundle: AppleResourceBundle, spec: PodSpec, options: BuildOptions) {
+    convenience init(name: String, resourceBundle: String, info: BaseInfoAnalyzerResult) {
         let data = PlistData(
-            CFBundleIdentifier: "org.cocoapods.\(bundle.bundleName)",
-            CFBundleName: bundle.bundleName,
-            CFBundleShortVersionString: spec.version ?? "1.0",
+            CFBundleIdentifier: "org.cocoapods.\(resourceBundle)",
+            CFBundleName: resourceBundle,
+            CFBundleShortVersionString: info.version,
             CFBundlePackageType: .BNDL,
-            MinimumOSVersion: options.resolvePlatforms(spec.platforms)["ios"],
-            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
-            UIDeviceFamily: [1, 2]
+            MinimumOSVersion: info.platforms.first?.value,
+            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS], // TODO: Support platforms
+            UIDeviceFamily: [1, 2] // TODO: Investigate
         )
-        self.init(name: bundle.name + "_InfoPlist", data: data)
+        self.init(name: name, data: data)
     }
 
-    convenience init(framework: AppleFramework, spec: PodSpec, options: BuildOptions) {
+    convenience init(framework info: BaseInfoAnalyzerResult) {
         let data = PlistData(
-            CFBundleIdentifier: "org.cocoapods.\(framework.name)",
-            CFBundleName: framework.name,
-            CFBundleShortVersionString: spec.version ?? "1.0",
+            CFBundleIdentifier: "org.cocoapods.\(info.name)",
+            CFBundleName: info.name,
+            CFBundleShortVersionString: info.version,
             CFBundlePackageType: .FMWK,
-            MinimumOSVersion: options.resolvePlatforms(spec.platforms)["ios"],
-            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS],
-            UIDeviceFamily: [1, 2]
+            MinimumOSVersion: info.platforms.first?.value,
+            CFBundleSupportedPlatforms: [.iPhoneSimulator, .iPhoneOS], // TODO: Support platforms
+            UIDeviceFamily: [1, 2] // TODO: Investigate
         )
-        self.init(name: framework.name + "_InfoPlist", data: data)
+        self.init(name: info.name + "_InfoPlist", data: data)
     }
 }

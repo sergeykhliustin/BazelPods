@@ -49,6 +49,7 @@ public struct PodBuildFile: StarlarkConvertible {
 
     static func makeSourceLibs(info: BaseInfoAnalyzerResult,
                                sources: SourcesAnalyzerResult,
+                               resources: ResourcesAnalyzer.Result,
                                spec: PodSpec,
                                subspecs: [PodSpec] = [],
                                deps: [BazelTarget] = [],
@@ -58,13 +59,14 @@ public struct PodBuildFile: StarlarkConvertible {
         var result: [BazelTarget] = []
         var framework = AppleFramework(info: info,
                                        sources: sources,
+                                       resources: resources,
                                        spec: spec,
                                        subspecs: subspecs,
                                        deps: Set((deps + dataDeps).map({ $0.name })),
                                        conditionalDeps: conditionalDeps,
                                        options: options)
-        if framework.needsInfoPlist {
-            let infoplist = InfoPlist(framework: framework, spec: spec, options: options)
+        if sources.linkDynamic {
+            let infoplist = InfoPlist(framework: info)
             framework.addInfoPlist(infoplist)
             result.append(infoplist)
         }
@@ -73,17 +75,14 @@ public struct PodBuildFile: StarlarkConvertible {
         return result
     }
 
-    static func makeResourceBundles(spec: PodSpec,
-                                    subspecs: [PodSpec] = [],
-                                    options: BuildOptions) -> [BazelTarget] {
+    static func makeResourceBundles(info: BaseInfoAnalyzerResult,
+                                    resources: ResourcesAnalyzer.Result) -> [BazelTarget] {
         var result: [BazelTarget] = []
-        let bundles = AppleResourceBundle.bundleResources(withPodSpec: spec, subspecs: subspecs, options: options)
-        for bundle in bundles {
-            var bundle = bundle
-            let infoplist = InfoPlist(bundle: bundle, spec: spec, options: options)
-            bundle.addInfoPlist(infoplist)
-            result.append(bundle)
-            result.append(infoplist)
+        for bundle in resources.resourceBundles {
+            let bundleRuleName = "\(info.moduleName)_\(bundle.name)_Bundle"
+            let infoPlistRuleName = "\(bundleRuleName)_InfoPlist"
+            result.append(AppleResourceBundle(name: bundleRuleName, bundle: bundle, infoplists: [infoPlistRuleName]))
+            result.append(InfoPlist(name: infoPlistRuleName, resourceBundle: bundle.name, info: info))
         }
         return result
     }
@@ -99,8 +98,12 @@ public struct PodBuildFile: StarlarkConvertible {
                                           spec: podSpec,
                                           subspecs: subspecs,
                                           options: buildOptions).result
+        let resourcesInfo = ResourcesAnalyzer(platform: .ios,
+                                              spec: podSpec,
+                                              subspecs: subspecs,
+                                              options: buildOptions).result
 
-        let extraDeps: [BazelTarget] = makeResourceBundles(spec: podSpec, subspecs: subspecs, options: buildOptions)
+        let extraDeps: [BazelTarget] = makeResourceBundles(info: baseInfo, resources: resourcesInfo)
         let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
         let libraries = ObjcImport.vendoredLibraries(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)
         let conditionalDeps = (frameworks + libraries).reduce([String: [Arch]]()) { partialResult, target in
@@ -120,6 +123,7 @@ public struct PodBuildFile: StarlarkConvertible {
 
         let sourceLibs = makeSourceLibs(info: baseInfo,
                                         sources: sourcesInfo,
+                                        resources: resourcesInfo,
                                         spec: podSpec,
                                         subspecs: subspecs,
                                         deps: extraDeps.filter({ !($0 is InfoPlist) }),
