@@ -145,22 +145,10 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "CFNetwork",
-        "Security"
-      ],
-      ":osxCase": [
-        "CoreServices",
-        "Security"
-      ],
-      ":tvosCase": [
-        "CFNetwork",
-        "Security"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "CFNetwork",
+    "Security"
+  ],
   visibility = [
     "//visibility:public"
   ]

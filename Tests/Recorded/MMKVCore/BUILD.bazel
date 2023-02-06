@@ -200,23 +200,10 @@ apple_framework(
     "c++",
     "z"
   ],
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "CoreFoundation",
-        "UIKit"
-      ],
-      ":osxCase": [
-        "CoreFoundation"
-      ],
-      ":tvosCase": [
-        "CoreFoundation"
-      ],
-      ":watchosCase": [
-        "CoreFoundation"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "CoreFoundation",
+    "UIKit"
+  ],
   xcconfig = {
     "CLANG_CXX_LANGUAGE_STANDARD": "gnu++17",
     "CLANG_CXX_LIBRARY": "libc++",

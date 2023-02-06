@@ -200,24 +200,10 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Foundation",
-        "UIKit"
-      ],
-      ":osxCase": [
-        "Foundation"
-      ],
-      ":tvosCase": [
-        "Foundation",
-        "UIKit"
-      ],
-      ":watchosCase": [
-        "Foundation"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "Foundation",
+    "UIKit"
+  ],
   xcconfig = {
     "OTHER_SWIFT_FLAGS": [
       "-DPMKCocoaPods"

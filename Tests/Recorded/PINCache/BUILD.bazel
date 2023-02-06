@@ -152,16 +152,9 @@ apple_framework(
   sdk_frameworks = [
     "Foundation"
   ],
-  weak_sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "UIKit"
-      ],
-      ":osxCase": [
-        "AppKit"
-      ]
-    }
-  ),
+  weak_sdk_frameworks = [
+    "UIKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

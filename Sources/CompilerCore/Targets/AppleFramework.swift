@@ -25,22 +25,21 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let info: BaseInfoAnalyzerResult
     let sources: SourcesAnalyzerResult
     let resources: ResourcesAnalyzer.Result
+    let sdkDepsInfo: SdkDependenciesAnalyzer.Result
     let infoplists: [String]
 
     var deps: AttrSet<[String]>
     var conditionalDeps: [String: [Arch]]
     let vendoredXCFrameworks: AttrSet<[XCFramework]>
-    let vendoredStaticFrameworks: AttrSet<Set<String>>
-    let vendoredDynamicFrameworks: AttrSet<Set<String>>
 
     let objcDefines: AttrSet<[String]>
     let swiftDefines: AttrSet<[String]>
 
     let xcconfig: [String: StarlarkNode]
 
-    var sdkDylibs: AttrSet<[String]>
-    var sdkFrameworks: AttrSet<[String]>
-    var weakSdkFrameworks: AttrSet<[String]>
+    var sdkDylibs: [String]
+    var sdkFrameworks: [String]
+    var weakSdkFrameworks: [String]
 
     let objcCopts: [String]
     let swiftCopts: [String]
@@ -53,6 +52,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
          info: BaseInfoAnalyzerResult,
          sources: SourcesAnalyzerResult,
          resources: ResourcesAnalyzer.Result,
+         sdkDepsInfo: SdkDependenciesAnalyzer.Result,
          infoplists: [String],
          spec: PodSpec,
          subspecs: [PodSpec],
@@ -66,6 +66,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.info = info
         self.sources = sources
         self.resources = resources
+        self.sdkDepsInfo = sdkDepsInfo
         self.infoplists = infoplists
 
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
@@ -84,8 +85,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         let vendoredXCFrameworks = xcFrameworks.map({ $0.compactMap({ XCFramework(xcframework: $0, options: options) }) })
 
         self.vendoredXCFrameworks = vendoredXCFrameworks// <> wrappedFrameworks
-        self.vendoredDynamicFrameworks = .empty
-        self.vendoredStaticFrameworks = .empty
 
         self.swiftDefines = AttrSet(basic: ["COCOAPODS"])
         self.objcDefines = AttrSet(basic: ["COCOAPODS=1"])
@@ -93,21 +92,15 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         let xcconfigParser = XCConfigParser(spec: spec, subspecs: subspecs, options: options)
         self.xcconfig = xcconfigParser.xcconfig
 
-        sdkDylibs = spec.collectAttribute(with: subspecs, keyPath: \.libraries)
-        sdkFrameworks = spec
-            .collectAttribute(with: subspecs, keyPath: \.frameworks)
-            .unpackToMulti()
-        weakSdkFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.weakFrameworks)
+        sdkDylibs = sdkDepsInfo.sdkDylibs
+        sdkFrameworks = sdkDepsInfo.sdkFrameworks
+        weakSdkFrameworks = sdkDepsInfo.weakSdkFrameworks
 
         self.objcCopts = xcconfigParser.objcCopts
         self.swiftCopts = xcconfigParser.swiftCopts
         self.linkOpts = xcconfigParser.linkOpts
 
-        self.testonly = (sdkFrameworks <> weakSdkFrameworks)
-            .trivialize(into: false, { result, value in
-                result = result || value.contains("XCTest")
-        })
-
+        self.testonly = sdkDepsInfo.testonly
         self.linkDynamic = sources.linkDynamic
     }
 
@@ -116,15 +109,15 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         switch key {
         case .sdkDylibs:
             if let value = value as? String {
-                self.sdkDylibs = self.sdkDylibs <> AttrSet(basic: [value])
+                self.sdkDylibs.append(value)
             }
         case .sdkFrameworks:
             if let value = value as? String {
-                self.sdkFrameworks = self.sdkFrameworks <> AttrSet(basic: [value])
+                self.sdkFrameworks.append(value)
             }
         case .weakSdkFrameworks:
             if let value = value as? String {
-                self.weakSdkFrameworks = self.weakSdkFrameworks <> AttrSet(basic: [value])
+                self.weakSdkFrameworks.append(value)
             }
         case .deps:
             if let value = value as? String {
@@ -138,15 +131,15 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         switch key {
         case .sdkDylibs:
             if let value = value as? String {
-                self.sdkDylibs = self.sdkDylibs.map({ $0.filter({ $0 != value }) })
+                self.sdkDylibs.removeAll(where: { $0 == value })
             }
         case .sdkFrameworks:
             if let value = value as? String {
-                self.sdkFrameworks = self.sdkFrameworks.map({ $0.filter({ $0 != value }) })
+                self.sdkFrameworks.removeAll(where: { $0 == value })
             }
         case .weakSdkFrameworks:
             if let value = value as? String {
-                self.weakSdkFrameworks = self.weakSdkFrameworks.map({ $0.filter({ $0 != value }) })
+                self.weakSdkFrameworks.removeAll(where: { $0 == value })
             }
         case .deps:
             if let value = value as? String {
@@ -234,8 +227,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         let bundleId = "org.cocoapods.\(info.name)"
 
         let vendoredXCFrameworks = vendoredXCFrameworks.multi.ios ?? []
-        let vendoredStaticFrameworks = vendoredStaticFrameworks.multi.ios ?? []
-        let vendoredDynamicFrameworks = vendoredDynamicFrameworks.multi.ios ?? []
 
         let lines: [StarlarkFunctionArgument] = [
             .named(name: "name", value: name.toStarlark()),
@@ -252,8 +243,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             .named(name: "data", value: packData()),
             .named(name: "deps", value: deps.toStarlark()),
             .named(name: "vendored_xcframeworks", value: vendoredXCFrameworks.toStarlark()),
-            .named(name: "vendored_static_frameworks", value: vendoredStaticFrameworks.toStarlark()),
-            .named(name: "vendored_dynamic_frameworks", value: vendoredDynamicFrameworks.toStarlark()),
             .named(name: "objc_defines", value: objcDefines),
             .named(name: "swift_defines", value: swiftDefines),
             .named(name: "sdk_dylibs", value: sdkDylibs.toStarlark()),

@@ -154,26 +154,12 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
+    "ImageIO",
     "CoreGraphics",
     "CoreImage",
     "QuartzCore",
     "Accelerate"
-  ] + select(
-    {
-      "//conditions:default": [
-        "ImageIO"
-      ],
-      ":osxCase": [
-        "ImageIO"
-      ],
-      ":tvosCase": [
-        "ImageIO"
-      ],
-      ":watchosCase": [
-        "ImageIO"
-      ]
-    }
-  ),
+  ],
   visibility = [
     "//visibility:public"
   ]

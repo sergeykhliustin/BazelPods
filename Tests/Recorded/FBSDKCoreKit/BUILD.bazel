@@ -191,30 +191,17 @@ apple_framework(
   sdk_frameworks = [
     "StoreKit"
   ],
-  weak_sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Accelerate",
-        "Accounts",
-        "AudioToolbox",
-        "CoreGraphics",
-        "Foundation",
-        "QuartzCore",
-        "Security",
-        "Social",
-        "UIKit"
-      ],
-      ":tvosCase": [
-        "AudioToolbox",
-        "CoreGraphics",
-        "CoreLocation",
-        "Foundation",
-        "QuartzCore",
-        "Security",
-        "UIKit"
-      ]
-    }
-  ),
+  weak_sdk_frameworks = [
+    "Accelerate",
+    "Accounts",
+    "AudioToolbox",
+    "CoreGraphics",
+    "Foundation",
+    "QuartzCore",
+    "Security",
+    "Social",
+    "UIKit"
+  ],
   xcconfig = {
     "GCC_PREPROCESSOR_DEFINITIONS": [
       "FBSDKCOCOAPODS=1"

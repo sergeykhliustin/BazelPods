@@ -158,25 +158,10 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Foundation",
-        "UIKit"
-      ],
-      ":osxCase": [
-        "AppKit",
-        "Foundation"
-      ],
-      ":tvosCase": [
-        "Foundation",
-        "UIKit"
-      ],
-      ":watchosCase": [
-        "Foundation"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "Foundation",
+    "UIKit"
+  ],
   objc_copts = [
     "-ITests/Pods/FirebaseCore"
   ],

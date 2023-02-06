@@ -145,14 +145,10 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Foundation",
-        "UIKit"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "Foundation",
+    "UIKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

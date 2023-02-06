@@ -162,16 +162,9 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "CoreTelephony"
-      ],
-      ":osxCase": [
-        "CoreTelephony"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "CoreTelephony"
+  ],
   xcconfig = {
     "SWIFT_VERSION": "5.0"
   },

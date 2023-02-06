@@ -145,23 +145,10 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "CoreTelephony",
-        "SystemConfiguration"
-      ],
-      ":osxCase": [
-        "SystemConfiguration"
-      ],
-      ":tvosCase": [
-        "SystemConfiguration"
-      ],
-      ":watchosCase": [
-        "SystemConfiguration"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "CoreTelephony",
+    "SystemConfiguration"
+  ],
   visibility = [
     "//visibility:public"
   ]

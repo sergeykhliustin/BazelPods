@@ -180,21 +180,10 @@ apple_framework(
   sdk_dylibs = [
     "z"
   ],
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "CoreTelephony",
-        "SystemConfiguration"
-      ],
-      ":osxCase": [
-        "CoreTelephony",
-        "SystemConfiguration"
-      ],
-      ":tvosCase": [
-        "SystemConfiguration"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "CoreTelephony",
+    "SystemConfiguration"
+  ],
   objc_copts = [
     "-ITests/Pods/GoogleDataTransport/"
   ],

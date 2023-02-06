@@ -180,21 +180,10 @@ apple_framework(
     "c++",
     "z"
   ],
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Security",
-        "SystemConfiguration"
-      ],
-      ":osxCase": [
-        "Security",
-        "SystemConfiguration"
-      ],
-      ":watchosCase": [
-        "Security"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "Security",
+    "SystemConfiguration"
+  ],
   objc_copts = [
     "-ITests/Pods/FirebaseCrashlytics"
   ],

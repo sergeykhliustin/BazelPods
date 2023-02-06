@@ -156,25 +156,11 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "CoreGraphics",
-        "QuartzCore",
-        "UIKit"
-      ],
-      ":osxCase": [
-        "AppKit",
-        "CoreGraphics",
-        "QuartzCore"
-      ],
-      ":tvosCase": [
-        "CoreGraphics",
-        "QuartzCore",
-        "UIKit"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "CoreGraphics",
+    "QuartzCore",
+    "UIKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

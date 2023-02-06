@@ -179,25 +179,10 @@ apple_framework(
   sdk_dylibs = [
     "z"
   ],
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Security",
-        "SystemConfiguration"
-      ],
-      ":osxCase": [
-        "Security",
-        "SystemConfiguration"
-      ],
-      ":tvosCase": [
-        "Security",
-        "SystemConfiguration"
-      ],
-      ":watchosCase": [
-        "Security"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "Security",
+    "SystemConfiguration"
+  ],
   objc_copts = [
     "-ITests/Pods/GoogleUtilities"
   ],
