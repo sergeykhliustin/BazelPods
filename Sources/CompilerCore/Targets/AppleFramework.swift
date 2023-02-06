@@ -5,7 +5,7 @@
 //  Created by Sergey Khliustin on 04.08.2022.
 //
 
-public enum AppleFrameworkConfigurableAddDeleteKeys : String {
+public enum AppleFrameworkConfigurableAddDeleteKeys: String {
     case sdkDylibs = "sdk_dylibs"
     case sdkFrameworks = "sdk_frameworks"
     case weakSdkFrameworks = "weak_sdk_frameworks"
@@ -21,7 +21,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let loadNode = "load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')"
 
     let name: String
-    
+
     let info: BaseInfoAnalyzerResult
     let sources: SourcesAnalyzerResult
     let resources: ResourcesAnalyzer.Result

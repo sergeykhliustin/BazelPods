@@ -31,13 +31,13 @@ private extension LogLevel {
     var terminalColor: String {
         switch self {
         case .debug:
-            return "[34m" //blue
+            return "[34m" // blue
         case .info:
-            return "[32m" //green
+            return "[32m" // green
         case .warning:
-            return "[33m" //yellow
+            return "[33m" // yellow
         case .error:
-            return "[31m" //red
+            return "[31m" // red
         }
     }
 

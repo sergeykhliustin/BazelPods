@@ -32,7 +32,7 @@ public struct ResourcesAnalyzer {
         self.subspecs = subspecs
         self.options = options
     }
-    
+
     public var result: Result {
         return run()
     }

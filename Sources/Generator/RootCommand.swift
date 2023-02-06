@@ -10,7 +10,7 @@ import ArgumentParser
 import CompilerCore
 import ObjcSupport
 
-fileprivate let IGNORE_FILELIST = [
+private let IGNORE_FILELIST = [
     "build.bazel",
     "build",
     "workspace",
