@@ -11,6 +11,8 @@ xcodeproj(
     name = "xcodeproj",
     project_name = "BazelPods",
     extra_files = [
+        ".bazelrc",
+        ".bazelversion",
         ".gitignore",
         ".swiftlint.yml",
         "WORKSPACE",
