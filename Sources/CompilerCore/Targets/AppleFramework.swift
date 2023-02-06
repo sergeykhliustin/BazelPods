@@ -81,7 +81,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.conditionalDeps = conditionalDeps
 
         let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
-        let xcFrameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtenstion == "xcframework" }) })
+        let xcFrameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtention == "xcframework" }) })
         let vendoredXCFrameworks = xcFrameworks.map({ $0.compactMap({ XCFramework(xcframework: $0, options: options) }) })
 
         self.vendoredXCFrameworks = vendoredXCFrameworks// <> wrappedFrameworks

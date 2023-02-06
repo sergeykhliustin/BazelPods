@@ -14,6 +14,24 @@ public enum Platform: String {
     case watchos
 }
 
+extension Platform {
+    var supportedArchs: [Arch] {
+        switch self {
+        case .ios:
+            return [
+                .ios_armv7,
+                .ios_arm64,
+                .ios_arm64e,
+                .ios_sim_arm64,
+                .ios_i386,
+                .ios_x86_64
+            ]
+        default:
+            return [] // TODO: Platforms support
+        }
+    }
+}
+
 public protocol BuildOptions {
     var podName: String { get }
     var subspecs: [String] { get }

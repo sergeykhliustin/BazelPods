@@ -64,48 +64,6 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
-genrule(
-  name = "Material_InfoPlist",
-  srcs = [],
-  outs = [
-    "Material_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.Material</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Material</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleShortVersionString</key>
-	<string>3.1.8</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<array>
-		<string>iPhoneSimulator</string>
-		<string>iPhoneOS</string>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<string>10.0</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>1</integer>
-		<integer>2</integer>
-	</array>
-</dict>
-</plist>
-
-EOF"""
-)
 apple_framework(
   name = "Material",
   module_name = "Material",
@@ -168,6 +126,61 @@ precompiled_apple_resource_bundle(
     ]
   )
 )
+precompiled_apple_resource_bundle(
+  name = "Material_com.cosmicmind.material.icons_Bundle",
+  bundle_id = "org.cocoapods.com.cosmicmind.material.icons",
+  bundle_name = "com.cosmicmind.material.icons",
+  infoplists = [
+    ":Material_com.cosmicmind.material.icons_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Sources/**/*.xcassets/**"
+    ]
+  )
+)
+genrule(
+  name = "Material_InfoPlist",
+  srcs = [],
+  outs = [
+    "Material_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.Material</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Material</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.1.8</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
 genrule(
   name = "Material_com.cosmicmind.material.fonts_Bundle_InfoPlist",
   srcs = [],
@@ -209,19 +222,6 @@ genrule(
 </plist>
 
 EOF"""
-)
-precompiled_apple_resource_bundle(
-  name = "Material_com.cosmicmind.material.icons_Bundle",
-  bundle_id = "org.cocoapods.com.cosmicmind.material.icons",
-  bundle_name = "com.cosmicmind.material.icons",
-  infoplists = [
-    ":Material_com.cosmicmind.material.icons_Bundle_InfoPlist"
-  ],
-  resources = glob(
-    [
-      "Sources/**/*.xcassets/**"
-    ]
-  )
 )
 genrule(
   name = "Material_com.cosmicmind.material.icons_Bundle_InfoPlist",

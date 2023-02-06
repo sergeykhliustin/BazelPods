@@ -147,8 +147,12 @@ public func frameworkExecutablePath(_ framework: String, options: BuildOptions) 
 }
 
 public func isDynamicFramework(_ framework: String, options: BuildOptions) -> Bool {
-    let path = frameworkExecutablePath(framework, options: options)
+    let executable = frameworkExecutablePath(framework, options: options)
+    return isDynamicFramework(executable)
+}
+
+public func isDynamicFramework(_ executable: String) -> Bool {
     // TODO: Find proper way
-    let output = SystemShellContext().command("/usr/bin/file", arguments: [path]).standardOutputAsString
+    let output = SystemShellContext().command("/usr/bin/file", arguments: [executable]).standardOutputAsString
     return output.contains("dynamically")
 }

@@ -69,11 +69,11 @@ public struct SourcesAnalyzer {
         let allSources = [sourceFiles, publicHeaders, privateHeaders].reduce(Set<String>()) { partialResult, node in
             guard let node else { return partialResult }
             return partialResult.union(node.sourcesOnDisk(options))
-        }.setmap(transform: { "." + $0.pathExtenstion })
+        }.setmap(transform: { "." + $0.pathExtention })
 
-        let hasSwift = !allSources.intersection(SwiftLikeFileTypes).isEmpty
-        let hasObjc = !allSources.intersection(ObjcCppLikeFileTypes).isEmpty
-        let hasHeaders = !allSources.intersection(HeaderFileTypes).isEmpty
+        let hasSwift = !allSources.isDisjoint(with: SwiftLikeFileTypes)
+        let hasObjc = !allSources.isDisjoint(with: ObjcCppLikeFileTypes)
+        let hasHeaders = !allSources.isDisjoint(with: HeaderFileTypes)
 
         let sourcesType: SourcesAnalyzerResult.SourcesType
         if hasSwift && (hasObjc || hasHeaders) {

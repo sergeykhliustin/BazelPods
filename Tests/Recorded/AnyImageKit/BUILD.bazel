@@ -64,48 +64,6 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
-genrule(
-  name = "AnyImageKit_InfoPlist",
-  srcs = [],
-  outs = [
-    "AnyImageKit_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.AnyImageKit</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>AnyImageKit</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.15.1</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<array>
-		<string>iPhoneSimulator</string>
-		<string>iPhoneOS</string>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<string>12.0</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>1</integer>
-		<integer>2</integer>
-	</array>
-</dict>
-</plist>
-
-EOF"""
-)
 apple_framework(
   name = "AnyImageKit",
   module_name = "AnyImageKit",
@@ -182,6 +140,87 @@ precompiled_apple_resource_bundle(
     ]
   )
 )
+precompiled_apple_resource_bundle(
+  name = "AnyImageKit_AnyImageKit_Core_Bundle",
+  bundle_id = "org.cocoapods.AnyImageKit_Core",
+  bundle_name = "AnyImageKit_Core",
+  infoplists = [
+    ":AnyImageKit_AnyImageKit_Core_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Sources/AnyImageKit/Resources/Core/**/**"
+    ]
+  )
+)
+precompiled_apple_resource_bundle(
+  name = "AnyImageKit_AnyImageKit_Editor_Bundle",
+  bundle_id = "org.cocoapods.AnyImageKit_Editor",
+  bundle_name = "AnyImageKit_Editor",
+  infoplists = [
+    ":AnyImageKit_AnyImageKit_Editor_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Sources/AnyImageKit/Resources/Editor/**/**"
+    ]
+  )
+)
+precompiled_apple_resource_bundle(
+  name = "AnyImageKit_AnyImageKit_Picker_Bundle",
+  bundle_id = "org.cocoapods.AnyImageKit_Picker",
+  bundle_name = "AnyImageKit_Picker",
+  infoplists = [
+    ":AnyImageKit_AnyImageKit_Picker_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Sources/AnyImageKit/Resources/Picker/**/**"
+    ]
+  )
+)
+genrule(
+  name = "AnyImageKit_InfoPlist",
+  srcs = [],
+  outs = [
+    "AnyImageKit_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.AnyImageKit</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>AnyImageKit</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.15.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>12.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
 genrule(
   name = "AnyImageKit_AnyImageKit_Capture_Bundle_InfoPlist",
   srcs = [],
@@ -223,19 +262,6 @@ genrule(
 </plist>
 
 EOF"""
-)
-precompiled_apple_resource_bundle(
-  name = "AnyImageKit_AnyImageKit_Core_Bundle",
-  bundle_id = "org.cocoapods.AnyImageKit_Core",
-  bundle_name = "AnyImageKit_Core",
-  infoplists = [
-    ":AnyImageKit_AnyImageKit_Core_Bundle_InfoPlist"
-  ],
-  resources = glob(
-    [
-      "Sources/AnyImageKit/Resources/Core/**/**"
-    ]
-  )
 )
 genrule(
   name = "AnyImageKit_AnyImageKit_Core_Bundle_InfoPlist",
@@ -279,19 +305,6 @@ genrule(
 
 EOF"""
 )
-precompiled_apple_resource_bundle(
-  name = "AnyImageKit_AnyImageKit_Editor_Bundle",
-  bundle_id = "org.cocoapods.AnyImageKit_Editor",
-  bundle_name = "AnyImageKit_Editor",
-  infoplists = [
-    ":AnyImageKit_AnyImageKit_Editor_Bundle_InfoPlist"
-  ],
-  resources = glob(
-    [
-      "Sources/AnyImageKit/Resources/Editor/**/**"
-    ]
-  )
-)
 genrule(
   name = "AnyImageKit_AnyImageKit_Editor_Bundle_InfoPlist",
   srcs = [],
@@ -333,19 +346,6 @@ genrule(
 </plist>
 
 EOF"""
-)
-precompiled_apple_resource_bundle(
-  name = "AnyImageKit_AnyImageKit_Picker_Bundle",
-  bundle_id = "org.cocoapods.AnyImageKit_Picker",
-  bundle_name = "AnyImageKit_Picker",
-  infoplists = [
-    ":AnyImageKit_AnyImageKit_Picker_Bundle_InfoPlist"
-  ],
-  resources = glob(
-    [
-      "Sources/AnyImageKit/Resources/Picker/**/**"
-    ]
-  )
 )
 genrule(
   name = "AnyImageKit_AnyImageKit_Picker_Bundle_InfoPlist",

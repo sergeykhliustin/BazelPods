@@ -40,7 +40,7 @@ enum Arch: String, CaseIterable {
     case ios_i386
     case ios_x86_64
 
-    static func archs(forExecutable path: String, options: BuildOptions) -> [Arch] {
+    static func archs(forExecutable path: String) -> [Arch] {
         let archs = SystemShellContext().command("/usr/bin/lipo",
                                                  arguments: ["-archs", path])
             .standardOutputAsString
