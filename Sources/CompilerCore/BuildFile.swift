@@ -104,6 +104,10 @@ public struct PodBuildFile: StarlarkConvertible {
                                               spec: podSpec,
                                               subspecs: subspecs,
                                               options: buildOptions).result
+        let sdkDepsInfo = SdkDependenciesAnalyzer(platform: .ios,
+                                                  spec: podSpec,
+                                                  subspecs: subspecs,
+                                                  options: buildOptions).result
 
         let extraDeps: [BazelTarget] = makeResourceBundles(info: baseInfo, resources: resourcesInfo)
         let frameworks = AppleFrameworkImport.vendoredFrameworks(withPodspec: podSpec, subspecs: subspecs, options: buildOptions)

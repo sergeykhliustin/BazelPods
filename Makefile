@@ -1,7 +1,7 @@
 
 .PHONY: xcodeproj
 xcodeproj:
-	bazel run xcodeproj
+	bazel run :xcodeproj
 
 clean:
 	bazel clean
