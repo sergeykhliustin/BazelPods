@@ -54,10 +54,23 @@ public struct VendoredDependenciesAnalyzer {
             .collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
             .platform(platform) ?? []
         let supportedArchs = platform.supportedArchs
+        let resultXCFrameworks = processXCFrameworks(xcFrameworks)
         let resultLibraries = processLibraries(libraries, supportedArchs: supportedArchs)
         let resultFrameworks = processFrameworks(frameworks, supportedArchs: supportedArchs)
 
-        return Result(libraries: resultLibraries, frameworks: resultFrameworks, xcFrameworks: xcFrameworks)
+        return Result(libraries: resultLibraries, frameworks: resultFrameworks, xcFrameworks: resultXCFrameworks)
+    }
+
+    private func processXCFrameworks(_ xcframeworks: [String]) -> [String] {
+        let result = xcframeworks.reduce(Set<String>()) { partialResult, pattern in
+            var result = partialResult
+            let paths = podGlob(pattern: options.absolutePath(from: pattern))
+                .map({ options.relativePath(from: $0) })
+            paths.forEach({ result.insert($0) })
+            return result
+        }
+            .sorted()
+        return result
     }
 
     private func processLibraries(_ libraries: [String], supportedArchs: [Arch]) -> [Result.Library] {

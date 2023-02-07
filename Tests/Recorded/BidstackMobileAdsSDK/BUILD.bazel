@@ -105,6 +105,40 @@ apple_framework(
       ]
     }
     ]
+  },
+    {
+    "name": "OMSDK_Bidstack",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_armv7",
+      "path": "Frameworks/OMSDK_Bidstack.xcframework/ios-arm64_armv7/OMSDK_Bidstack.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64",
+        "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_i386_x86_64-simulator",
+      "path": "Frameworks/OMSDK_Bidstack.xcframework/ios-arm64_i386_x86_64-simulator/OMSDK_Bidstack.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "i386",
+        "x86_64"
+      ]
+    }
+    ]
   }
   ],
   objc_defines = [

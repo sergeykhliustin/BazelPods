@@ -77,17 +77,21 @@ apple_framework(
   },
   srcs = glob(
     [
-      "BlocksKit/*.h",
-      "BlocksKit/*.m",
+      "BlocksKit/BlocksKit+MessageUI.h",
+      "BlocksKit/BlocksKit+UIKit.h",
+      "BlocksKit/BlocksKit.h",
+      "BlocksKit/Core/*.h",
+      "BlocksKit/Core/*.m",
+      "BlocksKit/DynamicDelegate/*.h",
+      "BlocksKit/DynamicDelegate/*.m",
+      "BlocksKit/DynamicDelegate/Foundation/*.h",
+      "BlocksKit/DynamicDelegate/Foundation/*.m",
       "BlocksKit/MessageUI/*.h",
       "BlocksKit/MessageUI/*.m",
       "BlocksKit/UIKit/*.h",
       "BlocksKit/UIKit/*.m"
     ]
   ),
-  deps = [
-    "//Tests/Pods/libffi"
-  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -137,7 +141,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.8.3</string>
+	<string>2.2.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

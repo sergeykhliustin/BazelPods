@@ -89,6 +89,39 @@ apple_framework(
       ]
     }
   ),
+  vendored_xcframeworks = [
+    {
+    "name": "QYSDK_ReName",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64",
+      "path": "QYSDK/QYSDK_ReName.xcframework/ios-arm64/QYSDK_ReName.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-x86_64-simulator",
+      "path": "QYSDK/QYSDK_ReName.xcframework/ios-x86_64-simulator/QYSDK_ReName.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "x86_64"
+      ]
+    }
+    ]
+  }
+  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(

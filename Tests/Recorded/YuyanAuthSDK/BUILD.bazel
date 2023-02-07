@@ -80,6 +80,41 @@ apple_framework(
     "//Tests/Pods/ADSuyiKit",
     "//Tests/Pods/ADSuyiNetwork"
   ],
+  vendored_xcframeworks = [
+    {
+    "name": "YuyanOneClickLogin",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_armv7",
+      "path": "YuyanOneClickLogin/Classes/YuyanOneClickLogin.xcframework/ios-arm64_armv7/YuyanOneClickLogin.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64",
+        "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-i386_x86_64-simulator",
+      "path": "YuyanOneClickLogin/Classes/YuyanOneClickLogin.xcframework/ios-i386_x86_64-simulator/YuyanOneClickLogin.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "i386",
+        "x86_64"
+      ]
+    }
+    ]
+  }
+  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(

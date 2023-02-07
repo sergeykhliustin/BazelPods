@@ -75,6 +75,40 @@ apple_framework(
   },
   vendored_xcframeworks = [
     {
+    "name": "SwiftProtobuf",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_armv7",
+      "path": "Frameworks/SwiftProtobuf.xcframework/ios-arm64_armv7/SwiftProtobuf.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64",
+        "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_i386_x86_64-simulator",
+      "path": "Frameworks/SwiftProtobuf.xcframework/ios-arm64_i386_x86_64-simulator/SwiftProtobuf.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "i386",
+        "x86_64"
+      ]
+    }
+    ]
+  },
+    {
     "name": "PubguardSDK",
     "slices": [
       {
