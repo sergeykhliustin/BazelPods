@@ -20,11 +20,19 @@ public struct VendoredDependenciesAnalyzer {
             let archs: [Arch]
             let dynamic: Bool
         }
+        struct XCFramework {
+            let name: String
+            let path: String
+            let archs: [Arch]
+            let dynamic: Bool
+        }
         let libraries: [Library]
         let frameworks: [Framework]
-        let xcFrameworks: [String]
-    }
+        let xcFrameworks: [XCFramework]
+        let xcFrameworkPaths: [String]
 
+        let xcFrameworksExternalTarget: Bool = true
+    }
     private let platform: Platform
     private let spec: PodSpec
     private let subspecs: [PodSpec]
@@ -54,11 +62,16 @@ public struct VendoredDependenciesAnalyzer {
             .collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
             .platform(platform) ?? []
         let supportedArchs = platform.supportedArchs
-        let resultXCFrameworks = processXCFrameworks(xcFrameworks)
         let resultLibraries = processLibraries(libraries, supportedArchs: supportedArchs)
         let resultFrameworks = processFrameworks(frameworks, supportedArchs: supportedArchs)
+        let resultXCFrameworkPaths = processXCFrameworks(xcFrameworks)
+        let resultXCFrameworks = resultXCFrameworkPaths
+            .compactMap({ processXCFramework($0, supportedArchs: supportedArchs) })
 
-        return Result(libraries: resultLibraries, frameworks: resultFrameworks, xcFrameworks: resultXCFrameworks)
+        return Result(libraries: resultLibraries,
+                      frameworks: resultFrameworks,
+                      xcFrameworks: resultXCFrameworks,
+                      xcFrameworkPaths: resultXCFrameworkPaths)
     }
 
     private func processXCFrameworks(_ xcframeworks: [String]) -> [String] {
@@ -71,6 +84,57 @@ public struct VendoredDependenciesAnalyzer {
         }
             .sorted()
         return result
+    }
+
+    private func processXCFramework(_ xcframework: String, supportedArchs: [Arch]) -> Result.XCFramework? {
+        let name = xcframework.deletingPathExtension.lastPath
+        let absolutePath = options.absolutePath(from: xcframework)
+        let frameworks = podGlob(pattern: absolutePath.appendingPath("**/*.framework"))
+        let libraries = podGlob(pattern: absolutePath.appendingPath("**/*.a"))
+        let librariesArchs = libraries
+            .reduce(Set<Arch>(), { partialResult, library in
+                var result = partialResult
+                let archs = Arch.archs(forExecutable: library)
+                archs.forEach({
+                    if supportedArchs.contains($0) {
+                        result.insert($0)
+                    }
+                })
+                return result
+            })
+            .sorted()
+        let (frameworksArchsSet, dynamic) = frameworks
+            .reduce((Set<Arch>(), [Bool]())) { partialResult, framework in
+                let name = framework.deletingPathExtension.lastPath
+                let executable = framework.appendingPath(name)
+                var (resultArchs, resultDynamic) = partialResult
+                let archs = Arch.archs(forExecutable: executable).filter({ supportedArchs.contains($0) })
+                if !archs.isEmpty {
+                    let dynamic = isDynamicFramework(executable)
+                    resultDynamic.append(dynamic)
+                }
+                archs.forEach({
+                    resultArchs.insert($0)
+                })
+                return (resultArchs, resultDynamic)
+            }
+        let frameworksArchs = frameworksArchsSet.sorted()
+        if !librariesArchs.isEmpty && !frameworksArchs.isEmpty {
+            log_warning("xcframework contains libraries and frameworks for \(platform), undefined behaviour: \(xcframework)")
+        }
+
+        if !librariesArchs.isEmpty {
+            return Result.XCFramework(name: name, path: xcframework, archs: librariesArchs, dynamic: false)
+        } else if !frameworksArchs.isEmpty {
+            if !(dynamic.allSatisfy({ $0 == true }) || dynamic.allSatisfy({ $0 == false })) {
+                log_warning("xcframework undefined linkage: \(xcframework)")
+            }
+            let isDynamic = dynamic.allSatisfy({ $0 == true })
+            return Result.XCFramework(name: name, path: xcframework, archs: frameworksArchs, dynamic: isDynamic)
+        } else {
+            log_error("unable to process: \(xcframework)")
+        }
+        return nil
     }
 
     private func processLibraries(_ libraries: [String], supportedArchs: [Arch]) -> [Result.Library] {

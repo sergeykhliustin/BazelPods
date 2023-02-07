@@ -3,7 +3,6 @@ startup --output_base=./bazel-output-base
 build --announce_rc
 build --spawn_strategy=local
 build --verbose_failures
-build --apple_platform_type=macos
 build --compilation_mode=fastbuild
 build --experimental_multi_threaded_digest
 build --verbose_failures

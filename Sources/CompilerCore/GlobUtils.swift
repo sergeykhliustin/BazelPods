@@ -143,11 +143,11 @@ public class Glob: Collection {
                 }
             } catch {
                 directories = []
-                log_debug("Error parsing file system item: \(error)")
+                //log_debug("Error parsing file system item: \(error)")
             }
         } else {
             directories = []
-            log_debug("Error parsing file system item: EMPTY\n")
+            //log_debug("Error parsing file system item: EMPTY\n")
         }
 
         if behavior.includesFilesFromRootOfGlobstar {

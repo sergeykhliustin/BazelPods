@@ -110,6 +110,14 @@ public struct PodBuildFile: StarlarkConvertible {
             targets.append(AppleFrameworkImport(name: name, isDynamic: framework.dynamic, isXCFramework: false, frameworkImport: framework.path))
             return (targets, conditions)
         })
+        result = vendored.xcFrameworks.reduce(result, { partialResult, xcFramework in
+            var targets = partialResult.0
+            var conditions = partialResult.1
+            let name = "\(info.moduleName)_\(xcFramework.name)_VendoredXCFramework"
+            conditions[name] = xcFramework.archs
+            targets.append(AppleFrameworkImport(name: name, isDynamic: xcFramework.dynamic, isXCFramework: true, frameworkImport: xcFramework.path))
+            return (targets, conditions)
+        })
         return result
     }
 

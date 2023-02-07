@@ -29,7 +29,11 @@ import Foundation
 //    "watchos_arm64_32",
 //    "tvos_arm64",
 // ]
-enum Arch: String, CaseIterable {
+enum Arch: String, Comparable, CaseIterable {
+    static func < (lhs: Arch, rhs: Arch) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+
     // Device
     case ios_armv7
     case ios_arm64
