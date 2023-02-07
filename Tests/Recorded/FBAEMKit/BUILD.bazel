@@ -97,20 +97,6 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64_x86_64-simulator/FBAEMKit.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
       "identifier": "ios-arm64_x86_64-maccatalyst",
       "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64_x86_64-maccatalyst/FBAEMKit.framework",
       "platform": "ios",
@@ -125,12 +111,12 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "tvos-arm64_x86_64-simulator",
-      "path": "XCFrameworks/FBAEMKit.xcframework/tvos-arm64_x86_64-simulator/FBAEMKit.framework",
-      "platform": "tvos",
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64_x86_64-simulator/FBAEMKit.framework",
+      "platform": "ios",
       "platform_variant": "simulator",
       "supported_archs": [
-        "arm64",
+        "sim_arm64",
         "x86_64"
       ]
     },
@@ -145,6 +131,20 @@ apple_framework(
       "platform_variant": [],
       "supported_archs": [
         "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "tvos-arm64_x86_64-simulator",
+      "path": "XCFrameworks/FBAEMKit.xcframework/tvos-arm64_x86_64-simulator/FBAEMKit.framework",
+      "platform": "tvos",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
       ]
     }
     ]

@@ -84,6 +84,19 @@ apple_framework(
         "linkage": "static",
         "packaging": "framework"
       },
+      "identifier": "ios-arm64",
+      "path": "Base/Frameworks/GoogleMapsBase.xcframework/ios-arm64/GoogleMapsBase.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
       "identifier": "ios-arm64_x86_64-simulator",
       "path": "Base/Frameworks/GoogleMapsBase.xcframework/ios-arm64_x86_64-simulator/GoogleMapsBase.framework",
       "platform": "ios",
@@ -92,25 +105,25 @@ apple_framework(
         "sim_arm64",
         "x86_64"
       ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "Base/Frameworks/GoogleMapsBase.xcframework/ios-arm64/GoogleMapsBase.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
     }
     ]
   },
     {
     "name": "GoogleMaps",
     "slices": [
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64",
+      "path": "Maps/Frameworks/GoogleMaps.xcframework/ios-arm64/GoogleMaps.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
       {
       "build_type": {
         "linkage": "static",
@@ -124,25 +137,25 @@ apple_framework(
         "sim_arm64",
         "x86_64"
       ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "Maps/Frameworks/GoogleMaps.xcframework/ios-arm64/GoogleMaps.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
     }
     ]
   },
     {
     "name": "GoogleMapsCore",
     "slices": [
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64",
+      "path": "Maps/Frameworks/GoogleMapsCore.xcframework/ios-arm64/GoogleMapsCore.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
       {
       "build_type": {
         "linkage": "static",
@@ -155,19 +168,6 @@ apple_framework(
       "supported_archs": [
         "sim_arm64",
         "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "Maps/Frameworks/GoogleMapsCore.xcframework/ios-arm64/GoogleMapsCore.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
       ]
     }
     ]

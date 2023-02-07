@@ -298,20 +298,6 @@ apple_framework(
         "linkage": "static",
         "packaging": "library"
       },
-      "identifier": "macos-x86_64_arm64",
-      "path": "core/realm-monorepo.xcframework/macos-x86_64_arm64/librealm-monorepo.a",
-      "platform": "macos",
-      "platform_variant": [],
-      "supported_archs": [
-        "x86_64",
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
       "identifier": "ios-arm64_armv7",
       "path": "core/realm-monorepo.xcframework/ios-arm64_armv7/librealm-monorepo.a",
       "platform": "ios",
@@ -319,6 +305,20 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64-maccatalyst/librealm-monorepo.a",
+      "platform": "ios",
+      "platform_variant": "maccatalyst",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
       ]
     },
       {
@@ -341,43 +341,13 @@ apple_framework(
         "linkage": "static",
         "packaging": "library"
       },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64-maccatalyst/librealm-monorepo.a",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "watchos-armv7k_arm64_32_arm64",
-      "path": "core/realm-monorepo.xcframework/watchos-armv7k_arm64_32_arm64/librealm-monorepo.a",
-      "platform": "watchos",
+      "identifier": "macos-x86_64_arm64",
+      "path": "core/realm-monorepo.xcframework/macos-x86_64_arm64/librealm-monorepo.a",
+      "platform": "macos",
       "platform_variant": [],
       "supported_archs": [
-        "armv7k",
-        "arm64_32",
+        "x86_64",
         "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "watchos-arm64_i386_x86_64-simulator",
-      "path": "core/realm-monorepo.xcframework/watchos-arm64_i386_x86_64-simulator/librealm-monorepo.a",
-      "platform": "watchos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "i386",
-        "x86_64"
       ]
     },
       {
@@ -405,6 +375,36 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "watchos-arm64_i386_x86_64-simulator",
+      "path": "core/realm-monorepo.xcframework/watchos-arm64_i386_x86_64-simulator/librealm-monorepo.a",
+      "platform": "watchos",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "arm64",
+        "i386",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "watchos-armv7k_arm64_32_arm64",
+      "path": "core/realm-monorepo.xcframework/watchos-armv7k_arm64_32_arm64/librealm-monorepo.a",
+      "platform": "watchos",
+      "platform_variant": [],
+      "supported_archs": [
+        "armv7k",
+        "arm64_32",
+        "arm64"
       ]
     }
     ]

@@ -81,12 +81,25 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "RevealServer/RevealServer.xcframework/ios-arm64_x86_64-simulator/RevealServer.framework",
+      "identifier": "ios-arm64",
+      "path": "RevealServer/RevealServer.xcframework/ios-arm64/RevealServer.framework",
       "platform": "ios",
-      "platform_variant": "simulator",
+      "platform_variant": [],
       "supported_archs": [
-        "sim_arm64",
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "RevealServer/RevealServer.xcframework/ios-arm64_x86_64-maccatalyst/RevealServer.framework",
+      "platform": "ios",
+      "platform_variant": "maccatalyst",
+      "supported_archs": [
+        "arm64",
         "x86_64"
       ]
     },
@@ -95,12 +108,13 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64",
-      "path": "RevealServer/RevealServer.xcframework/ios-arm64/RevealServer.framework",
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "RevealServer/RevealServer.xcframework/ios-arm64_x86_64-simulator/RevealServer.framework",
       "platform": "ios",
-      "platform_variant": [],
+      "platform_variant": "simulator",
       "supported_archs": [
-        "arm64"
+        "sim_arm64",
+        "x86_64"
       ]
     },
       {
@@ -125,20 +139,6 @@ apple_framework(
       "path": "RevealServer/RevealServer.xcframework/tvos-arm64_x86_64-simulator/RevealServer.framework",
       "platform": "tvos",
       "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "RevealServer/RevealServer.xcframework/ios-arm64_x86_64-maccatalyst/RevealServer.framework",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
       "supported_archs": [
         "arm64",
         "x86_64"

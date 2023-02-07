@@ -26,16 +26,14 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let sources: SourcesAnalyzerResult
     let resources: ResourcesAnalyzer.Result
     let sdkDepsInfo: SdkDependenciesAnalyzer.Result
+    let vendoredDeps: VendoredDependenciesAnalyzer.Result
     let infoplists: [String]
 
     var deps: AttrSet<[String]>
     var conditionalDeps: [String: [Arch]]
-    let vendoredXCFrameworks: AttrSet<[XCFramework]>
 
     let objcDefines: AttrSet<[String]>
     let swiftDefines: AttrSet<[String]>
-
-    let xcconfig: [String: StarlarkNode]
 
     var sdkDylibs: [String]
     var sdkFrameworks: [String]
@@ -48,11 +46,15 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     var linkDynamic: Bool
     var testonly: Bool
 
+    let xcconfig: [String: StarlarkNode]
+    let vendoredXCFrameworks: [XCFramework]
+
     init(name: String,
          info: BaseInfoAnalyzerResult,
          sources: SourcesAnalyzerResult,
          resources: ResourcesAnalyzer.Result,
          sdkDepsInfo: SdkDependenciesAnalyzer.Result,
+         vendoredDeps: VendoredDependenciesAnalyzer.Result,
          infoplists: [String],
          spec: PodSpec,
          subspecs: [PodSpec],
@@ -67,6 +69,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.sources = sources
         self.resources = resources
         self.sdkDepsInfo = sdkDepsInfo
+        self.vendoredDeps = vendoredDeps
         self.infoplists = infoplists
 
         let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
@@ -79,12 +82,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         let depNames = deps.map { ":\($0)" }
         self.deps = AttrSet(basic: depNames) <> allPodSpecDeps
         self.conditionalDeps = conditionalDeps
-
-        let vendoredFrameworks = spec.collectAttribute(with: subspecs, keyPath: \.vendoredFrameworks)
-        let xcFrameworks = vendoredFrameworks.map({ $0.filter({ $0.pathExtention == "xcframework" }) })
-        let vendoredXCFrameworks = xcFrameworks.map({ $0.compactMap({ XCFramework(xcframework: $0, options: options) }) })
-
-        self.vendoredXCFrameworks = vendoredXCFrameworks// <> wrappedFrameworks
 
         self.swiftDefines = AttrSet(basic: ["COCOAPODS"])
         self.objcDefines = AttrSet(basic: ["COCOAPODS=1"])
@@ -102,6 +99,8 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
         self.testonly = sdkDepsInfo.testonly
         self.linkDynamic = sources.linkDynamic
+
+        self.vendoredXCFrameworks = vendoredDeps.xcFrameworks.compactMap({ XCFramework(xcframework: $0, options: options) })
     }
 
     mutating func add(configurableKey: String, value: Any) {
@@ -225,8 +224,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         }
 
         let bundleId = "org.cocoapods.\(info.name)"
-
-        let vendoredXCFrameworks = vendoredXCFrameworks.multi.ios ?? []
 
         let lines: [StarlarkFunctionArgument] = [
             .named(name: "name", value: name.toStarlark()),

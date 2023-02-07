@@ -73,7 +73,7 @@ extension BuildOptions {
         case .tvos:
             return "13.0"
         case .watchos:
-            return "8.0"
+            return "6.0"
         }
     }
 

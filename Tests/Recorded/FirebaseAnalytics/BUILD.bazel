@@ -89,6 +89,49 @@ apple_framework(
         "linkage": "static",
         "packaging": "framework"
       },
+      "identifier": "ios-arm64_armv7",
+      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_armv7/FirebaseAnalytics.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64",
+        "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_i386_x86_64-simulator",
+      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_i386_x86_64-simulator/FirebaseAnalytics.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "i386",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_x86_64-maccatalyst/FirebaseAnalytics.framework",
+      "platform": "ios",
+      "platform_variant": "maccatalyst",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
       "identifier": "macos-arm64_x86_64",
       "path": "Frameworks/FirebaseAnalytics.xcframework/macos-arm64_x86_64/FirebaseAnalytics.framework",
       "platform": "macos",
@@ -116,35 +159,6 @@ apple_framework(
         "linkage": "static",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_x86_64-maccatalyst/FirebaseAnalytics.framework",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_i386_x86_64-simulator/FirebaseAnalytics.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
       "identifier": "tvos-arm64_x86_64-simulator",
       "path": "Frameworks/FirebaseAnalytics.xcframework/tvos-arm64_x86_64-simulator/FirebaseAnalytics.framework",
       "platform": "tvos",
@@ -152,20 +166,6 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_armv7/FirebaseAnalytics.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
       ]
     }
     ]

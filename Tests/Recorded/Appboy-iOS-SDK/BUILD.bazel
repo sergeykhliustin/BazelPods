@@ -185,13 +185,13 @@ apple_framework(
         "linkage": "static",
         "packaging": "library"
       },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_x86_64-maccatalyst/libAppboyKitLibrary.a",
+      "identifier": "ios-arm64_armv7",
+      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_armv7/libAppboyKitLibrary.a",
       "platform": "ios",
-      "platform_variant": "maccatalyst",
+      "platform_variant": [],
       "supported_archs": [
         "arm64",
-        "x86_64"
+        "armv7"
       ]
     },
       {
@@ -214,13 +214,13 @@ apple_framework(
         "linkage": "static",
         "packaging": "library"
       },
-      "identifier": "ios-arm64_armv7",
-      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_armv7/libAppboyKitLibrary.a",
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_x86_64-maccatalyst/libAppboyKitLibrary.a",
       "platform": "ios",
-      "platform_variant": [],
+      "platform_variant": "maccatalyst",
       "supported_archs": [
         "arm64",
-        "armv7"
+        "x86_64"
       ]
     }
     ]
