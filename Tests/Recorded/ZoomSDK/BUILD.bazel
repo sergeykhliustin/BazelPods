@@ -1,3 +1,5 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_dynamic_xcframework_import')
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -75,74 +77,29 @@ apple_framework(
   data = [
     "zoom-sdk-ios-5.11.3.4099/lib/MobileRTCResources.bundle"
   ],
-  vendored_xcframeworks = [
+  deps = select(
     {
-    "name": "MobileRTC",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "zoom-sdk-ios-5.11.3.4099/lib/MobileRTC.xcframework/ios-arm64_armv7/MobileRTC.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-x86_64-simulator",
-      "path": "zoom-sdk-ios-5.11.3.4099/lib/MobileRTC.xcframework/ios-x86_64-simulator/MobileRTC.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":ZoomSDK_MobileRTCScreenShare_VendoredXCFramework",
+        ":ZoomSDK_MobileRTC_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":ZoomSDK_MobileRTCScreenShare_VendoredXCFramework",
+        ":ZoomSDK_MobileRTC_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":ZoomSDK_MobileRTCScreenShare_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":ZoomSDK_MobileRTCScreenShare_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":ZoomSDK_MobileRTCScreenShare_VendoredXCFramework",
+        ":ZoomSDK_MobileRTC_VendoredXCFramework"
       ]
     }
-    ]
-  },
-    {
-    "name": "MobileRTCScreenShare",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "zoom-sdk-ios-5.11.3.4099/lib/MobileRTCScreenShare.xcframework/ios-arm64_armv7/MobileRTCScreenShare.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "zoom-sdk-ios-5.11.3.4099/lib/MobileRTCScreenShare.xcframework/ios-arm64_i386_x86_64-simulator/MobileRTCScreenShare.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -177,6 +134,28 @@ apple_framework(
     "ReplayKit",
     "VideoToolbox"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "ZoomSDK_MobileRTC_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "zoom-sdk-ios-5.11.3.4099/lib/MobileRTC.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "ZoomSDK_MobileRTCScreenShare_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "zoom-sdk-ios-5.11.3.4099/lib/MobileRTCScreenShare.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]

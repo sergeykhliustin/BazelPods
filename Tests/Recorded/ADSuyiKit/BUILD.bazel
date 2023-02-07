@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -72,76 +73,31 @@ apple_framework(
   platforms = {
     "ios": "10.0"
   },
-  vendored_xcframeworks = [
+  deps = select(
     {
-    "name": "ADSuyiKit",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "ADSuyiKit/Classes/ADSuyiKit.xcframework/ios-arm64_armv7/ADSuyiKit.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "ADSuyiKit/Classes/ADSuyiKit.xcframework/ios-arm64_i386_x86_64-simulator/ADSuyiKit.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":ADSuyiKit_ADSuyiKitIDFA_VendoredXCFramework",
+        ":ADSuyiKit_ADSuyiKit_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":ADSuyiKit_ADSuyiKitIDFA_VendoredXCFramework",
+        ":ADSuyiKit_ADSuyiKit_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":ADSuyiKit_ADSuyiKitIDFA_VendoredXCFramework",
+        ":ADSuyiKit_ADSuyiKit_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":ADSuyiKit_ADSuyiKitIDFA_VendoredXCFramework",
+        ":ADSuyiKit_ADSuyiKit_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":ADSuyiKit_ADSuyiKitIDFA_VendoredXCFramework",
+        ":ADSuyiKit_ADSuyiKit_VendoredXCFramework"
       ]
     }
-    ]
-  },
-    {
-    "name": "ADSuyiKitIDFA",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "ADSuyiKit/Classes/ADSuyiKitIDFA.xcframework/ios-arm64_armv7/ADSuyiKitIDFA.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "ADSuyiKit/Classes/ADSuyiKitIDFA.xcframework/ios-arm64_i386_x86_64-simulator/ADSuyiKitIDFA.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -177,6 +133,28 @@ apple_framework(
   linkopts = [
     "-ObjC"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "ADSuyiKit_ADSuyiKit_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "ADSuyiKit/Classes/ADSuyiKit.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "ADSuyiKit_ADSuyiKitIDFA_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "ADSuyiKit/Classes/ADSuyiKitIDFA.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]

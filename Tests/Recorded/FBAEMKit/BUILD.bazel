@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_dynamic_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -74,82 +75,17 @@ apple_framework(
   },
   deps = [
     "//Tests/Pods/FBSDKCoreKit_Basics"
-  ],
-  vendored_xcframeworks = [
+  ] + select(
     {
-    "name": "FBAEMKit",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64/FBAEMKit.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64_x86_64-maccatalyst/FBAEMKit.framework",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "XCFrameworks/FBAEMKit.xcframework/ios-arm64_x86_64-simulator/FBAEMKit.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64",
-      "path": "XCFrameworks/FBAEMKit.xcframework/tvos-arm64/FBAEMKit.framework",
-      "platform": "tvos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64_x86_64-simulator",
-      "path": "XCFrameworks/FBAEMKit.xcframework/tvos-arm64_x86_64-simulator/FBAEMKit.framework",
-      "platform": "tvos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_sim_arm64": [
+        ":FBAEMKit_FBAEMKit_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":FBAEMKit_FBAEMKit_VendoredXCFramework"
       ]
     }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -171,6 +107,17 @@ apple_framework(
         "DEBUG"
       ]
     }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "FBAEMKit_FBAEMKit_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "XCFrameworks/FBAEMKit.xcframework/**"
+    ]
   ),
   visibility = [
     "//visibility:public"

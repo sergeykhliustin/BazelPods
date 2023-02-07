@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_dynamic_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -72,40 +73,20 @@ apple_framework(
   platforms = {
     "ios": "11.0"
   },
-  vendored_xcframeworks = [
+  deps = select(
     {
-    "name": "Onfido",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "Onfido.xcframework/ios-arm64/Onfido.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "Onfido.xcframework/ios-arm64_x86_64-simulator/Onfido.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":Onfido_Onfido_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":Onfido_Onfido_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":Onfido_Onfido_VendoredXCFramework"
       ]
     }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -133,6 +114,17 @@ apple_framework(
     "Foundation",
     "UIKit"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "Onfido_Onfido_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Onfido.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]

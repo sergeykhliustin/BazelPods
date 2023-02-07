@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_dynamic_xcframework_import')
 load('@build_bazel_rules_ios//rules:apple_patched.bzl', 'apple_dynamic_framework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
@@ -82,46 +83,15 @@ apple_framework(
     {
       "//conditions:default": [],
       ":ios_arm64": [
-        ":QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework"
+        ":QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework",
+        ":QY_NIM_iOS_SDK_QYSDK_ReName_VendoredXCFramework"
       ],
       ":ios_x86_64": [
-        ":QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework"
+        ":QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework",
+        ":QY_NIM_iOS_SDK_QYSDK_ReName_VendoredXCFramework"
       ]
     }
   ),
-  vendored_xcframeworks = [
-    {
-    "name": "QYSDK_ReName",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "QYSDK/QYSDK_ReName.xcframework/ios-arm64/QYSDK_ReName.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-x86_64-simulator",
-      "path": "QYSDK/QYSDK_ReName.xcframework/ios-x86_64-simulator/QYSDK_ReName.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "x86_64"
-      ]
-    }
-    ]
-  }
-  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -175,6 +145,17 @@ apple_dynamic_framework_import(
   framework_imports = glob(
     [
       "QYSDK/NIMSDK2.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "QY_NIM_iOS_SDK_QYSDK_ReName_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "QYSDK/QYSDK_ReName.xcframework/**"
     ]
   ),
   visibility = [

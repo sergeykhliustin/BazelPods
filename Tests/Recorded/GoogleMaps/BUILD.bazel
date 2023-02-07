@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -75,104 +76,21 @@ apple_framework(
   data = [
     "Maps/Frameworks/GoogleMaps.xcframework/ios-arm64/GoogleMaps.framework/Resources/GoogleMaps.bundle"
   ],
-  vendored_xcframeworks = [
+  deps = select(
     {
-    "name": "GoogleMapsBase",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "Base/Frameworks/GoogleMapsBase.xcframework/ios-arm64/GoogleMapsBase.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "Base/Frameworks/GoogleMapsBase.xcframework/ios-arm64_x86_64-simulator/GoogleMapsBase.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_sim_arm64": [
+        ":GoogleMaps_GoogleMapsBase_VendoredXCFramework",
+        ":GoogleMaps_GoogleMapsCore_VendoredXCFramework",
+        ":GoogleMaps_GoogleMaps_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":GoogleMaps_GoogleMapsBase_VendoredXCFramework",
+        ":GoogleMaps_GoogleMapsCore_VendoredXCFramework",
+        ":GoogleMaps_GoogleMaps_VendoredXCFramework"
       ]
     }
-    ]
-  },
-    {
-    "name": "GoogleMaps",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "Maps/Frameworks/GoogleMaps.xcframework/ios-arm64/GoogleMaps.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "Maps/Frameworks/GoogleMaps.xcframework/ios-arm64_x86_64-simulator/GoogleMaps.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  },
-    {
-    "name": "GoogleMapsCore",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "Maps/Frameworks/GoogleMapsCore.xcframework/ios-arm64/GoogleMapsCore.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "Maps/Frameworks/GoogleMapsCore.xcframework/ios-arm64_x86_64-simulator/GoogleMapsCore.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -215,6 +133,39 @@ apple_framework(
     "SystemConfiguration",
     "UIKit"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "GoogleMaps_GoogleMapsBase_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Base/Frameworks/GoogleMapsBase.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "GoogleMaps_GoogleMaps_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Maps/Frameworks/GoogleMaps.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "GoogleMaps_GoogleMapsCore_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Maps/Frameworks/GoogleMapsCore.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]

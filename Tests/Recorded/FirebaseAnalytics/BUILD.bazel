@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -79,98 +80,26 @@ apple_framework(
     "//Tests/Pods/GoogleAppMeasurement",
     "//Tests/Pods/GoogleUtilities",
     "//Tests/Pods/nanopb"
-  ],
-  vendored_xcframeworks = [
+  ] + select(
     {
-    "name": "FirebaseAnalytics",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_armv7/FirebaseAnalytics.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_i386_x86_64-simulator/FirebaseAnalytics.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/ios-arm64_x86_64-maccatalyst/FirebaseAnalytics.framework",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "macos-arm64_x86_64",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/macos-arm64_x86_64/FirebaseAnalytics.framework",
-      "platform": "macos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/tvos-arm64/FirebaseAnalytics.framework",
-      "platform": "tvos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64_x86_64-simulator",
-      "path": "Frameworks/FirebaseAnalytics.xcframework/tvos-arm64_x86_64-simulator/FirebaseAnalytics.framework",
-      "platform": "tvos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
       ]
     }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -201,6 +130,17 @@ apple_framework(
   sdk_frameworks = [
     "StoreKit"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Frameworks/FirebaseAnalytics.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]

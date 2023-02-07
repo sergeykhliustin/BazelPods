@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
 # Add a config setting release for compilation mode
@@ -175,57 +176,26 @@ apple_framework(
     ":Appboy_iOS_SDK_AppboyUI.InAppMessage_Bundle",
     ":Appboy_iOS_SDK_AppboyUI.NewsFeed_Bundle",
     ":Appboy_iOS_SDK_Appboy_Bundle"
-  ],
-  vendored_xcframeworks = [
+  ] + select(
     {
-    "name": "AppboyKitLibrary",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_armv7/libAppboyKitLibrary.a",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_i386_x86_64-simulator/libAppboyKitLibrary.a",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "AppboyKit/AppboyKitLibrary.xcframework/ios-arm64_x86_64-maccatalyst/libAppboyKitLibrary.a",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":Appboy_iOS_SDK_AppboyKitLibrary_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":Appboy_iOS_SDK_AppboyKitLibrary_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":Appboy_iOS_SDK_AppboyKitLibrary_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":Appboy_iOS_SDK_AppboyKitLibrary_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":Appboy_iOS_SDK_AppboyKitLibrary_VendoredXCFramework"
       ]
     }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -320,6 +290,17 @@ precompiled_apple_resource_bundle(
       "AppboyUI/ABKNewsFeed/Resources/**/**"
     ]
   )
+)
+apple_static_xcframework_import(
+  name = "Appboy_iOS_SDK_AppboyKitLibrary_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AppboyKit/AppboyKitLibrary.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
 )
 genrule(
   name = "Appboy-iOS-SDK_InfoPlist",

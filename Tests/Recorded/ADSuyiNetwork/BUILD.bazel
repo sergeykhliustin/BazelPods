@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -74,43 +75,26 @@ apple_framework(
   },
   deps = [
     "//Tests/Pods/ADSuyiKit"
-  ],
-  vendored_xcframeworks = [
+  ] + select(
     {
-    "name": "ADSuyiNetwork",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "ADSuyiNetwork/Classes/ADSuyiNetwork.xcframework/ios-arm64_armv7/ADSuyiNetwork.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "ADSuyiNetwork/Classes/ADSuyiNetwork.xcframework/ios-arm64_i386_x86_64-simulator/ADSuyiNetwork.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":ADSuyiNetwork_ADSuyiNetwork_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":ADSuyiNetwork_ADSuyiNetwork_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":ADSuyiNetwork_ADSuyiNetwork_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":ADSuyiNetwork_ADSuyiNetwork_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":ADSuyiNetwork_ADSuyiNetwork_VendoredXCFramework"
       ]
     }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -139,6 +123,17 @@ apple_framework(
   linkopts = [
     "-ObjC"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "ADSuyiNetwork_ADSuyiNetwork_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "ADSuyiNetwork/Classes/ADSuyiNetwork.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]

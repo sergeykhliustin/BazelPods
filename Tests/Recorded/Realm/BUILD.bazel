@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -289,127 +290,26 @@ apple_framework(
       "include/RLMUser_Private.h"
     ]
   ),
-  vendored_xcframeworks = [
+  deps = select(
     {
-    "name": "realm-monorepo",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "core/realm-monorepo.xcframework/ios-arm64_armv7/librealm-monorepo.a",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64-maccatalyst/librealm-monorepo.a",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "ios-arm64_x86_64_i386-simulator",
-      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64_i386-simulator/librealm-monorepo.a",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64",
-        "i386"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "macos-x86_64_arm64",
-      "path": "core/realm-monorepo.xcframework/macos-x86_64_arm64/librealm-monorepo.a",
-      "platform": "macos",
-      "platform_variant": [],
-      "supported_archs": [
-        "x86_64",
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "tvos-arm64",
-      "path": "core/realm-monorepo.xcframework/tvos-arm64/librealm-monorepo.a",
-      "platform": "tvos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "tvos-arm64_x86_64-simulator",
-      "path": "core/realm-monorepo.xcframework/tvos-arm64_x86_64-simulator/librealm-monorepo.a",
-      "platform": "tvos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "watchos-arm64_i386_x86_64-simulator",
-      "path": "core/realm-monorepo.xcframework/watchos-arm64_i386_x86_64-simulator/librealm-monorepo.a",
-      "platform": "watchos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "i386",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "watchos-armv7k_arm64_32_arm64",
-      "path": "core/realm-monorepo.xcframework/watchos-armv7k_arm64_32_arm64/librealm-monorepo.a",
-      "platform": "watchos",
-      "platform_variant": [],
-      "supported_archs": [
-        "armv7k",
-        "arm64_32",
-        "arm64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":Realm_realm-monorepo_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":Realm_realm-monorepo_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":Realm_realm-monorepo_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":Realm_realm-monorepo_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":Realm_realm-monorepo_VendoredXCFramework"
       ]
     }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -455,6 +355,17 @@ apple_framework(
       "-fvisibility-inlines-hidden"
     ]
   },
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "Realm_realm-monorepo_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "core/realm-monorepo.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]
