@@ -64,30 +64,31 @@ config_setting(
   }
 )
 apple_framework(
-  name = "BlocksKit",
-  module_name = "BlocksKit",
-  bundle_id = "org.cocoapods.BlocksKit",
+  name = "libffi",
+  module_name = "libffi",
+  bundle_id = "org.cocoapods.libffi",
   link_dynamic = True,
   testonly = False,
   infoplists = [
-    ":BlocksKit_InfoPlist"
+    ":libffi_InfoPlist"
   ],
   platforms = {
     "ios": "10.0"
   },
   srcs = glob(
     [
-      "BlocksKit/*.h",
-      "BlocksKit/*.m",
-      "BlocksKit/MessageUI/*.h",
-      "BlocksKit/MessageUI/*.m",
-      "BlocksKit/UIKit/*.h",
-      "BlocksKit/UIKit/*.m"
+      "ios/include/*.h",
+      "ios/src/arm/*.S",
+      "ios/src/arm/*.c",
+      "ios/src/closures.c",
+      "ios/src/debug.c",
+      "ios/src/prep_cif.c",
+      "ios/src/raw_api.c",
+      "ios/src/types.c",
+      "ios/src/x86/*.S",
+      "ios/src/x86/*.c"
     ]
   ),
-  deps = [
-    "//Tests/Pods/libffi"
-  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -110,18 +111,18 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = [
-    "MessageUI"
+  linkopts = [
+    "-Wl,-no_compact_unwind"
   ],
   visibility = [
     "//visibility:public"
   ]
 )
 genrule(
-  name = "BlocksKit_InfoPlist",
+  name = "libffi_InfoPlist",
   srcs = [],
   outs = [
-    "BlocksKit_InfoPlist.plist"
+    "libffi_InfoPlist.plist"
   ],
   cmd = """cat <<EOF > $@
 <?xml version="1.0" encoding="UTF-8"?>
@@ -129,15 +130,15 @@ genrule(
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.BlocksKit</string>
+	<string>org.cocoapods.libffi</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>BlocksKit</string>
+	<string>libffi</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.8.3</string>
+	<string>3.0.13</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

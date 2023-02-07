@@ -12,6 +12,7 @@
   "Aspects" : "",
   "Bagel" : "",
   "BarcodeScanner" : "",
+  "BidstackMobileAdsSDK": "",
   "BlocksKit" : "",
   "Bugly" : "",
   "BulletinBoard" : "",
@@ -84,7 +85,9 @@
   "PhoneNumberKit" : "",
   "PPBadgeViewSwift" : "",
   "PromiseKit" : "6.18.1",
+  "PubguardSDK" : "",
   "QMUIKit" : "",
+  "QY_NIM_iOS_SDK": "",
   "R.swift" : "6.1.0",
   "ReachabilitySwift" : "5.0.0",
   "ReactiveCocoa" : "12.0.0",
@@ -129,5 +132,7 @@
   "YYImage" : "",
   "YYModel" : "",
   "YYText" : "",
-  "ZipArchive" : ""
+  "YuyanAuthSDK" : "", 
+  "ZipArchive" : "",
+  "ZoomSDK": ""
 }

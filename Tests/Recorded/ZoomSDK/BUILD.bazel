@@ -64,29 +64,16 @@ config_setting(
   }
 )
 apple_framework(
-  name = "BlocksKit",
-  module_name = "BlocksKit",
-  bundle_id = "org.cocoapods.BlocksKit",
-  link_dynamic = True,
+  name = "ZoomSDK",
+  module_name = "ZoomSDK",
+  bundle_id = "org.cocoapods.ZoomSDK",
+  link_dynamic = False,
   testonly = False,
-  infoplists = [
-    ":BlocksKit_InfoPlist"
-  ],
   platforms = {
     "ios": "10.0"
   },
-  srcs = glob(
-    [
-      "BlocksKit/*.h",
-      "BlocksKit/*.m",
-      "BlocksKit/MessageUI/*.h",
-      "BlocksKit/MessageUI/*.m",
-      "BlocksKit/UIKit/*.h",
-      "BlocksKit/UIKit/*.m"
-    ]
-  ),
-  deps = [
-    "//Tests/Pods/libffi"
+  data = [
+    "zoom-sdk-ios-5.11.3.4099/lib/MobileRTCResources.bundle"
   ],
   objc_defines = [
     "COCOAPODS=1"
@@ -110,52 +97,19 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = [
-    "MessageUI"
+  sdk_dylibs = [
+    "c++",
+    "sqlite3",
+    "z.1.2.5"
+  ],
+  weak_sdk_frameworks = [
+    "CoreGraphics",
+    "CoreMedia",
+    "CoreVideo",
+    "ReplayKit",
+    "VideoToolbox"
   ],
   visibility = [
     "//visibility:public"
   ]
-)
-genrule(
-  name = "BlocksKit_InfoPlist",
-  srcs = [],
-  outs = [
-    "BlocksKit_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.BlocksKit</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>BlocksKit</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.8.3</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<array>
-		<string>iPhoneSimulator</string>
-		<string>iPhoneOS</string>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<string>10.0</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>1</integer>
-		<integer>2</integer>
-	</array>
-</dict>
-</plist>
-
-EOF"""
 )

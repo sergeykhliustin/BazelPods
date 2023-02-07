@@ -64,29 +64,48 @@ config_setting(
   }
 )
 apple_framework(
-  name = "BlocksKit",
-  module_name = "BlocksKit",
-  bundle_id = "org.cocoapods.BlocksKit",
-  link_dynamic = True,
+  name = "BidstackMobileAdsSDK",
+  module_name = "BidstackMobileAdsSDK",
+  bundle_id = "org.cocoapods.BidstackMobileAdsSDK",
+  swift_version = "5",
+  link_dynamic = False,
   testonly = False,
-  infoplists = [
-    ":BlocksKit_InfoPlist"
-  ],
   platforms = {
-    "ios": "10.0"
+    "ios": "11.0"
   },
-  srcs = glob(
-    [
-      "BlocksKit/*.h",
-      "BlocksKit/*.m",
-      "BlocksKit/MessageUI/*.h",
-      "BlocksKit/MessageUI/*.m",
-      "BlocksKit/UIKit/*.h",
-      "BlocksKit/UIKit/*.m"
+  vendored_xcframeworks = [
+    {
+    "name": "BidstackMobileAdsSDK",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64",
+      "path": "BidstackMobileAdsSDK.xcframework/ios-arm64/BidstackMobileAdsSDK.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "BidstackMobileAdsSDK.xcframework/ios-arm64_x86_64-simulator/BidstackMobileAdsSDK.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "x86_64"
+      ]
+    }
     ]
-  ),
-  deps = [
-    "//Tests/Pods/libffi"
+  }
   ],
   objc_defines = [
     "COCOAPODS=1"
@@ -110,52 +129,7 @@ apple_framework(
       ]
     }
   ),
-  sdk_frameworks = [
-    "MessageUI"
-  ],
   visibility = [
     "//visibility:public"
   ]
-)
-genrule(
-  name = "BlocksKit_InfoPlist",
-  srcs = [],
-  outs = [
-    "BlocksKit_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.BlocksKit</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>BlocksKit</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.8.3</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<array>
-		<string>iPhoneSimulator</string>
-		<string>iPhoneOS</string>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<string>10.0</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>1</integer>
-		<integer>2</integer>
-	</array>
-</dict>
-</plist>
-
-EOF"""
 )

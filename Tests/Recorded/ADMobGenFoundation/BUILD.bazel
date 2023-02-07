@@ -1,3 +1,4 @@
+load('@build_bazel_rules_ios//rules:apple_patched.bzl', 'apple_static_framework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -64,30 +65,31 @@ config_setting(
   }
 )
 apple_framework(
-  name = "BlocksKit",
-  module_name = "BlocksKit",
-  bundle_id = "org.cocoapods.BlocksKit",
-  link_dynamic = True,
+  name = "ADMobGenFoundation",
+  module_name = "ADMobGenFoundation",
+  bundle_id = "org.cocoapods.ADMobGenFoundation",
+  link_dynamic = False,
   testonly = False,
-  infoplists = [
-    ":BlocksKit_InfoPlist"
-  ],
   platforms = {
     "ios": "10.0"
   },
-  srcs = glob(
-    [
-      "BlocksKit/*.h",
-      "BlocksKit/*.m",
-      "BlocksKit/MessageUI/*.h",
-      "BlocksKit/MessageUI/*.m",
-      "BlocksKit/UIKit/*.h",
-      "BlocksKit/UIKit/*.m"
-    ]
+  deps = select(
+    {
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":ADMobGenFoundation_ADMobGenFoundation_VendoredFramework"
+      ],
+      ":ios_armv7": [
+        ":ADMobGenFoundation_ADMobGenFoundation_VendoredFramework"
+      ],
+      ":ios_i386": [
+        ":ADMobGenFoundation_ADMobGenFoundation_VendoredFramework"
+      ],
+      ":ios_x86_64": [
+        ":ADMobGenFoundation_ADMobGenFoundation_VendoredFramework"
+      ]
+    }
   ),
-  deps = [
-    "//Tests/Pods/libffi"
-  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -110,52 +112,27 @@ apple_framework(
       ]
     }
   ),
+  sdk_dylibs = [
+    "z"
+  ],
   sdk_frameworks = [
-    "MessageUI"
+    "AdSupport",
+    "CoreTelephony",
+    "SystemConfiguration",
+    "UIKit"
   ],
   visibility = [
     "//visibility:public"
   ]
 )
-genrule(
-  name = "BlocksKit_InfoPlist",
-  srcs = [],
-  outs = [
-    "BlocksKit_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.BlocksKit</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>BlocksKit</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.8.3</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<array>
-		<string>iPhoneSimulator</string>
-		<string>iPhoneOS</string>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<string>10.0</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>1</integer>
-		<integer>2</integer>
-	</array>
-</dict>
-</plist>
-
-EOF"""
+apple_static_framework_import(
+  name = "ADMobGenFoundation_ADMobGenFoundation_VendoredFramework",
+  framework_imports = glob(
+    [
+      "ADMobGenFoundation/Classes/ADMobGenFoundation.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
 )
