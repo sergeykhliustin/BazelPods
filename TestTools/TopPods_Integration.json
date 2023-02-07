@@ -42,5 +42,6 @@
     "SwiftyJSON": "5.0.1",
     "ViewAnimator": "3.1.0",
     "Yoga": "1.14.0",
-    "lottie-ios": "3.4.3"
+    "lottie-ios": "3.4.3",
+    "ZoomSDK": "5.11.3.4099.1"
 }

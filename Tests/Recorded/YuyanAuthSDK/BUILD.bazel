@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -10,45 +11,15 @@ config_setting(
   }
 )
 config_setting(
-  name = "osxCase",
-  values = {
-    "apple_platform_type": "macos"
-  }
-)
-config_setting(
-  name = "tvosCase",
-  values = {
-    "apple_platform_type": "tvos"
-  }
-)
-config_setting(
-  name = "watchosCase",
-  values = {
-    "apple_platform_type": "watchos"
-  }
-)
-config_setting(
-  name = "ios_armv7",
-  values = {
-    "cpu": "ios_armv7"
-  }
-)
-config_setting(
   name = "ios_arm64",
   values = {
     "cpu": "ios_arm64"
   }
 )
 config_setting(
-  name = "ios_arm64e",
+  name = "ios_armv7",
   values = {
-    "cpu": "ios_arm64e"
-  }
-)
-config_setting(
-  name = "ios_sim_arm64",
-  values = {
-    "cpu": "ios_sim_arm64"
+    "cpu": "ios_armv7"
   }
 )
 config_setting(
@@ -79,42 +50,23 @@ apple_framework(
     "//Tests/Pods/ADMobGenDeviceInfo",
     "//Tests/Pods/ADSuyiKit",
     "//Tests/Pods/ADSuyiNetwork"
-  ],
-  vendored_xcframeworks = [
+  ] + select(
     {
-    "name": "YuyanOneClickLogin",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "YuyanOneClickLogin/Classes/YuyanOneClickLogin.xcframework/ios-arm64_armv7/YuyanOneClickLogin.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-i386_x86_64-simulator",
-      "path": "YuyanOneClickLogin/Classes/YuyanOneClickLogin.xcframework/ios-i386_x86_64-simulator/YuyanOneClickLogin.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "i386",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":YuyanAuthSDK_YuyanOneClickLogin_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":YuyanAuthSDK_YuyanOneClickLogin_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":YuyanAuthSDK_YuyanOneClickLogin_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":YuyanAuthSDK_YuyanOneClickLogin_VendoredXCFramework"
       ]
     }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -143,6 +95,17 @@ apple_framework(
   sdk_frameworks = [
     "UIKit"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "YuyanAuthSDK_YuyanOneClickLogin_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "YuyanOneClickLogin/Classes/YuyanOneClickLogin.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]

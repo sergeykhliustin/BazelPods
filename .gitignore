@@ -5,6 +5,7 @@ IntegrationTests/BUILD.bazel
 IntegrationTests/Podfile
 IntegrationTests/Podfile.lock
 BazelPods.xcodeproj
+xcodeproj/BazelPods.xcodeproj
 Tests/Podfile
 Tests/Podfile.lock
 Tests/Pods

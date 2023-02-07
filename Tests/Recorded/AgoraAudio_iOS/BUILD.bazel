@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_dynamic_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -10,21 +11,9 @@ config_setting(
   }
 )
 config_setting(
-  name = "osxCase",
+  name = "ios_arm64",
   values = {
-    "apple_platform_type": "macos"
-  }
-)
-config_setting(
-  name = "tvosCase",
-  values = {
-    "apple_platform_type": "tvos"
-  }
-)
-config_setting(
-  name = "watchosCase",
-  values = {
-    "apple_platform_type": "watchos"
+    "cpu": "ios_arm64"
   }
 )
 config_setting(
@@ -34,27 +23,9 @@ config_setting(
   }
 )
 config_setting(
-  name = "ios_arm64",
-  values = {
-    "cpu": "ios_arm64"
-  }
-)
-config_setting(
-  name = "ios_arm64e",
-  values = {
-    "cpu": "ios_arm64e"
-  }
-)
-config_setting(
   name = "ios_sim_arm64",
   values = {
     "cpu": "ios_sim_arm64"
-  }
-)
-config_setting(
-  name = "ios_i386",
-  values = {
-    "cpu": "ios_i386"
   }
 )
 config_setting(
@@ -72,272 +43,51 @@ apple_framework(
   platforms = {
     "ios": "10.0"
   },
-  vendored_xcframeworks = [
+  deps = select(
     {
-    "name": "AgoraAiEchoCancellationExtension",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AgoraAiEchoCancellationExtension.xcframework/ios-arm64_armv7/AgoraAiEchoCancellationExtension.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraAiEchoCancellationExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAiEchoCancellationExtension.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSpatialAudioExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_Agorafdkaac_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSpatialAudioExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_Agorafdkaac_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSpatialAudioExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_Agorafdkaac_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraSpatialAudioExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_Agorafdkaac_VendoredXCFramework"
       ]
     }
-    ]
-  },
-    {
-    "name": "AgoraAiNoiseSuppressionExtension",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AgoraAiNoiseSuppressionExtension.xcframework/ios-arm64_armv7/AgoraAiNoiseSuppressionExtension.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraAiNoiseSuppressionExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAiNoiseSuppressionExtension.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraAudioBeautyExtension",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AgoraAudioBeautyExtension.xcframework/ios-arm64_armv7/AgoraAudioBeautyExtension.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraAudioBeautyExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAudioBeautyExtension.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraDrmLoaderExtension",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AgoraDrmLoaderExtension.xcframework/ios-arm64_armv7/AgoraDrmLoaderExtension.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraDrmLoaderExtension.xcframework/ios-arm64_x86_64-simulator/AgoraDrmLoaderExtension.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraRtcKit",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AgoraRtcKit.xcframework/ios-arm64_armv7/AgoraRtcKit.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraRtcKit.xcframework/ios-arm64_x86_64-simulator/AgoraRtcKit.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraSoundTouch",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AgoraSoundTouch.xcframework/ios-arm64_armv7/AgoraSoundTouch.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraSoundTouch.xcframework/ios-arm64_x86_64-simulator/AgoraSoundTouch.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraSpatialAudioExtension",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "AgoraSpatialAudioExtension.xcframework/ios-arm64_armv7/AgoraSpatialAudioExtension.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraSpatialAudioExtension.xcframework/ios-arm64_x86_64-simulator/AgoraSpatialAudioExtension.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  },
-    {
-    "name": "Agorafdkaac",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "Agorafdkaac.xcframework/ios-arm64_armv7/Agorafdkaac.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "Agorafdkaac.xcframework/ios-arm64_x86_64-simulator/Agorafdkaac.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -359,6 +109,94 @@ apple_framework(
         "DEBUG"
       ]
     }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraAiEchoCancellationExtension.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraAiNoiseSuppressionExtension.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraAudioBeautyExtension.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraDrmLoaderExtension.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraRtcKit.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraSoundTouch.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraSpatialAudioExtension_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraSpatialAudioExtension.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_Agorafdkaac_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Agorafdkaac.xcframework/**"
+    ]
   ),
   visibility = [
     "//visibility:public"

@@ -25,7 +25,7 @@ public struct ConfigSetting: BazelTarget {
     /// Config Setting Nodes
     /// Write Build dependent COPTS.
     /// @note We consume this as an expression in ObjCLibrary
-    static func makeConfigSettingNodes() -> StarlarkNode {
+    static func makeConfigSettingNodes(archs: [Arch]) -> StarlarkNode {
         let comment = [
             "# Add a config setting release for compilation mode",
             "# Assume that people are using `opt` for release mode",
@@ -35,18 +35,9 @@ public struct ConfigSetting: BazelTarget {
         var settings = [
             ConfigSetting(
                 name: "release",
-                values: ["compilation_mode": "opt"]).toStarlark(),
-            ConfigSetting(
-                name: "osxCase",
-                values: ["apple_platform_type": "macos"]).toStarlark(),
-            ConfigSetting(
-                name: "tvosCase",
-                values: ["apple_platform_type": "tvos"]).toStarlark(),
-            ConfigSetting(
-                name: "watchosCase",
-                values: ["apple_platform_type": "watchos"]).toStarlark()
+                values: ["compilation_mode": "opt"]).toStarlark()
         ]
-        settings.append(contentsOf: Arch.allCases.map({
+        settings.append(contentsOf: archs.map({
             ConfigSetting(name: $0.rawValue, values: ["cpu": $0.rawValue]).toStarlark()
         }))
 

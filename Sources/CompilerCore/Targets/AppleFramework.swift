@@ -47,7 +47,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     var testonly: Bool
 
     let xcconfig: [String: StarlarkNode]
-    let vendoredXCFrameworks: [XCFramework]
 
     init(name: String,
          info: BaseInfoAnalyzerResult,
@@ -99,8 +98,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
         self.testonly = sdkDepsInfo.testonly
         self.linkDynamic = sources.linkDynamic
-
-        self.vendoredXCFrameworks = vendoredDeps.xcFrameworks.compactMap({ XCFramework(xcframework: $0, options: options) })
     }
 
     mutating func add(configurableKey: String, value: Any) {
@@ -239,7 +236,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             .named(name: "private_headers", value: sources.privateHeaders.toStarlark()),
             .named(name: "data", value: packData()),
             .named(name: "deps", value: deps.toStarlark()),
-            .named(name: "vendored_xcframeworks", value: vendoredXCFrameworks.toStarlark()),
             .named(name: "objc_defines", value: objcDefines),
             .named(name: "swift_defines", value: swiftDefines),
             .named(name: "sdk_dylibs", value: sdkDylibs.toStarlark()),

@@ -1,7 +1,7 @@
 
 .PHONY: xcodeproj
 xcodeproj:
-	bazel run :xcodeproj
+	bazel run xcodeproj:xcodeproj
 
 clean:
 	bazel clean
@@ -97,9 +97,11 @@ integration-generate-dynamic:
 	"FBSDKCoreKit.sdk_frameworks += StoreKit" \
 	"GoogleUtilities.sdk_frameworks += CoreTelephony"
 
-integration-build:
-	bazel build --config=ci //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=x86_64
-	bazel build --config=ci //IntegrationTests:TestApp_iOS --apple_platform_type=ios --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=sim_arm64
+integration-build-x86_64:
+	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=x86_64
+
+integration-build-arm64:
+	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=sim_arm64
 
 integration-clean:
 	-cd IntegrationTests; \
@@ -110,20 +112,30 @@ integration-static:
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	$(MAKE) integration-generate-static
-	$(MAKE) integration-build
+	$(MAKE) integration-build-x86_64
+	$(MAKE) integration-build-arm64
 
 integration-dynamic: 
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	$(MAKE) integration-generate-dynamic
-	$(MAKE) integration-build
+	$(MAKE) integration-build-x86_64
+	$(MAKE) integration-build-arm64
 
 integration: 
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	$(MAKE) integration-generate-static
-	$(MAKE) integration-build
+	$(MAKE) integration-build-x86_64
+	$(MAKE) integration-build-arm64
 	$(MAKE) integration-generate-dynamic
-	$(MAKE) integration-build
+	$(MAKE) integration-build-x86_64
+	$(MAKE) integration-build-arm64
+
+integration-run-arm64:
+	bazel run //IntegrationTests:TestApp_iOS --ios_multi_cpus=sim_arm64
+
+integration-run-x86_64:
+	bazel run //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64
 
 

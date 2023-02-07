@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_dynamic_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -10,21 +11,9 @@ config_setting(
   }
 )
 config_setting(
-  name = "osxCase",
+  name = "ios_arm64",
   values = {
-    "apple_platform_type": "macos"
-  }
-)
-config_setting(
-  name = "tvosCase",
-  values = {
-    "apple_platform_type": "tvos"
-  }
-)
-config_setting(
-  name = "watchosCase",
-  values = {
-    "apple_platform_type": "watchos"
+    "cpu": "ios_arm64"
   }
 )
 config_setting(
@@ -34,27 +23,15 @@ config_setting(
   }
 )
 config_setting(
-  name = "ios_arm64",
+  name = "ios_i386",
   values = {
-    "cpu": "ios_arm64"
-  }
-)
-config_setting(
-  name = "ios_arm64e",
-  values = {
-    "cpu": "ios_arm64e"
+    "cpu": "ios_i386"
   }
 )
 config_setting(
   name = "ios_sim_arm64",
   values = {
     "cpu": "ios_sim_arm64"
-  }
-)
-config_setting(
-  name = "ios_i386",
-  values = {
-    "cpu": "ios_i386"
   }
 )
 config_setting(
@@ -73,74 +50,29 @@ apple_framework(
   platforms = {
     "ios": "11.0"
   },
-  vendored_xcframeworks = [
+  deps = select(
     {
-    "name": "BidstackMobileAdsSDK",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64",
-      "path": "BidstackMobileAdsSDK.xcframework/ios-arm64/BidstackMobileAdsSDK.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "BidstackMobileAdsSDK.xcframework/ios-arm64_x86_64-simulator/BidstackMobileAdsSDK.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":BidstackMobileAdsSDK_BidstackMobileAdsSDK_VendoredXCFramework",
+        ":BidstackMobileAdsSDK_OMSDK_Bidstack_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":BidstackMobileAdsSDK_OMSDK_Bidstack_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":BidstackMobileAdsSDK_OMSDK_Bidstack_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":BidstackMobileAdsSDK_BidstackMobileAdsSDK_VendoredXCFramework",
+        ":BidstackMobileAdsSDK_OMSDK_Bidstack_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":BidstackMobileAdsSDK_BidstackMobileAdsSDK_VendoredXCFramework",
+        ":BidstackMobileAdsSDK_OMSDK_Bidstack_VendoredXCFramework"
       ]
     }
-    ]
-  },
-    {
-    "name": "OMSDK_Bidstack",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "Frameworks/OMSDK_Bidstack.xcframework/ios-arm64_armv7/OMSDK_Bidstack.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "Frameworks/OMSDK_Bidstack.xcframework/ios-arm64_i386_x86_64-simulator/OMSDK_Bidstack.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -162,6 +94,28 @@ apple_framework(
         "DEBUG"
       ]
     }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "BidstackMobileAdsSDK_BidstackMobileAdsSDK_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "BidstackMobileAdsSDK.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "BidstackMobileAdsSDK_OMSDK_Bidstack_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Frameworks/OMSDK_Bidstack.xcframework/**"
+    ]
   ),
   visibility = [
     "//visibility:public"

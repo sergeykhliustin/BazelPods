@@ -1,3 +1,4 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
@@ -10,21 +11,9 @@ config_setting(
   }
 )
 config_setting(
-  name = "osxCase",
+  name = "ios_arm64",
   values = {
-    "apple_platform_type": "macos"
-  }
-)
-config_setting(
-  name = "tvosCase",
-  values = {
-    "apple_platform_type": "tvos"
-  }
-)
-config_setting(
-  name = "watchosCase",
-  values = {
-    "apple_platform_type": "watchos"
+    "cpu": "ios_arm64"
   }
 )
 config_setting(
@@ -34,27 +23,15 @@ config_setting(
   }
 )
 config_setting(
-  name = "ios_arm64",
+  name = "ios_i386",
   values = {
-    "cpu": "ios_arm64"
-  }
-)
-config_setting(
-  name = "ios_arm64e",
-  values = {
-    "cpu": "ios_arm64e"
+    "cpu": "ios_i386"
   }
 )
 config_setting(
   name = "ios_sim_arm64",
   values = {
     "cpu": "ios_sim_arm64"
-  }
-)
-config_setting(
-  name = "ios_i386",
-  values = {
-    "cpu": "ios_i386"
   }
 )
 config_setting(
@@ -75,187 +52,31 @@ apple_framework(
   deps = [
     "//Tests/Pods/GoogleUtilities",
     "//Tests/Pods/nanopb"
-  ],
-  vendored_xcframeworks = [
+  ] + select(
     {
-    "name": "GoogleAppMeasurement",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "Frameworks/GoogleAppMeasurement.xcframework/ios-arm64_armv7/GoogleAppMeasurement.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "Frameworks/GoogleAppMeasurement.xcframework/ios-arm64_i386_x86_64-simulator/GoogleAppMeasurement.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "Frameworks/GoogleAppMeasurement.xcframework/ios-arm64_x86_64-maccatalyst/GoogleAppMeasurement.framework",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "macos-arm64_x86_64",
-      "path": "Frameworks/GoogleAppMeasurement.xcframework/macos-arm64_x86_64/GoogleAppMeasurement.framework",
-      "platform": "macos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64",
-      "path": "Frameworks/GoogleAppMeasurement.xcframework/tvos-arm64/GoogleAppMeasurement.framework",
-      "platform": "tvos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64_x86_64-simulator",
-      "path": "Frameworks/GoogleAppMeasurement.xcframework/tvos-arm64_x86_64-simulator/GoogleAppMeasurement.framework",
-      "platform": "tvos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":GoogleAppMeasurement_GoogleAppMeasurementIdentitySupport_VendoredXCFramework",
+        ":GoogleAppMeasurement_GoogleAppMeasurement_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":GoogleAppMeasurement_GoogleAppMeasurementIdentitySupport_VendoredXCFramework",
+        ":GoogleAppMeasurement_GoogleAppMeasurement_VendoredXCFramework"
+      ],
+      ":ios_i386": [
+        ":GoogleAppMeasurement_GoogleAppMeasurementIdentitySupport_VendoredXCFramework",
+        ":GoogleAppMeasurement_GoogleAppMeasurement_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":GoogleAppMeasurement_GoogleAppMeasurementIdentitySupport_VendoredXCFramework",
+        ":GoogleAppMeasurement_GoogleAppMeasurement_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":GoogleAppMeasurement_GoogleAppMeasurementIdentitySupport_VendoredXCFramework",
+        ":GoogleAppMeasurement_GoogleAppMeasurement_VendoredXCFramework"
       ]
     }
-    ]
-  },
-    {
-    "name": "GoogleAppMeasurementIdentitySupport",
-    "slices": [
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_armv7",
-      "path": "Frameworks/GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_armv7/GoogleAppMeasurementIdentitySupport.framework",
-      "platform": "ios",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "armv7"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_i386_x86_64-simulator",
-      "path": "Frameworks/GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_i386_x86_64-simulator/GoogleAppMeasurementIdentitySupport.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "i386",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "Frameworks/GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_x86_64-maccatalyst/GoogleAppMeasurementIdentitySupport.framework",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "macos-arm64_x86_64",
-      "path": "Frameworks/GoogleAppMeasurementIdentitySupport.xcframework/macos-arm64_x86_64/GoogleAppMeasurementIdentitySupport.framework",
-      "platform": "macos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64",
-      "path": "Frameworks/GoogleAppMeasurementIdentitySupport.xcframework/tvos-arm64/GoogleAppMeasurementIdentitySupport.framework",
-      "platform": "tvos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64_x86_64-simulator",
-      "path": "Frameworks/GoogleAppMeasurementIdentitySupport.xcframework/tvos-arm64_x86_64-simulator/GoogleAppMeasurementIdentitySupport.framework",
-      "platform": "tvos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    }
-    ]
-  }
-  ],
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -286,6 +107,28 @@ apple_framework(
   sdk_frameworks = [
     "StoreKit"
   ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "GoogleAppMeasurement_GoogleAppMeasurement_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Frameworks/GoogleAppMeasurement.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "GoogleAppMeasurement_GoogleAppMeasurementIdentitySupport_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "Frameworks/GoogleAppMeasurementIdentitySupport.xcframework/**"
+    ]
+  ),
   visibility = [
     "//visibility:public"
   ]
