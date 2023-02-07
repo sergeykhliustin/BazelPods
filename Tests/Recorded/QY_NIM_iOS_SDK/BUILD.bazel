@@ -1,0 +1,183 @@
+load('@build_bazel_rules_ios//rules:apple_patched.bzl', 'apple_dynamic_framework_import')
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+apple_framework(
+  name = "QY_NIM_iOS_SDK",
+  module_name = "QY_NIM_iOS_SDK",
+  bundle_id = "org.cocoapods.QY_NIM_iOS_SDK",
+  link_dynamic = False,
+  testonly = False,
+  platforms = {
+    "ios": "10.0"
+  },
+  data = [
+    "QYSDK/Resources/QYCustomResource.bundle",
+    "QYSDK/Resources/QYLanguage.bundle",
+    "QYSDK/Resources/QYResource.bundle"
+  ],
+  deps = select(
+    {
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework"
+      ],
+      ":ios_x86_64": [
+        ":QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework"
+      ]
+    }
+  ),
+  vendored_xcframeworks = [
+    {
+    "name": "QYSDK_ReName",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64",
+      "path": "QYSDK/QYSDK_ReName.xcframework/ios-arm64/QYSDK_ReName.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-x86_64-simulator",
+      "path": "QYSDK/QYSDK_ReName.xcframework/ios-x86_64-simulator/QYSDK_ReName.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "x86_64"
+      ]
+    }
+    ]
+  }
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++",
+    "sqlite3.0",
+    "xml2",
+    "z"
+  ],
+  sdk_frameworks = [
+    "AVFoundation",
+    "Accelerate",
+    "AssetsLibrary",
+    "AudioToolbox",
+    "CoreMedia",
+    "CoreMotion",
+    "CoreTelephony",
+    "CoreText",
+    "ImageIO",
+    "MobileCoreServices",
+    "Photos",
+    "SystemConfiguration",
+    "UIKit",
+    "WebKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_framework_import(
+  name = "QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework",
+  framework_imports = glob(
+    [
+      "QYSDK/NIMSDK2.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)

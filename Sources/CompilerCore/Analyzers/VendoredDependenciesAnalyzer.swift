@@ -53,20 +53,43 @@ public struct VendoredDependenciesAnalyzer {
         let libraries = spec
             .collectAttribute(with: subspecs, keyPath: \.vendoredLibraries)
             .platform(platform) ?? []
-        let platformArchs = platform.supportedArchs
-        let resultLibraries = libraries.reduce([Result.Library]()) { partialResult, path in
+        let supportedArchs = platform.supportedArchs
+        let resultXCFrameworks = processXCFrameworks(xcFrameworks)
+        let resultLibraries = processLibraries(libraries, supportedArchs: supportedArchs)
+        let resultFrameworks = processFrameworks(frameworks, supportedArchs: supportedArchs)
+
+        return Result(libraries: resultLibraries, frameworks: resultFrameworks, xcFrameworks: resultXCFrameworks)
+    }
+
+    private func processXCFrameworks(_ xcframeworks: [String]) -> [String] {
+        let result = xcframeworks.reduce(Set<String>()) { partialResult, pattern in
+            var result = partialResult
+            let paths = podGlob(pattern: options.absolutePath(from: pattern))
+                .map({ options.relativePath(from: $0) })
+            paths.forEach({ result.insert($0) })
+            return result
+        }
+            .sorted()
+        return result
+    }
+
+    private func processLibraries(_ libraries: [String], supportedArchs: [Arch]) -> [Result.Library] {
+        return libraries.reduce([Result.Library]()) { partialResult, path in
             var result = partialResult
             let name = path.deletingPathExtension.lastPath
             let absolutePath = options.podTargetAbsoluteRoot.appendingPath(path)
             let archs = Arch
                 .archs(forExecutable: absolutePath)
-                .filter({ platformArchs.contains($0) })
+                .filter({ supportedArchs.contains($0) })
             if !archs.isEmpty {
                 result.append(.init(name: name, path: path, archs: archs))
             }
             return result
         }
-        let resultFrameworks = frameworks.reduce([Result.Framework]()) { partialResult, pattern in
+    }
+
+    private func processFrameworks(_ frameworks: [String], supportedArchs: [Arch]) -> [Result.Framework] {
+        return frameworks.reduce([Result.Framework]()) { partialResult, pattern in
             var result = partialResult
             podGlob(pattern: options.podTargetAbsoluteRoot.appendingPath(pattern)).forEach({ absolutePath in
                 let name = absolutePath.deletingPathExtension.lastPath
@@ -74,7 +97,7 @@ public struct VendoredDependenciesAnalyzer {
                 let dynamic = isDynamicFramework(executable)
                 let archs = Arch
                     .archs(forExecutable: executable)
-                    .filter({ platformArchs.contains($0) })
+                    .filter({ supportedArchs.contains($0) })
                 if !archs.isEmpty {
                     result.append(.init(name: name,
                                         path: options.relativePath(from: absolutePath),
@@ -85,7 +108,5 @@ public struct VendoredDependenciesAnalyzer {
 
             return result
         }
-
-        return Result(libraries: resultLibraries, frameworks: resultFrameworks, xcFrameworks: xcFrameworks)
     }
 }

@@ -58,6 +58,10 @@ public protocol BuildOptions {
 }
 
 extension BuildOptions {
+    func absolutePath(from relative: String) -> String {
+        return podTargetAbsoluteRoot.appendingPath(relative)
+    }
+
     func relativePath(from absolute: String) -> String {
         return absolute
             .deletingSuffix("/")

@@ -1,0 +1,149 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "osxCase",
+  values = {
+    "apple_platform_type": "macos"
+  }
+)
+config_setting(
+  name = "tvosCase",
+  values = {
+    "apple_platform_type": "tvos"
+  }
+)
+config_setting(
+  name = "watchosCase",
+  values = {
+    "apple_platform_type": "watchos"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_arm64e",
+  values = {
+    "cpu": "ios_arm64e"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_i386",
+  values = {
+    "cpu": "ios_i386"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+apple_framework(
+  name = "YuyanAuthSDK",
+  module_name = "YuyanAuthSDK",
+  bundle_id = "org.cocoapods.YuyanAuthSDK",
+  link_dynamic = False,
+  testonly = False,
+  platforms = {
+    "ios": "10.0"
+  },
+  data = [
+    "YuyanOneClickLogin/Classes/YuyanOneClickLogin.bundle"
+  ],
+  deps = [
+    "//Tests/Pods/ADMobGenDeviceInfo",
+    "//Tests/Pods/ADSuyiKit",
+    "//Tests/Pods/ADSuyiNetwork"
+  ],
+  vendored_xcframeworks = [
+    {
+    "name": "YuyanOneClickLogin",
+    "slices": [
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_armv7",
+      "path": "YuyanOneClickLogin/Classes/YuyanOneClickLogin.xcframework/ios-arm64_armv7/YuyanOneClickLogin.framework",
+      "platform": "ios",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64",
+        "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "framework"
+      },
+      "identifier": "ios-i386_x86_64-simulator",
+      "path": "YuyanOneClickLogin/Classes/YuyanOneClickLogin.xcframework/ios-i386_x86_64-simulator/YuyanOneClickLogin.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "i386",
+        "x86_64"
+      ]
+    }
+    ]
+  }
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++"
+  ],
+  sdk_frameworks = [
+    "UIKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
