@@ -12,6 +12,7 @@ public struct PodBuildFile: StarlarkConvertible {
     /// Starlark Convertibles excluding prefix nodes.
     /// @note Use toStarlark() to generate the actual BUILD file
     let starlarkConvertibles: [StarlarkConvertible]
+    let archs: [Arch]
 
     private let options: BuildOptions
 
@@ -22,15 +23,16 @@ public struct PodBuildFile: StarlarkConvertible {
         return .lines([
             makeLoadNodes(forConvertibles: starlarkConvertibles)
         ] + [
-            ConfigSetting.makeConfigSettingNodes()
+            ConfigSetting.makeConfigSettingNodes(archs: archs)
         ] + convertibleNodes)
     }
 
     public static func with(podSpec: PodSpec,
                             buildOptions: BuildOptions =
                             BasicBuildOptions.empty) -> PodBuildFile {
-        let libs = PodBuildFile.makeConvertables(fromPodspec: podSpec, buildOptions: buildOptions)
-        return PodBuildFile(starlarkConvertibles: libs,
+        let (convertables, archs) = PodBuildFile.makeConvertablesAndArchs(fromPodspec: podSpec, options: buildOptions)
+        return PodBuildFile(starlarkConvertibles: convertables,
+                            archs: archs,
                             options: buildOptions)
     }
 
@@ -121,31 +123,31 @@ public struct PodBuildFile: StarlarkConvertible {
         return result
     }
 
-    static func makeConvertables(fromPodspec podSpec: PodSpec,
-                                 buildOptions: BuildOptions = BasicBuildOptions.empty) -> [StarlarkConvertible] {
-        let subspecs = podSpec.selectedSubspecs(subspecs: buildOptions.subspecs)
+    static func makeConvertablesAndArchs(fromPodspec podSpec: PodSpec,
+                                 options: BuildOptions = BasicBuildOptions.empty) -> ([StarlarkConvertible], [Arch]) {
+        let subspecs = podSpec.selectedSubspecs(subspecs: options.subspecs)
         // TODO: Platforms support
         let platform = Platform.ios
         let baseInfo = BaseInfoAnalyzer(platform: platform,
                                         spec: podSpec,
                                         subspecs: subspecs,
-                                        options: buildOptions).result
+                                        options: options).result
         let sourcesInfo = SourcesAnalyzer(platform: platform,
                                           spec: podSpec,
                                           subspecs: subspecs,
-                                          options: buildOptions).result
+                                          options: options).result
         let resourcesInfo = ResourcesAnalyzer(platform: platform,
                                               spec: podSpec,
                                               subspecs: subspecs,
-                                              options: buildOptions).result
+                                              options: options).result
         let sdkDepsInfo = SdkDependenciesAnalyzer(platform: platform,
                                                   spec: podSpec,
                                                   subspecs: subspecs,
-                                                  options: buildOptions).result
+                                                  options: options).result
         let vendoredDepsInfo = VendoredDependenciesAnalyzer(platform: platform,
                                                             spec: podSpec,
                                                             subspecs: subspecs,
-                                                            options: buildOptions).result
+                                                            options: options).result
 
         let (resourceTargets, resourceInfoplists) = makeResourceBundles(info: baseInfo, resources: resourcesInfo)
         let (vendoredTargets, conditions) = makeVendoredTargets(info: baseInfo, vendored: vendoredDepsInfo)
@@ -159,7 +161,15 @@ public struct PodBuildFile: StarlarkConvertible {
                                                          subspecs: subspecs,
                                                          deps: resourceTargets,
                                                          conditionalDeps: conditions,
-                                                         options: buildOptions)
+                                                         options: options)
+        let archs = conditions.reduce(Set<Arch>()) { partialResult, element in
+            var result = partialResult
+            element.value.forEach({
+                result.insert($0)
+            })
+            return result
+        }.sorted()
+
         var output: [BazelTarget] = []
         output += sourceTargets
         output += resourceTargets
@@ -168,9 +178,9 @@ public struct PodBuildFile: StarlarkConvertible {
         output += resourceInfoplists
 
         output = UserConfigurableTransform.transform(convertibles: output,
-                                                     options: buildOptions,
+                                                     options: options,
                                                      podSpec: podSpec)
-        return output
+        return (output, archs)
     }
 
     public func compile() -> String {

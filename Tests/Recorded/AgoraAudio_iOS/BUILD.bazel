@@ -11,21 +11,9 @@ config_setting(
   }
 )
 config_setting(
-  name = "osxCase",
+  name = "ios_arm64",
   values = {
-    "apple_platform_type": "macos"
-  }
-)
-config_setting(
-  name = "tvosCase",
-  values = {
-    "apple_platform_type": "tvos"
-  }
-)
-config_setting(
-  name = "watchosCase",
-  values = {
-    "apple_platform_type": "watchos"
+    "cpu": "ios_arm64"
   }
 )
 config_setting(
@@ -35,27 +23,9 @@ config_setting(
   }
 )
 config_setting(
-  name = "ios_arm64",
-  values = {
-    "cpu": "ios_arm64"
-  }
-)
-config_setting(
-  name = "ios_arm64e",
-  values = {
-    "cpu": "ios_arm64e"
-  }
-)
-config_setting(
   name = "ios_sim_arm64",
   values = {
     "cpu": "ios_sim_arm64"
-  }
-)
-config_setting(
-  name = "ios_i386",
-  values = {
-    "cpu": "ios_i386"
   }
 )
 config_setting(
