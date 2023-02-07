@@ -63,48 +63,6 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
-genrule(
-  name = "FirebaseCrashlytics_InfoPlist",
-  srcs = [],
-  outs = [
-    "FirebaseCrashlytics_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.FirebaseCrashlytics</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>FirebaseCrashlytics</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleShortVersionString</key>
-	<string>9.6.0</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<array>
-		<string>iPhoneSimulator</string>
-		<string>iPhoneOS</string>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<string>10.0</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>1</integer>
-		<integer>2</integer>
-	</array>
-</dict>
-</plist>
-
-EOF"""
-)
 apple_framework(
   name = "FirebaseCrashlytics",
   module_name = "FirebaseCrashlytics",
@@ -116,10 +74,7 @@ apple_framework(
     ":FirebaseCrashlytics_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "osx": "10.12",
-    "tvos": "10.0",
-    "watchos": "6.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [
@@ -183,21 +138,10 @@ apple_framework(
     "c++",
     "z"
   ],
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Security",
-        "SystemConfiguration"
-      ],
-      ":osxCase": [
-        "Security",
-        "SystemConfiguration"
-      ],
-      ":watchosCase": [
-        "Security"
-      ]
-    }
-  ),
+  sdk_frameworks = [
+    "Security",
+    "SystemConfiguration"
+  ],
   objc_copts = [
     "-ITests/Pods/FirebaseCrashlytics"
   ],
@@ -216,4 +160,46 @@ apple_framework(
   visibility = [
     "//visibility:public"
   ]
+)
+genrule(
+  name = "FirebaseCrashlytics_InfoPlist",
+  srcs = [],
+  outs = [
+    "FirebaseCrashlytics_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.FirebaseCrashlytics</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>FirebaseCrashlytics</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>9.6.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
 )

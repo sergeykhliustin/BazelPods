@@ -70,40 +70,12 @@ apple_framework(
   link_dynamic = False,
   testonly = False,
   platforms = {
-    "ios": "12.0",
-    "tvos": "12.0"
+    "ios": "12.0"
   },
   vendored_xcframeworks = [
     {
     "name": "FBSDKCoreKit_Basics",
     "slices": [
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "XCFrameworks/FBSDKCoreKit_Basics.xcframework/ios-arm64_x86_64-simulator/FBSDKCoreKit_Basics.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
-      "identifier": "tvos-arm64",
-      "path": "XCFrameworks/FBSDKCoreKit_Basics.xcframework/tvos-arm64/FBSDKCoreKit_Basics.framework",
-      "platform": "tvos",
-      "platform_variant": [],
-      "supported_archs": [
-        "arm64"
-      ]
-    },
       {
       "build_type": {
         "linkage": "dynamic",
@@ -129,6 +101,33 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "XCFrameworks/FBSDKCoreKit_Basics.xcframework/ios-arm64_x86_64-simulator/FBSDKCoreKit_Basics.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "tvos-arm64",
+      "path": "XCFrameworks/FBSDKCoreKit_Basics.xcframework/tvos-arm64/FBSDKCoreKit_Basics.framework",
+      "platform": "tvos",
+      "platform_variant": [],
+      "supported_archs": [
+        "arm64"
       ]
     },
       {

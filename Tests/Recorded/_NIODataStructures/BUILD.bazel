@@ -63,6 +63,52 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "_NIODataStructures",
+  module_name = "_NIODataStructures",
+  bundle_id = "org.cocoapods._NIODataStructures",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":_NIODataStructures_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Sources/_NIODataStructures/**/*.c",
+      "Sources/_NIODataStructures/**/*.h",
+      "Sources/_NIODataStructures/**/*.swift"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "_NIODataStructures_InfoPlist",
   srcs = [],
@@ -104,53 +150,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "_NIODataStructures",
-  module_name = "_NIODataStructures",
-  bundle_id = "org.cocoapods._NIODataStructures",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":_NIODataStructures_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.10",
-    "tvos": "10.0",
-    "watchos": "6.0"
-  },
-  srcs = glob(
-    [
-      "Sources/_NIODataStructures/**/*.c",
-      "Sources/_NIODataStructures/**/*.h",
-      "Sources/_NIODataStructures/**/*.swift"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

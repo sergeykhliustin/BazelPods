@@ -81,20 +81,6 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraAiEchoCancellationExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAiEchoCancellationExtension.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
       "identifier": "ios-arm64_armv7",
       "path": "AgoraAiEchoCancellationExtension.xcframework/ios-arm64_armv7/AgoraAiEchoCancellationExtension.framework",
       "platform": "ios",
@@ -103,26 +89,26 @@ apple_framework(
         "arm64",
         "armv7"
       ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraAiNoiseSuppressionExtension",
-    "slices": [
+    },
       {
       "build_type": {
         "linkage": "dynamic",
         "packaging": "framework"
       },
       "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraAiNoiseSuppressionExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAiNoiseSuppressionExtension.framework",
+      "path": "AgoraAiEchoCancellationExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAiEchoCancellationExtension.framework",
       "platform": "ios",
       "platform_variant": "simulator",
       "supported_archs": [
         "sim_arm64",
         "x86_64"
       ]
-    },
+    }
+    ]
+  },
+    {
+    "name": "AgoraAiNoiseSuppressionExtension",
+    "slices": [
       {
       "build_type": {
         "linkage": "dynamic",
@@ -136,26 +122,26 @@ apple_framework(
         "arm64",
         "armv7"
       ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraAudioBeautyExtension",
-    "slices": [
+    },
       {
       "build_type": {
         "linkage": "dynamic",
         "packaging": "framework"
       },
       "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraAudioBeautyExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAudioBeautyExtension.framework",
+      "path": "AgoraAiNoiseSuppressionExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAiNoiseSuppressionExtension.framework",
       "platform": "ios",
       "platform_variant": "simulator",
       "supported_archs": [
         "sim_arm64",
         "x86_64"
       ]
-    },
+    }
+    ]
+  },
+    {
+    "name": "AgoraAudioBeautyExtension",
+    "slices": [
       {
       "build_type": {
         "linkage": "dynamic",
@@ -169,26 +155,26 @@ apple_framework(
         "arm64",
         "armv7"
       ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraDrmLoaderExtension",
-    "slices": [
+    },
       {
       "build_type": {
         "linkage": "dynamic",
         "packaging": "framework"
       },
       "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraDrmLoaderExtension.xcframework/ios-arm64_x86_64-simulator/AgoraDrmLoaderExtension.framework",
+      "path": "AgoraAudioBeautyExtension.xcframework/ios-arm64_x86_64-simulator/AgoraAudioBeautyExtension.framework",
       "platform": "ios",
       "platform_variant": "simulator",
       "supported_archs": [
         "sim_arm64",
         "x86_64"
       ]
-    },
+    }
+    ]
+  },
+    {
+    "name": "AgoraDrmLoaderExtension",
+    "slices": [
       {
       "build_type": {
         "linkage": "dynamic",
@@ -202,26 +188,26 @@ apple_framework(
         "arm64",
         "armv7"
       ]
-    }
-    ]
-  },
-    {
-    "name": "AgoraRtcKit",
-    "slices": [
+    },
       {
       "build_type": {
         "linkage": "dynamic",
         "packaging": "framework"
       },
       "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraRtcKit.xcframework/ios-arm64_x86_64-simulator/AgoraRtcKit.framework",
+      "path": "AgoraDrmLoaderExtension.xcframework/ios-arm64_x86_64-simulator/AgoraDrmLoaderExtension.framework",
       "platform": "ios",
       "platform_variant": "simulator",
       "supported_archs": [
         "sim_arm64",
         "x86_64"
       ]
-    },
+    }
+    ]
+  },
+    {
+    "name": "AgoraRtcKit",
+    "slices": [
       {
       "build_type": {
         "linkage": "dynamic",
@@ -234,6 +220,20 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "AgoraRtcKit.xcframework/ios-arm64_x86_64-simulator/AgoraRtcKit.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "x86_64"
       ]
     }
     ]
@@ -279,20 +279,6 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "AgoraSpatialAudioExtension.xcframework/ios-arm64_x86_64-simulator/AgoraSpatialAudioExtension.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
       "identifier": "ios-arm64_armv7",
       "path": "AgoraSpatialAudioExtension.xcframework/ios-arm64_armv7/AgoraSpatialAudioExtension.framework",
       "platform": "ios",
@@ -300,6 +286,20 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "AgoraSpatialAudioExtension.xcframework/ios-arm64_x86_64-simulator/AgoraSpatialAudioExtension.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "x86_64"
       ]
     }
     ]
@@ -312,20 +312,6 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "Agorafdkaac.xcframework/ios-arm64_x86_64-simulator/Agorafdkaac.framework",
-      "platform": "ios",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "sim_arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "dynamic",
-        "packaging": "framework"
-      },
       "identifier": "ios-arm64_armv7",
       "path": "Agorafdkaac.xcframework/ios-arm64_armv7/Agorafdkaac.framework",
       "platform": "ios",
@@ -333,6 +319,20 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "dynamic",
+        "packaging": "framework"
+      },
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "Agorafdkaac.xcframework/ios-arm64_x86_64-simulator/Agorafdkaac.framework",
+      "platform": "ios",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "sim_arm64",
+        "x86_64"
       ]
     }
     ]

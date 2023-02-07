@@ -89,6 +89,19 @@ struct MultiPlatform<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAw
                                 tvos: tvos.map(transform))
     }
 
+    func platform(_ platform: Platform) -> T? {
+        switch platform {
+        case .ios:
+            return ios
+        case .osx:
+            return osx
+        case .tvos:
+            return tvos
+        case .watchos:
+            return watchos
+        }
+    }
+
     func toStarlark() -> StarlarkNode {
         precondition(ios != nil || osx != nil || watchos != nil || tvos != nil, "MultiPlatform empty can't be rendered")
 
@@ -204,6 +217,10 @@ struct AttrSet<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAwarenes
                 tvos: AttrTuple(self.multi.tvos, other.multi.tvos)
             )
         )
+    }
+
+    func platform(_ platform: Platform) -> T? {
+        return unpackToMulti().multi.platform(platform)
     }
 
     static var empty: AttrSet<T> { return AttrSet(basic: nil, multi: MultiPlatform.empty) }
@@ -366,7 +383,7 @@ extension PodSpec {
         return getAttrSet(spec: self, keyPath: keyPath)
     }
 
-    func collectAttribute(with subspecs: [PodSpec] = [],
+    func collectAttribute(with subspecs: [PodSpec],
                           keyPath: KeyPath<PodSpecRepresentable, [String]>) -> AttrSet<[String]> {
         return (subspecs + [self])
             .reduce(into: AttrSet<Set<String>>.empty) { partialResult, spec in

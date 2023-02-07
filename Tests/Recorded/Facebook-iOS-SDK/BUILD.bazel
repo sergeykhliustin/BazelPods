@@ -70,8 +70,7 @@ apple_framework(
   link_dynamic = False,
   testonly = False,
   platforms = {
-    "ios": "10.0",
-    "tvos": "9.0"
+    "ios": "10.0"
   },
   deps = [
     "//Tests/Pods/Bolts",
@@ -100,31 +99,18 @@ apple_framework(
       ]
     }
   ),
-  weak_sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Accounts",
-        "AudioToolbox",
-        "CoreGraphics",
-        "CoreLocation",
-        "Foundation",
-        "QuartzCore",
-        "Security",
-        "Social",
-        "UIKit",
-        "WebKit"
-      ],
-      ":tvosCase": [
-        "AudioToolbox",
-        "CoreGraphics",
-        "CoreLocation",
-        "Foundation",
-        "QuartzCore",
-        "Security",
-        "UIKit"
-      ]
-    }
-  ),
+  weak_sdk_frameworks = [
+    "Accounts",
+    "AudioToolbox",
+    "CoreGraphics",
+    "CoreLocation",
+    "Foundation",
+    "QuartzCore",
+    "Security",
+    "Social",
+    "UIKit",
+    "WebKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

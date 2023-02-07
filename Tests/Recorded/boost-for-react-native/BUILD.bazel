@@ -70,8 +70,7 @@ apple_framework(
   link_dynamic = False,
   testonly = False,
   platforms = {
-    "ios": "10.0",
-    "tvos": "9.2"
+    "ios": "10.0"
   },
   objc_defines = [
     "COCOAPODS=1"

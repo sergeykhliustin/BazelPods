@@ -18,7 +18,7 @@ private extension LogLevel {
     var string: String {
         switch self {
         case .debug:
-            return "debug:"
+            return "🔨debug:"
         case .info:
             return "info:"
         case .warning:
@@ -31,13 +31,13 @@ private extension LogLevel {
     var terminalColor: String {
         switch self {
         case .debug:
-            return "[34m" //blue
+            return "[34m" // blue
         case .info:
-            return "[32m" //green
+            return "[32m" // green
         case .warning:
-            return "[33m" //yellow
+            return "[33m" // yellow
         case .error:
-            return "[31m" //red
+            return "[31m" // red
         }
     }
 
@@ -49,7 +49,7 @@ private extension LogLevel {
 }
 
 public protocol LoggerProtocol: AnyObject {
-    func log_debug(_ message: @autoclosure () -> Any)
+    func log_debug(file: StaticString, function: StaticString, line: Int, _ message: @autoclosure () -> Any)
     func log_info(_ message: @autoclosure () -> Any)
     func log_warning(_ message: @autoclosure () -> Any)
     func log_error(_ message: @autoclosure () -> Any)
@@ -63,10 +63,14 @@ public class DefaultLogger: LoggerProtocol {
 
     public var prefix: String?
     public var colors: Bool = false
+    #if DEBUG
     public var level: LogLevel = .debug
+    #else
+    public var level: LogLevel = .info
+    #endif
 
-    public func log_debug(_ message: @autoclosure () -> Any) {
-        log(.debug, message: message())
+    public func log_debug(file: StaticString = #file, function: StaticString = #function, line: Int = #line, _ message: @autoclosure () -> Any) {
+        log(.debug, message: ["\(file)", "\(function)", "\(line)", "\n\(message())"].joined(separator: ": "))
     }
 
     public func log_info(_ message: @autoclosure () -> Any) {
@@ -82,6 +86,7 @@ public class DefaultLogger: LoggerProtocol {
     }
 
     func log(_ level: LogLevel, message: @autoclosure () -> Any) {
+        guard level.rawValue >= self.level.rawValue else { return }
         var result = ""
         if let prefix {
             result += "[\(prefix)] "

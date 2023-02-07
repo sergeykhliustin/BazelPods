@@ -63,6 +63,60 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "PINCache",
+  module_name = "PINCache",
+  bundle_id = "org.cocoapods.PINCache",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":PINCache_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Source/*.h",
+      "Source/*.m",
+      "Source/PINDiskCache.m"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/PINOperation"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Foundation"
+  ],
+  weak_sdk_frameworks = [
+    "UIKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "PINCache_InfoPlist",
   srcs = [],
@@ -104,68 +158,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "PINCache",
-  module_name = "PINCache",
-  bundle_id = "org.cocoapods.PINCache",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":PINCache_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.8",
-    "tvos": "9.0",
-    "watchos": "2.0"
-  },
-  srcs = glob(
-    [
-      "Source/*.h",
-      "Source/*.m",
-      "Source/PINDiskCache.m"
-    ]
-  ),
-  deps = [
-    "//Tests/Pods/PINOperation"
-  ],
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  sdk_frameworks = [
-    "Foundation"
-  ],
-  weak_sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "UIKit"
-      ],
-      ":osxCase": [
-        "AppKit"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

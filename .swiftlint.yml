@@ -18,3 +18,6 @@ force_cast:
   severity: warning
 force_try:
   severity: warning
+function_parameter_count:
+  warning: 8
+  error: 10

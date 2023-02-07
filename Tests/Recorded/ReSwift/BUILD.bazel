@@ -63,6 +63,50 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "ReSwift",
+  module_name = "ReSwift",
+  bundle_id = "org.cocoapods.ReSwift",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":ReSwift_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "ReSwift/**/*.swift"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "ReSwift_InfoPlist",
   srcs = [],
@@ -104,51 +148,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "ReSwift",
-  module_name = "ReSwift",
-  bundle_id = "org.cocoapods.ReSwift",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":ReSwift_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.10",
-    "tvos": "9.0",
-    "watchos": "2.0"
-  },
-  srcs = glob(
-    [
-      "ReSwift/**/*.swift"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

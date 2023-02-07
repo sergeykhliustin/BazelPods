@@ -63,6 +63,53 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "SentryPrivate",
+  module_name = "SentryPrivate",
+  bundle_id = "org.cocoapods.SentryPrivate",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":SentryPrivate_InfoPlist"
+  ],
+  platforms = {
+    "ios": "11.0"
+  },
+  srcs = glob(
+    [
+      "Sources/Swift/**/*.swift"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Foundation"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "SentryPrivate_InfoPlist",
   srcs = [],
@@ -104,68 +151,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "SentryPrivate",
-  module_name = "SentryPrivate",
-  bundle_id = "org.cocoapods.SentryPrivate",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":SentryPrivate_InfoPlist"
-  ],
-  platforms = {
-    "ios": "11.0",
-    "osx": "10.13",
-    "tvos": "11.0",
-    "watchos": "4.0"
-  },
-  srcs = glob(
-    [
-      "Sources/Swift/**/*.swift"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Foundation"
-      ],
-      ":osxCase": [
-        "Foundation"
-      ],
-      ":tvosCase": [
-        "Foundation"
-      ],
-      ":watchosCase": [
-        "Foundation",
-        "WatchKit"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

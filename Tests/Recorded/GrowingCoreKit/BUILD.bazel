@@ -75,7 +75,23 @@ apple_framework(
   },
   deps = [
     "//Tests/Pods/Growing"
-  ],
+  ] + select(
+    {
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":GrowingCoreKit_GrowingCoreKit_VendoredFramework"
+      ],
+      ":ios_armv7": [
+        ":GrowingCoreKit_GrowingCoreKit_VendoredFramework"
+      ],
+      ":ios_i386": [
+        ":GrowingCoreKit_GrowingCoreKit_VendoredFramework"
+      ],
+      ":ios_x86_64": [
+        ":GrowingCoreKit_GrowingCoreKit_VendoredFramework"
+      ]
+    }
+  ),
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -119,10 +135,10 @@ apple_framework(
   ]
 )
 apple_static_framework_import(
-  name = "GrowingCoreKit_*_VendoredFramework",
+  name = "GrowingCoreKit_GrowingCoreKit_VendoredFramework",
   framework_imports = glob(
     [
-      "GrowingIO-iOS-CoreKit/*.framework/**"
+      "GrowingIO-iOS-CoreKit/GrowingCoreKit.framework/**"
     ]
   ),
   visibility = [

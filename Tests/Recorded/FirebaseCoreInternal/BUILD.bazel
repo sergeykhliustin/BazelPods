@@ -63,6 +63,53 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "FirebaseCoreInternal",
+  module_name = "FirebaseCoreInternal",
+  bundle_id = "org.cocoapods.FirebaseCoreInternal",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":FirebaseCoreInternal_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "FirebaseCore/Internal/Sources/**/*.swift"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/GoogleUtilities"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "FirebaseCoreInternal_InfoPlist",
   srcs = [],
@@ -104,54 +151,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "FirebaseCoreInternal",
-  module_name = "FirebaseCoreInternal",
-  bundle_id = "org.cocoapods.FirebaseCoreInternal",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":FirebaseCoreInternal_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.12",
-    "tvos": "10.0",
-    "watchos": "6.0"
-  },
-  srcs = glob(
-    [
-      "FirebaseCore/Internal/Sources/**/*.swift"
-    ]
-  ),
-  deps = [
-    "//Tests/Pods/GoogleUtilities"
-  ],
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

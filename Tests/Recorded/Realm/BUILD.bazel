@@ -63,48 +63,6 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
-genrule(
-  name = "Realm_InfoPlist",
-  srcs = [],
-  outs = [
-    "Realm_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.Realm</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Realm</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleShortVersionString</key>
-	<string>10.34.1</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<array>
-		<string>iPhoneSimulator</string>
-		<string>iPhoneOS</string>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<string>10.0</string>
-	<key>UIDeviceFamily</key>
-	<array>
-		<integer>1</integer>
-		<integer>2</integer>
-	</array>
-</dict>
-</plist>
-
-EOF"""
-)
 apple_framework(
   name = "Realm",
   module_name = "Realm",
@@ -115,10 +73,7 @@ apple_framework(
     ":Realm_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0",
-    "osx": "10.9",
-    "tvos": "9.0",
-    "watchos": "2.0"
+    "ios": "10.0"
   },
   srcs = glob(
     [
@@ -343,20 +298,6 @@ apple_framework(
         "linkage": "static",
         "packaging": "library"
       },
-      "identifier": "macos-x86_64_arm64",
-      "path": "core/realm-monorepo.xcframework/macos-x86_64_arm64/librealm-monorepo.a",
-      "platform": "macos",
-      "platform_variant": [],
-      "supported_archs": [
-        "x86_64",
-        "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
       "identifier": "ios-arm64_armv7",
       "path": "core/realm-monorepo.xcframework/ios-arm64_armv7/librealm-monorepo.a",
       "platform": "ios",
@@ -364,6 +305,20 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "armv7"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "ios-arm64_x86_64-maccatalyst",
+      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64-maccatalyst/librealm-monorepo.a",
+      "platform": "ios",
+      "platform_variant": "maccatalyst",
+      "supported_archs": [
+        "arm64",
+        "x86_64"
       ]
     },
       {
@@ -386,43 +341,13 @@ apple_framework(
         "linkage": "static",
         "packaging": "library"
       },
-      "identifier": "ios-arm64_x86_64-maccatalyst",
-      "path": "core/realm-monorepo.xcframework/ios-arm64_x86_64-maccatalyst/librealm-monorepo.a",
-      "platform": "ios",
-      "platform_variant": "maccatalyst",
-      "supported_archs": [
-        "arm64",
-        "x86_64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "watchos-armv7k_arm64_32_arm64",
-      "path": "core/realm-monorepo.xcframework/watchos-armv7k_arm64_32_arm64/librealm-monorepo.a",
-      "platform": "watchos",
+      "identifier": "macos-x86_64_arm64",
+      "path": "core/realm-monorepo.xcframework/macos-x86_64_arm64/librealm-monorepo.a",
+      "platform": "macos",
       "platform_variant": [],
       "supported_archs": [
-        "armv7k",
-        "arm64_32",
+        "x86_64",
         "arm64"
-      ]
-    },
-      {
-      "build_type": {
-        "linkage": "static",
-        "packaging": "library"
-      },
-      "identifier": "watchos-arm64_i386_x86_64-simulator",
-      "path": "core/realm-monorepo.xcframework/watchos-arm64_i386_x86_64-simulator/librealm-monorepo.a",
-      "platform": "watchos",
-      "platform_variant": "simulator",
-      "supported_archs": [
-        "arm64",
-        "i386",
-        "x86_64"
       ]
     },
       {
@@ -450,6 +375,36 @@ apple_framework(
       "supported_archs": [
         "arm64",
         "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "watchos-arm64_i386_x86_64-simulator",
+      "path": "core/realm-monorepo.xcframework/watchos-arm64_i386_x86_64-simulator/librealm-monorepo.a",
+      "platform": "watchos",
+      "platform_variant": "simulator",
+      "supported_archs": [
+        "arm64",
+        "i386",
+        "x86_64"
+      ]
+    },
+      {
+      "build_type": {
+        "linkage": "static",
+        "packaging": "library"
+      },
+      "identifier": "watchos-armv7k_arm64_32_arm64",
+      "path": "core/realm-monorepo.xcframework/watchos-armv7k_arm64_32_arm64/librealm-monorepo.a",
+      "platform": "watchos",
+      "platform_variant": [],
+      "supported_archs": [
+        "armv7k",
+        "arm64_32",
+        "arm64"
       ]
     }
     ]
@@ -503,4 +458,46 @@ apple_framework(
   visibility = [
     "//visibility:public"
   ]
+)
+genrule(
+  name = "Realm_InfoPlist",
+  srcs = [],
+  outs = [
+    "Realm_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.Realm</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Realm</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>10.34.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
 )

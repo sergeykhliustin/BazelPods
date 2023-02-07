@@ -136,7 +136,7 @@ enum PodSpecField: String {
 protocol PodSpecRepresentable {
     var name: String { get }
     var version: String? { get }
-    var swiftVersions: Set<String>? { get }
+    var swiftVersions: [String]? { get }
     var staticFramework: Bool { get }
     var platforms: [String: String] { get }
     var podTargetXcconfig: [String: String] { get }
@@ -169,7 +169,7 @@ protocol PodSpecRepresentable {
 public struct PodSpec: PodSpecRepresentable {
     let name: String
     let version: String?
-    let swiftVersions: Set<String>?
+    let swiftVersions: [String]?
     let staticFramework: Bool
     let platforms: [String: String]
     let sourceFiles: [String]
@@ -313,7 +313,7 @@ public struct PodSpec: PodSpecRepresentable {
         if let swiftVersion = fieldMap[.swiftVersion] as? String {
             resultSwiftVersions.insert(swiftVersion)
         }
-        self.swiftVersions = !resultSwiftVersions.isEmpty ? resultSwiftVersions : nil
+        self.swiftVersions = !resultSwiftVersions.isEmpty ? Array(resultSwiftVersions) : nil
     }
 
     func allSubspecs(_ isSubspec: Bool = false) -> [PodSpec] {
@@ -322,13 +322,26 @@ public struct PodSpec: PodSpecRepresentable {
         }
     }
 
-    func selectedSubspecs(subspecs: [String]) -> [PodSpec] {
+    public func selectedSubspecs(subspecs: [String]) -> [PodSpec] {
         let defaultSubspecs = Set(subspecs.isEmpty ? self.defaultSubspecs : subspecs)
         let subspecs = allSubspecs()
         guard !defaultSubspecs.isEmpty else {
             return subspecs
         }
         return subspecs.filter { defaultSubspecs.contains($0.name) }
+    }
+
+    func platformRepresentable(_ platform: Platform) -> PodSpecRepresentable? {
+        switch platform {
+        case .ios:
+            return ios
+        case .osx:
+            return osx
+        case .tvos:
+            return tvos
+        case .watchos:
+            return watchos
+        }
     }
 }
 

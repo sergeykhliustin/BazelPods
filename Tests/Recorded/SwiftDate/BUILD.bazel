@@ -63,6 +63,58 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "SwiftDate",
+  module_name = "SwiftDate",
+  bundle_id = "org.cocoapods.SwiftDate",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":SwiftDate_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Sources/**/*.swift"
+    ]
+  ),
+  data = glob(
+    [
+      "Sources/SwiftDate/Formatters/RelativeFormatter/langs"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Foundation"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "SwiftDate_InfoPlist",
   srcs = [],
@@ -104,59 +156,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "SwiftDate",
-  module_name = "SwiftDate",
-  bundle_id = "org.cocoapods.SwiftDate",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":SwiftDate_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.10",
-    "tvos": "9.0",
-    "watchos": "2.0"
-  },
-  srcs = glob(
-    [
-      "Sources/**/*.swift"
-    ]
-  ),
-  data = glob(
-    [
-      "Sources/SwiftDate/Formatters/RelativeFormatter/langs"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  sdk_frameworks = [
-    "Foundation"
-  ],
-  visibility = [
-    "//visibility:public"
-  ]
 )

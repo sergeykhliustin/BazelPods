@@ -63,6 +63,55 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "SwiftNIOConcurrencyHelpers",
+  module_name = "NIOConcurrencyHelpers",
+  bundle_id = "org.cocoapods.SwiftNIOConcurrencyHelpers",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":SwiftNIOConcurrencyHelpers_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Sources/NIOConcurrencyHelpers/**/*.c",
+      "Sources/NIOConcurrencyHelpers/**/*.h",
+      "Sources/NIOConcurrencyHelpers/**/*.swift"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/CNIOAtomics"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "SwiftNIOConcurrencyHelpers_InfoPlist",
   srcs = [],
@@ -104,56 +153,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "SwiftNIOConcurrencyHelpers",
-  module_name = "NIOConcurrencyHelpers",
-  bundle_id = "org.cocoapods.SwiftNIOConcurrencyHelpers",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":SwiftNIOConcurrencyHelpers_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.10",
-    "tvos": "10.0",
-    "watchos": "6.0"
-  },
-  srcs = glob(
-    [
-      "Sources/NIOConcurrencyHelpers/**/*.c",
-      "Sources/NIOConcurrencyHelpers/**/*.h",
-      "Sources/NIOConcurrencyHelpers/**/*.swift"
-    ]
-  ),
-  deps = [
-    "//Tests/Pods/CNIOAtomics"
-  ],
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

@@ -63,6 +63,65 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "SDWebImage",
+  module_name = "SDWebImage",
+  bundle_id = "org.cocoapods.SDWebImage",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":SDWebImage_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "SDWebImage/Core/*.h",
+      "SDWebImage/Core/*.m",
+      "SDWebImage/Private/*.h",
+      "SDWebImage/Private/*.m",
+      "WebImage/SDWebImage.h"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "SDWebImage/Private/*.h"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "ImageIO",
+    "CoreGraphics",
+    "CoreImage",
+    "QuartzCore",
+    "Accelerate"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "SDWebImage_InfoPlist",
   srcs = [],
@@ -104,80 +163,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "SDWebImage",
-  module_name = "SDWebImage",
-  bundle_id = "org.cocoapods.SDWebImage",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":SDWebImage_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.11",
-    "tvos": "9.0",
-    "watchos": "2.0"
-  },
-  srcs = glob(
-    [
-      "SDWebImage/Core/*.h",
-      "SDWebImage/Core/*.m",
-      "SDWebImage/Private/*.h",
-      "SDWebImage/Private/*.m",
-      "WebImage/SDWebImage.h"
-    ]
-  ),
-  private_headers = glob(
-    [
-      "SDWebImage/Private/*.h"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  sdk_frameworks = [
-    "CoreGraphics",
-    "CoreImage",
-    "QuartzCore",
-    "Accelerate"
-  ] + select(
-    {
-      "//conditions:default": [
-        "ImageIO"
-      ],
-      ":osxCase": [
-        "ImageIO"
-      ],
-      ":tvosCase": [
-        "ImageIO"
-      ],
-      ":watchosCase": [
-        "ImageIO"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

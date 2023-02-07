@@ -8,8 +8,8 @@
 import Foundation
 import Logger
 
-func log_debug(_ message: @autoclosure () -> Any) {
-    logger.log_debug(message())
+func log_debug(file: StaticString = #file, function: StaticString = #function, line: Int = #line, _ message: @autoclosure () -> Any) {
+    logger.log_debug(file: file, function: function, line: line, message())
 }
 
 func log_info(_ message: @autoclosure () -> Any) {

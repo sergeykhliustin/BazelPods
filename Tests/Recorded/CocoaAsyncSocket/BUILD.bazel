@@ -63,6 +63,54 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "CocoaAsyncSocket",
+  module_name = "CocoaAsyncSocket",
+  bundle_id = "org.cocoapods.CocoaAsyncSocket",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":CocoaAsyncSocket_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Source/GCD/*.h",
+      "Source/GCD/*.m"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "CFNetwork",
+    "Security"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "CocoaAsyncSocket_InfoPlist",
   srcs = [],
@@ -104,66 +152,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "CocoaAsyncSocket",
-  module_name = "CocoaAsyncSocket",
-  bundle_id = "org.cocoapods.CocoaAsyncSocket",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":CocoaAsyncSocket_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.8",
-    "tvos": "9.0"
-  },
-  srcs = glob(
-    [
-      "Source/GCD/*.h",
-      "Source/GCD/*.m"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "CFNetwork",
-        "Security"
-      ],
-      ":osxCase": [
-        "CoreServices",
-        "Security"
-      ],
-      ":tvosCase": [
-        "CFNetwork",
-        "Security"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

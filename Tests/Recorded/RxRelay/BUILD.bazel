@@ -63,6 +63,55 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "RxRelay",
+  module_name = "RxRelay",
+  bundle_id = "org.cocoapods.RxRelay",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":RxRelay_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "RxRelay/**/*.h",
+      "RxRelay/**/*.m",
+      "RxRelay/**/*.swift"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/RxSwift"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "RxRelay_InfoPlist",
   srcs = [],
@@ -104,56 +153,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "RxRelay",
-  module_name = "RxRelay",
-  bundle_id = "org.cocoapods.RxRelay",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":RxRelay_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.9",
-    "tvos": "9.0",
-    "watchos": "3.0"
-  },
-  srcs = glob(
-    [
-      "RxRelay/**/*.h",
-      "RxRelay/**/*.m",
-      "RxRelay/**/*.swift"
-    ]
-  ),
-  deps = [
-    "//Tests/Pods/RxSwift"
-  ],
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

@@ -63,6 +63,56 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "R.swift.Library",
+  module_name = "Rswift",
+  bundle_id = "org.cocoapods.R.swift.Library",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":R.swift.Library_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Library/**/*.swift"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  objc_copts = [
+    "-fapplication-extension"
+  ],
+  swift_copts = [
+    "-application-extension"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "R.swift.Library_InfoPlist",
   srcs = [],
@@ -104,56 +154,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "R.swift.Library",
-  module_name = "Rswift",
-  bundle_id = "org.cocoapods.R.swift.Library",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":R.swift.Library_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "tvos": "9.0",
-    "watchos": "2.2"
-  },
-  srcs = glob(
-    [
-      "Library/**/*.swift"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  objc_copts = [
-    "-fapplication-extension"
-  ],
-  swift_copts = [
-    "-application-extension"
-  ],
-  visibility = [
-    "//visibility:public"
-  ]
 )

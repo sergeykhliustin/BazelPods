@@ -16,12 +16,16 @@ public extension String {
         return (self as NSString).lastPathComponent
     }
 
-    var pathExtenstion: String {
+    var pathExtention: String {
         return (self as NSString).pathExtension
     }
 
     var deletingLastPath: String {
         return (self as NSString).deletingLastPathComponent
+    }
+
+    var deletingPathExtension: String {
+        return (self as NSString).deletingPathExtension
     }
 
     func deletingSuffix(_ suffix: String) -> String {

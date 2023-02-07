@@ -63,6 +63,54 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "Masonry",
+  module_name = "Masonry",
+  bundle_id = "org.cocoapods.Masonry",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":Masonry_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Masonry/*.h",
+      "Masonry/*.m"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Foundation",
+    "UIKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "Masonry_InfoPlist",
   srcs = [],
@@ -104,66 +152,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "Masonry",
-  module_name = "Masonry",
-  bundle_id = "org.cocoapods.Masonry",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":Masonry_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "osx": "10.7",
-    "tvos": "9.0"
-  },
-  srcs = glob(
-    [
-      "Masonry/*.h",
-      "Masonry/*.m"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  sdk_frameworks = select(
-    {
-      "//conditions:default": [
-        "Foundation",
-        "UIKit"
-      ],
-      ":osxCase": [
-        "AppKit",
-        "Foundation"
-      ],
-      ":tvosCase": [
-        "Foundation",
-        "UIKit"
-      ]
-    }
-  ),
-  visibility = [
-    "//visibility:public"
-  ]
 )

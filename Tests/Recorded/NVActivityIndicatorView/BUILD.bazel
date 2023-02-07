@@ -63,6 +63,54 @@ config_setting(
     "cpu": "ios_x86_64"
   }
 )
+apple_framework(
+  name = "NVActivityIndicatorView",
+  module_name = "NVActivityIndicatorView",
+  bundle_id = "org.cocoapods.NVActivityIndicatorView",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":NVActivityIndicatorView_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Sources/Base/**/*.swift"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "QuartzCore",
+    "UIKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
 genrule(
   name = "NVActivityIndicatorView_InfoPlist",
   srcs = [],
@@ -104,53 +152,4 @@ genrule(
 </plist>
 
 EOF"""
-)
-apple_framework(
-  name = "NVActivityIndicatorView",
-  module_name = "NVActivityIndicatorView",
-  bundle_id = "org.cocoapods.NVActivityIndicatorView",
-  swift_version = "5",
-  link_dynamic = True,
-  testonly = False,
-  infoplists = [
-    ":NVActivityIndicatorView_InfoPlist"
-  ],
-  platforms = {
-    "ios": "10.0",
-    "tvos": "9.0"
-  },
-  srcs = glob(
-    [
-      "Sources/Base/**/*.swift"
-    ]
-  ),
-  objc_defines = [
-    "COCOAPODS=1"
-  ] + select(
-    {
-      "//conditions:default": [
-        "POD_CONFIGURATION_DEBUG=1",
-        "DEBUG=1"
-      ],
-      ":release": [
-        "POD_CONFIGURATION_RELEASE=1"
-      ]
-    }
-  ),
-  swift_defines = [
-    "COCOAPODS"
-  ] + select(
-    {
-      "//conditions:default": [
-        "DEBUG"
-      ]
-    }
-  ),
-  sdk_frameworks = [
-    "QuartzCore",
-    "UIKit"
-  ],
-  visibility = [
-    "//visibility:public"
-  ]
 )

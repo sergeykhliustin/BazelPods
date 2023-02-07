@@ -81,13 +81,12 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64_x86_64-simulator",
-      "path": "Onfido.xcframework/ios-arm64_x86_64-simulator/Onfido.framework",
+      "identifier": "ios-arm64",
+      "path": "Onfido.xcframework/ios-arm64/Onfido.framework",
       "platform": "ios",
-      "platform_variant": "simulator",
+      "platform_variant": [],
       "supported_archs": [
-        "sim_arm64",
-        "x86_64"
+        "arm64"
       ]
     },
       {
@@ -95,12 +94,13 @@ apple_framework(
         "linkage": "dynamic",
         "packaging": "framework"
       },
-      "identifier": "ios-arm64",
-      "path": "Onfido.xcframework/ios-arm64/Onfido.framework",
+      "identifier": "ios-arm64_x86_64-simulator",
+      "path": "Onfido.xcframework/ios-arm64_x86_64-simulator/Onfido.framework",
       "platform": "ios",
-      "platform_variant": [],
+      "platform_variant": "simulator",
       "supported_archs": [
-        "arm64"
+        "sim_arm64",
+        "x86_64"
       ]
     }
     ]

@@ -59,21 +59,4 @@ struct AppleFrameworkImport: BazelTarget {
     func appleFrameworkImport(isDynamic: Bool, isXCFramework: Bool) -> String {
         return "apple_" + (isDynamic ? "dynamic_" : "static_") + (isXCFramework ? "xcframework_" : "framework_") + "import"
     }
-
-    static func vendoredFrameworks(withPodspec spec: PodSpec, subspecs: [PodSpec], options: BuildOptions) -> [BazelTarget] {
-        let vendoredFrameworks = spec.collectAttribute(with: subspecs,
-                                                       keyPath: \.vendoredFrameworks).map({ $0.filter({ !$0.hasSuffix("xcframework") }) })
-        let frameworks = vendoredFrameworks.map {
-            $0.compactMap {
-                let isDynamic = isDynamicFramework($0, options: options)
-                let frameworkName = URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent
-
-                return AppleFrameworkImport(name: "\(spec.moduleName ?? spec.name)_\(frameworkName)_VendoredFramework",
-                                            isDynamic: isDynamic,
-                                            isXCFramework: false,
-                                            frameworkImport: $0)
-            } as [AppleFrameworkImport]
-        }
-        return (frameworks.basic ?? []) + (frameworks.multi.ios ?? []).sorted(by: { $0.name < $1.name })
-    }
 }
