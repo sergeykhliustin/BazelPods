@@ -10,19 +10,30 @@ import ArgumentParser
 import CompilerCore
 import ObjcSupport
 
+extension Platform: ExpressibleByArgument {}
+
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Compiler", abstract: "Compiles podspec.json to BUILD file")
-    @Argument(help: "podspec.json", completion: .file(extensions: ["json"]))
-    var podspecJson: String
 
     @Option(name: .long, help: "Sources root where Pods directory located (or renamed by podsRoot)")
-    var src: String = ""
+    var src: String
+
+    @Option(help: "podspec.json", completion: .file(extensions: ["json"]))
+    var podspec: String
 
     @Option(name: .long, parsing: .upToNextOption, help: "Subspecs list")
     var subspecs: [String] = []
 
-    @Option(name: .long, help: "Minimum iOS version to bump if lower")
-    var minIos: String?
+    @Option(parsing: .upToNextOption,
+            help: """
+            Space separated platforms.
+            Valid values are: ios, osx, tvos, watchos.
+            Currently ignored, only 'ios' supported
+            """)
+    var platforms: [Platform] = [.ios]
+
+    @Option(name: .long, help: "Minimum iOS version")
+    var minIos: String = BasicBuildOptions.defaultVersion(for: .ios)
 
     @Option(name: .long, help: "Dependencies prefix")
     var depsPrefix: String = "//Pods"
@@ -48,20 +59,21 @@ Example:
 
     func run() throws {
         _ = CrashReporter()
-        let jsonData = try NSData(contentsOfFile: podspecJson, options: []) as Data
+        let jsonData = try NSData(contentsOfFile: podspec, options: []) as Data
         let jsonFile = try JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as AnyObject
 
         guard let jsonPodspec = jsonFile as? JSONDict else {
-            throw "Error parsing podspec at path \(podspecJson)"
+            throw "Error parsing podspec at path \(podspec)"
         }
 
         let podSpec = try PodSpec(JSONPodspec: jsonPodspec)
 
-        let podSpecURL = NSURL(fileURLWithPath: podspecJson)
+        let podSpecURL = NSURL(fileURLWithPath: podspec)
         let assumedPodName = podSpecURL.lastPathComponent!.components(separatedBy: ".")[0]
         let options = BasicBuildOptions(podName: assumedPodName,
                                         subspecs: subspecs,
                                         sourcePath: src,
+                                        platforms: platforms,
                                         userOptions: userOptions,
                                         minIosPlatform: minIos,
                                         depsPrefix: depsPrefix,

@@ -28,8 +28,7 @@ public struct PodBuildFile: StarlarkConvertible {
     }
 
     public static func with(podSpec: PodSpec,
-                            buildOptions: BuildOptions =
-                            BasicBuildOptions.empty) -> PodBuildFile {
+                            buildOptions: BuildOptions) -> PodBuildFile {
         let (convertables, archs) = PodBuildFile.makeConvertablesAndArchs(fromPodspec: podSpec, options: buildOptions)
         return PodBuildFile(starlarkConvertibles: convertables,
                             archs: archs,
@@ -119,7 +118,7 @@ public struct PodBuildFile: StarlarkConvertible {
     }
 
     static func makeConvertablesAndArchs(fromPodspec spec: PodSpec,
-                                         options: BuildOptions = BasicBuildOptions.empty)
+                                         options: BuildOptions)
     -> ([StarlarkConvertible], [Arch]) {
         let subspecs = spec.selectedSubspecs(subspecs: options.subspecs)
         // TODO: Platforms support

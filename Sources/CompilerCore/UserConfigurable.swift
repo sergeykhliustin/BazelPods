@@ -101,7 +101,7 @@ enum UserConfigurableTransform: StarlarkConvertibleTransform {
                                  podSpec: PodSpec) -> [BazelTarget] {
         let attributes = UserConfigurableTargetAttributes(buildOptions: options)
         return UserConfigurableTransform.executeUserOptionsTransform(onConvertibles: convertibles,
-                                                                     copts: options.globalCopts,
+                                                                     copts: [],
                                                                      userAttributes: attributes)
     }
 

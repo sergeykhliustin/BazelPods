@@ -35,29 +35,31 @@ extension Platform {
 public protocol BuildOptions {
     var podName: String { get }
     var subspecs: [String] { get }
-    var podspecPath: String { get }
     var sourcePath: String { get }
-
     var platforms: [Platform] { get }
-
-    var minIosPlatform: String? { get }
-
+    var minIosPlatform: String { get }
     var depsPrefix: String { get }
     var podsRoot: String { get }
-
     var useFrameworks: Bool { get }
-
     var userOptions: [String] { get }
-    var globalCopts: [String] { get }
-
     var podTargetSrcRoot: String { get }
-
     var podTargetAbsoluteRoot: String { get }
-
     func getRulePrefix(name: String) -> String
 }
 
 extension BuildOptions {
+    public static func defaultVersion(for platform: Platform) -> String {
+        switch platform {
+        case .ios:
+            return "13.0"
+        case .osx:
+            return "10.13"
+        case .tvos:
+            return "13.0"
+        case .watchos:
+            return "6.0"
+        }
+    }
     func absolutePath(from relative: String) -> String {
         return podTargetAbsoluteRoot.appendingPath(relative)
     }
@@ -71,20 +73,19 @@ extension BuildOptions {
     func defaultVersion(for platform: Platform) -> String {
         switch platform {
         case .ios:
-            return minIosPlatform ?? "13.0"
+            return minIosPlatform
         case .osx:
-            return "10.13"
+            return Self.defaultVersion(for: platform)
         case .tvos:
-            return "13.0"
+            return Self.defaultVersion(for: platform)
         case .watchos:
-            return "6.0"
+            return Self.defaultVersion(for: platform)
         }
     }
 
     func resolvePlatforms(_ platforms: [String: String]) -> [String: String] {
         var platforms = platforms
         if let iosPlatform = platforms["ios"],
-            let minIosPlatform,
            iosPlatform.compareVersion(minIosPlatform) == .orderedAscending {
             platforms["ios"] = minIosPlatform
         } else if platforms.isEmpty {
@@ -97,42 +98,34 @@ extension BuildOptions {
 public struct BasicBuildOptions: BuildOptions {
     public let podName: String
     public let subspecs: [String]
-    public let podspecPath: String
     public let sourcePath: String
     public let platforms: [Platform]
 
     public let userOptions: [String]
-    public let globalCopts: [String]
-    public let minIosPlatform: String?
+    public let minIosPlatform: String
     public let depsPrefix: String
     public let podsRoot: String
     public let useFrameworks: Bool
 
-    public init(podName: String = "",
-                subspecs: [String] = [],
-                podspecPath: String = "",
-                sourcePath: String = "",
-                platforms: [Platform] = [.ios],
-                userOptions: [String] = [],
-                globalCopts: [String] = [],
-                minIosPlatform: String? = nil,
-                depsPrefix: String = "//Pods",
-                podsRoot: String = "Pods",
-                dynamicFrameworks: Bool = false) {
+    public init(podName: String,
+                subspecs: [String],
+                sourcePath: String,
+                platforms: [Platform],
+                userOptions: [String],
+                minIosPlatform: String,
+                depsPrefix: String,
+                podsRoot: String,
+                dynamicFrameworks: Bool) {
         self.podName = podName
         self.subspecs = subspecs
-        self.podspecPath = podspecPath
         self.sourcePath = sourcePath
         self.platforms = platforms
         self.userOptions = userOptions
-        self.globalCopts = globalCopts
         self.minIosPlatform = minIosPlatform
         self.depsPrefix = depsPrefix
         self.podsRoot = podsRoot
         self.useFrameworks = dynamicFrameworks
     }
-
-    public static let empty = BasicBuildOptions(podName: "")
 
     public var podTargetSrcRoot: String {
         return podsRoot.appendingPath(podName)
