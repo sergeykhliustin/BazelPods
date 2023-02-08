@@ -28,7 +28,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/Base64"
+    "//Tests/Pods/Base64:Base64"
   ],
   objc_defines = [
     "COCOAPODS=1"

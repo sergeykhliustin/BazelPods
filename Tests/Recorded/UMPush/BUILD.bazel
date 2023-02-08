@@ -47,7 +47,7 @@ apple_framework(
     "UMPush/UMPushResource.bundle"
   ],
   deps = [
-    "//Tests/Pods/UMCommon"
+    "//Tests/Pods/UMCommon:UMCommon"
   ] + select(
     {
       "//conditions:default": [],

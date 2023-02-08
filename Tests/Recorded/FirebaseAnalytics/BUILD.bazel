@@ -51,11 +51,11 @@ apple_framework(
     "ios": "10.0"
   },
   deps = [
-    "//Tests/Pods/FirebaseCore",
-    "//Tests/Pods/FirebaseInstallations",
-    "//Tests/Pods/GoogleAppMeasurement",
-    "//Tests/Pods/GoogleUtilities",
-    "//Tests/Pods/nanopb"
+    "//Tests/Pods/FirebaseCore:FirebaseCore",
+    "//Tests/Pods/FirebaseInstallations:FirebaseInstallations",
+    "//Tests/Pods/GoogleAppMeasurement:GoogleAppMeasurement",
+    "//Tests/Pods/GoogleUtilities:GoogleUtilities",
+    "//Tests/Pods/nanopb:nanopb"
   ] + select(
     {
       "//conditions:default": [],

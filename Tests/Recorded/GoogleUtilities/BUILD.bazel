@@ -56,7 +56,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/PromisesObjC"
+    "//Tests/Pods/PromisesObjC:PromisesObjC"
   ],
   objc_defines = [
     "COCOAPODS=1"

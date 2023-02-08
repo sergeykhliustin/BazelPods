@@ -31,8 +31,8 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/RxRelay",
-    "//Tests/Pods/RxSwift"
+    "//Tests/Pods/RxRelay:RxRelay",
+    "//Tests/Pods/RxSwift:RxSwift"
   ],
   objc_defines = [
     "COCOAPODS=1"

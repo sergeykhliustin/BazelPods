@@ -93,10 +93,10 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/CocoaLumberjack",
-    "//Tests/Pods/FLEX",
-    "//Tests/Pods/MTAppenderFile",
-    "//Tests/Pods/fishhook"
+    "//Tests/Pods/CocoaLumberjack:CocoaLumberjack",
+    "//Tests/Pods/FLEX:FLEX",
+    "//Tests/Pods/MTAppenderFile:MTAppenderFile",
+    "//Tests/Pods/fishhook:fishhook"
   ],
   objc_defines = [
     "COCOAPODS=1"

@@ -47,9 +47,9 @@ apple_framework(
     "YuyanOneClickLogin/Classes/YuyanOneClickLogin.bundle"
   ],
   deps = [
-    "//Tests/Pods/ADMobGenDeviceInfo",
-    "//Tests/Pods/ADSuyiKit",
-    "//Tests/Pods/ADSuyiNetwork"
+    "//Tests/Pods/ADMobGenDeviceInfo:ADMobGenDeviceInfo",
+    "//Tests/Pods/ADSuyiKit:ADSuyiKit",
+    "//Tests/Pods/ADSuyiNetwork:ADSuyiNetwork"
   ] + select(
     {
       "//conditions:default": [],

@@ -44,8 +44,8 @@ apple_framework(
     "ios": "10.0"
   },
   deps = [
-    "//Tests/Pods/ADMobGenFoundation",
-    "//Tests/Pods/ADMobGenNetwork"
+    "//Tests/Pods/ADMobGenFoundation:ADMobGenFoundation",
+    "//Tests/Pods/ADMobGenNetwork:ADMobGenNetwork"
   ] + select(
     {
       "//conditions:default": [],

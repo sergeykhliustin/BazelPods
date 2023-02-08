@@ -57,7 +57,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/FBSDKCoreKit"
+    "//Tests/Pods/FBSDKCoreKit:FBSDKCoreKit"
   ] + select(
     {
       "//conditions:default": [],

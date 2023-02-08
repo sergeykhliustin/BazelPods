@@ -32,7 +32,7 @@ apple_framework(
     "ios": "12.0"
   },
   deps = [
-    "//Tests/Pods/FBSDKCoreKit_Basics"
+    "//Tests/Pods/FBSDKCoreKit_Basics:FBSDKCoreKit_Basics"
   ] + select(
     {
       "//conditions:default": [],

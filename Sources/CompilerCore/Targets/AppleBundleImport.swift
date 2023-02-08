@@ -21,7 +21,7 @@ public struct AppleBundleImport: BazelTarget {
         return .functionCall(
             name: "apple_bundle_import",
             arguments: [
-                .named(name: "name", value: bazelLabel(fromString: name).toStarlark()),
+                .named(name: "name", value: name.toStarlark()),
                 .named(name: "bundle_imports",
                        value: bundleImports.map { GlobNode(include: $0.sorted()) }.toStarlark() )
                 ])

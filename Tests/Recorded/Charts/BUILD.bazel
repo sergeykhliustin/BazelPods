@@ -28,7 +28,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/SwiftAlgorithms"
+    "//Tests/Pods/SwiftAlgorithms:SwiftAlgorithms"
   ],
   objc_defines = [
     "COCOAPODS=1"

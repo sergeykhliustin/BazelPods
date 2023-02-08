@@ -56,10 +56,10 @@ public struct PodBuildFile: StarlarkConvertible {
         var targets: [BazelTarget] = []
         var infoplists: [InfoPlist] = []
         if analyzer.sourcesInfo.linkDynamic {
-            let ruleName = "\(info.name)_InfoPlist"
+            let ruleName = analyzer.targetName.baseInfoplist(info.name)
             infoplists.append(InfoPlist(name: ruleName, framework: info))
         }
-        let framework = AppleFramework(name: info.name,
+        let framework = AppleFramework(name: analyzer.targetName.base(info.name),
                                        info: info,
                                        sources: analyzer.sourcesInfo,
                                        resources: analyzer.resourcesInfo,
@@ -77,8 +77,8 @@ public struct PodBuildFile: StarlarkConvertible {
         var targets: [BazelTarget] = []
         var infoplists: [InfoPlist] = []
         for bundle in analyzer.resourcesInfo.resourceBundles {
-            let bundleRuleName = "\(analyzer.baseInfo.moduleName)_\(bundle.name)_Bundle"
-            let infoPlistRuleName = "\(bundleRuleName)_InfoPlist"
+            let bundleRuleName = analyzer.targetName.bundle(analyzer.baseInfo.moduleName, bundle: bundle.name)
+            let infoPlistRuleName = analyzer.targetName.bundleInfoplist(analyzer.baseInfo.moduleName, bundle: bundle.name)
             targets.append(AppleResourceBundle(name: bundleRuleName, bundle: bundle, infoplists: [infoPlistRuleName]))
             infoplists.append(InfoPlist(name: infoPlistRuleName, resourceBundle: bundle.name, info: analyzer.baseInfo))
         }
@@ -93,7 +93,7 @@ public struct PodBuildFile: StarlarkConvertible {
         var result = vendored.libraries.reduce(([BazelTarget](), [String: [Arch]]())) { partialResult, library in
             var targets = partialResult.0
             var conditions = partialResult.1
-            let name = "\(baseInfo.moduleName)_\(library.name)_VendoredLibrary"
+            let name = analyzer.targetName.library(baseInfo.moduleName, library: library.name)
             conditions[name] = library.archs
             targets.append(ObjcImport(name: name, library: library.path))
             return (targets, conditions)
@@ -101,7 +101,7 @@ public struct PodBuildFile: StarlarkConvertible {
         result = vendored.frameworks.reduce(result, { partialResult, framework in
             var targets = partialResult.0
             var conditions = partialResult.1
-            let name = "\(baseInfo.moduleName)_\(framework.name)_VendoredFramework"
+            let name = analyzer.targetName.framework(baseInfo.moduleName, framework: framework.name)
             conditions[name] = framework.archs
             targets.append(AppleFrameworkImport(name: name, isDynamic: framework.dynamic, isXCFramework: false, frameworkImport: framework.path))
             return (targets, conditions)
@@ -109,7 +109,7 @@ public struct PodBuildFile: StarlarkConvertible {
         result = vendored.xcFrameworks.reduce(result, { partialResult, xcFramework in
             var targets = partialResult.0
             var conditions = partialResult.1
-            let name = "\(baseInfo.moduleName)_\(xcFramework.name)_VendoredXCFramework"
+            let name = analyzer.targetName.xcframework(baseInfo.moduleName, xcframework: xcFramework.name)
             conditions[name] = xcFramework.archs
             targets.append(AppleFrameworkImport(name: name, isDynamic: xcFramework.dynamic, isXCFramework: true, frameworkImport: xcFramework.path))
             return (targets, conditions)
@@ -131,7 +131,10 @@ public struct PodBuildFile: StarlarkConvertible {
         let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
         let (vendoredTargets, conditions) = makeVendoredTargets(analyzer: analyzer)
 
-        let deps = ((resourceTargets.map({ $0.name })) + analyzer.podDepsInfo.dependencies).sorted()
+        let deps = (
+            (resourceTargets.map({ $0.name })) +
+            analyzer.podDependencies
+        ).sorted()
 
         let (sourceTargets, infoplists) = makeSourceLibs(analyzer: analyzer,
                                                          deps: deps,

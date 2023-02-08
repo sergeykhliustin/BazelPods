@@ -44,7 +44,6 @@ public protocol BuildOptions {
     var userOptions: [String] { get }
     var podTargetSrcRoot: String { get }
     var podTargetAbsoluteRoot: String { get }
-    func getRulePrefix(name: String) -> String
 }
 
 extension BuildOptions {
@@ -139,9 +138,5 @@ public struct BasicBuildOptions: BuildOptions {
             result = result.appendingPath(podsRoot.lastPath)
         }
         return result.appendingPath(podName)
-    }
-
-    public func getRulePrefix(name: String) -> String {
-        return "\(depsPrefix)/\(name)"
     }
 }

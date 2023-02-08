@@ -51,12 +51,12 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/FirebaseCore",
-    "//Tests/Pods/FirebaseInstallations",
-    "//Tests/Pods/GoogleDataTransport",
-    "//Tests/Pods/GoogleUtilities",
-    "//Tests/Pods/PromisesObjC",
-    "//Tests/Pods/nanopb"
+    "//Tests/Pods/FirebaseCore:FirebaseCore",
+    "//Tests/Pods/FirebaseInstallations:FirebaseInstallations",
+    "//Tests/Pods/GoogleDataTransport:GoogleDataTransport",
+    "//Tests/Pods/GoogleUtilities:GoogleUtilities",
+    "//Tests/Pods/PromisesObjC:PromisesObjC",
+    "//Tests/Pods/nanopb:nanopb"
   ],
   objc_defines = [
     "COCOAPODS=1"
