@@ -69,7 +69,7 @@ Example:
         let podSubSpecs = podSpec.selectedSubspecs(subspecs: subspecs)
 
         let sourcesResult = SourcesAnalyzer(platform: .ios, spec: podSpec, subspecs: podSubSpecs, options: options).result
-        let baseInfoResult = BaseInfoAnalyzer(platform: .ios, spec: podSpec, subspecs: podSubSpecs, options: options).result
+        let baseInfoResult = BaseAnalyzer(platform: .ios, spec: podSpec, subspecs: podSubSpecs, options: options).result
         let resourcesResult = ResourcesAnalyzer(platform: .ios, spec: podSpec, subspecs: podSubSpecs, options: options).result
         print(sourcesResult)
         print(baseInfoResult)

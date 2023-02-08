@@ -1,5 +1,5 @@
 //
-//  BaseInfoAnalyzer.swift
+//  BaseAnalyzer.swift
 //  CompilerCore
 //
 //  Created by Sergey Khliustin on 05.02.2023.
@@ -15,7 +15,7 @@ public struct BaseInfoAnalyzerResult {
     let swiftVersion: String?
 }
 
-public struct BaseInfoAnalyzer {
+public struct BaseAnalyzer {
     let platform: Platform
     private let spec: PodSpec
     private let subspecs: [PodSpec]
