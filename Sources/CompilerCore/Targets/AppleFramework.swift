@@ -29,7 +29,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let vendoredDeps: VendoredDependenciesAnalyzer.Result
     let infoplists: [String]
 
-    var deps: AttrSet<[String]>
+    var deps: [String]
     var conditionalDeps: [String: [Arch]]
 
     let objcDefines: AttrSet<[String]>
@@ -55,11 +55,10 @@ struct AppleFramework: BazelTarget, UserConfigurable {
          sdkDepsInfo: SdkDependenciesAnalyzer.Result,
          vendoredDeps: VendoredDependenciesAnalyzer.Result,
          infoplists: [String],
+         deps: [String],
+         conditionalDeps: [String: [Arch]] = [:],
          spec: PodSpec,
          subspecs: [PodSpec],
-         deps: Set<String> = [],
-         conditionalDeps: [String: [Arch]] = [:],
-         dataDeps: Set<String> = [],
          options: BuildOptions) {
 
         self.name = name
@@ -71,15 +70,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.vendoredDeps = vendoredDeps
         self.infoplists = infoplists
 
-        let allPodSpecDeps = spec.collectAttribute(with: subspecs, keyPath: \.dependencies)
-            .map({
-                $0.map({
-                    getDependencyName(podDepName: $0, podName: info.name, options: options)
-                }).filter({ !($0.hasPrefix(":") && !$0.hasPrefix(options.depsPrefix)) })
-            })
-
-        let depNames = deps.map { ":\($0)" }
-        self.deps = AttrSet(basic: depNames) <> allPodSpecDeps
+        self.deps = deps
         self.conditionalDeps = conditionalDeps
 
         self.swiftDefines = AttrSet(basic: ["COCOAPODS"])
@@ -117,7 +108,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             }
         case .deps:
             if let value = value as? String {
-                self.deps = self.deps <> AttrSet(basic: [value])
+                self.deps.append(value)
             }
         }
     }
@@ -139,7 +130,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
             }
         case .deps:
             if let value = value as? String {
-                self.deps = self.deps.map({ $0.filter({ $0 != value }) })
+                self.deps = self.deps.filter({ $0 != value })
                 self.conditionalDeps = self.conditionalDeps.filter({ $0.key != value })
             }
         }
@@ -187,9 +178,7 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         let swiftDefines = self.swiftDefines.toStarlark() .+. basicSwiftDefines
         let objcDefines = self.objcDefines.toStarlark() .+. basicObjcDefines
 
-        let baseDeps = deps.unpackToMulti().multi.ios.map {
-            Set($0).sorted(by: (<))
-        } ?? []
+        let baseDeps = deps.map({ !$0.hasPrefix("/") ? ":" + $0 : $0 })
 
         var conditionalDepsMap = self.conditionalDeps.reduce([String: [String]]()) { partialResult, element in
             var result = partialResult

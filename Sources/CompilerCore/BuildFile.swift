@@ -55,10 +55,11 @@ public struct PodBuildFile: StarlarkConvertible {
                                sdkDeps: SdkDependenciesAnalyzer.Result,
                                vendoredDeps: VendoredDependenciesAnalyzer.Result,
                                spec: PodSpec,
-                               subspecs: [PodSpec] = [],
-                               deps: [BazelTarget] = [],
+                               subspecs: [PodSpec],
+                               deps: [String],
                                conditionalDeps: [String: [Arch]] = [:],
-                               options: BuildOptions) -> ([BazelTarget], [InfoPlist]) {
+                               options: BuildOptions)
+    -> ([BazelTarget], [InfoPlist]) {
         var targets: [BazelTarget] = []
         var infoplists: [InfoPlist] = []
         if sources.linkDynamic {
@@ -72,10 +73,10 @@ public struct PodBuildFile: StarlarkConvertible {
                                        sdkDepsInfo: sdkDeps,
                                        vendoredDeps: vendoredDeps,
                                        infoplists: infoplists.map({ $0.name }),
+                                       deps: deps,
+                                       conditionalDeps: conditionalDeps,
                                        spec: spec,
                                        subspecs: subspecs,
-                                       deps: Set((deps).map({ $0.name })),
-                                       conditionalDeps: conditionalDeps,
                                        options: options)
         targets.append(framework)
         return (targets, infoplists)
@@ -95,7 +96,8 @@ public struct PodBuildFile: StarlarkConvertible {
     }
 
     static func makeVendoredTargets(info: BaseInfoAnalyzerResult,
-                                    vendored: VendoredDependenciesAnalyzer.Result) -> (targets: [BazelTarget], conditions: [String: [Arch]]) {
+                                    vendored: VendoredDependenciesAnalyzer.Result)
+    -> (targets: [BazelTarget], conditions: [String: [Arch]]) {
         var result = vendored.libraries.reduce(([BazelTarget](), [String: [Arch]]())) { partialResult, library in
             var targets = partialResult.0
             var conditions = partialResult.1
@@ -124,11 +126,12 @@ public struct PodBuildFile: StarlarkConvertible {
     }
 
     static func makeConvertablesAndArchs(fromPodspec podSpec: PodSpec,
-                                 options: BuildOptions = BasicBuildOptions.empty) -> ([StarlarkConvertible], [Arch]) {
+                                         options: BuildOptions = BasicBuildOptions.empty)
+    -> ([StarlarkConvertible], [Arch]) {
         let subspecs = podSpec.selectedSubspecs(subspecs: options.subspecs)
         // TODO: Platforms support
         let platform = Platform.ios
-        let baseInfo = BaseInfoAnalyzer(platform: platform,
+        let baseInfo = BaseAnalyzer(platform: platform,
                                         spec: podSpec,
                                         subspecs: subspecs,
                                         options: options).result
@@ -148,9 +151,15 @@ public struct PodBuildFile: StarlarkConvertible {
                                                             spec: podSpec,
                                                             subspecs: subspecs,
                                                             options: options).result
+        let podDepsInfo = PodDependenciesAnalyzer(platform: platform,
+                                                  spec: podSpec,
+                                                  subspecs: subspecs,
+                                                  options: options).result
 
         let (resourceTargets, resourceInfoplists) = makeResourceBundles(info: baseInfo, resources: resourcesInfo)
         let (vendoredTargets, conditions) = makeVendoredTargets(info: baseInfo, vendored: vendoredDepsInfo)
+
+        let deps = ((resourceTargets.map({ $0.name })) + podDepsInfo.dependencies).sorted()
 
         let (sourceTargets, infoplists) = makeSourceLibs(info: baseInfo,
                                                          sources: sourcesInfo,
@@ -159,7 +168,7 @@ public struct PodBuildFile: StarlarkConvertible {
                                                          vendoredDeps: vendoredDepsInfo,
                                                          spec: podSpec,
                                                          subspecs: subspecs,
-                                                         deps: resourceTargets,
+                                                         deps: deps,
                                                          conditionalDeps: conditions,
                                                          options: options)
         let archs = conditions.reduce(Set<Arch>()) { partialResult, element in
