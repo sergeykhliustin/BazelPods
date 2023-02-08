@@ -22,10 +22,10 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
     let name: String
 
-    let info: BaseInfoAnalyzerResult
-    let sources: SourcesAnalyzerResult
+    let info: BaseAnalyzer.Result
+    let sources: SourcesAnalyzer.Result
     let resources: ResourcesAnalyzer.Result
-    let sdkDepsInfo: SdkDependenciesAnalyzer.Result
+    let sdkDeps: SdkDependenciesAnalyzer.Result
     let vendoredDeps: VendoredDependenciesAnalyzer.Result
     let infoplists: [String]
 
@@ -49,24 +49,22 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let xcconfig: [String: StarlarkNode]
 
     init(name: String,
-         info: BaseInfoAnalyzerResult,
-         sources: SourcesAnalyzerResult,
+         info: BaseAnalyzer.Result,
+         sources: SourcesAnalyzer.Result,
          resources: ResourcesAnalyzer.Result,
-         sdkDepsInfo: SdkDependenciesAnalyzer.Result,
+         sdkDeps: SdkDependenciesAnalyzer.Result,
          vendoredDeps: VendoredDependenciesAnalyzer.Result,
+         buildSettings: BuildSettingsAnalyzer.Result,
          infoplists: [String],
          deps: [String],
-         conditionalDeps: [String: [Arch]] = [:],
-         spec: PodSpec,
-         subspecs: [PodSpec],
-         options: BuildOptions) {
+         conditionalDeps: [String: [Arch]] = [:]) {
 
         self.name = name
 
         self.info = info
         self.sources = sources
         self.resources = resources
-        self.sdkDepsInfo = sdkDepsInfo
+        self.sdkDeps = sdkDeps
         self.vendoredDeps = vendoredDeps
         self.infoplists = infoplists
 
@@ -76,18 +74,16 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.swiftDefines = AttrSet(basic: ["COCOAPODS"])
         self.objcDefines = AttrSet(basic: ["COCOAPODS=1"])
 
-        let xcconfigParser = XCConfigParser(spec: spec, subspecs: subspecs, options: options)
-        self.xcconfig = xcconfigParser.xcconfig
+        sdkDylibs = sdkDeps.sdkDylibs
+        sdkFrameworks = sdkDeps.sdkFrameworks
+        weakSdkFrameworks = sdkDeps.weakSdkFrameworks
 
-        sdkDylibs = sdkDepsInfo.sdkDylibs
-        sdkFrameworks = sdkDepsInfo.sdkFrameworks
-        weakSdkFrameworks = sdkDepsInfo.weakSdkFrameworks
+        self.xcconfig = buildSettings.xcconfig
+        self.objcCopts = buildSettings.objcCopts
+        self.swiftCopts = buildSettings.swiftCopts
+        self.linkOpts = buildSettings.linkOpts
 
-        self.objcCopts = xcconfigParser.objcCopts
-        self.swiftCopts = xcconfigParser.swiftCopts
-        self.linkOpts = xcconfigParser.linkOpts
-
-        self.testonly = sdkDepsInfo.testonly
+        self.testonly = sdkDeps.testonly
         self.linkDynamic = sources.linkDynamic
     }
 

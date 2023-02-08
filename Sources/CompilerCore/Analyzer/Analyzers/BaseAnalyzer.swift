@@ -7,15 +7,15 @@
 
 import Foundation
 
-public struct BaseInfoAnalyzerResult {
-    let name: String
-    let version: String
-    let moduleName: String
-    let platforms: [String: String]
-    let swiftVersion: String?
-}
-
 public struct BaseAnalyzer {
+    public struct Result {
+        let name: String
+        let version: String
+        let moduleName: String
+        let platforms: [String: String]
+        let swiftVersion: String?
+    }
+
     let platform: Platform
     private let spec: PodSpec
     private let subspecs: [PodSpec]
@@ -31,11 +31,11 @@ public struct BaseAnalyzer {
         self.options = options
     }
 
-    public var result: BaseInfoAnalyzerResult {
+    public var result: Result {
         return run()
     }
 
-    private func run() -> BaseInfoAnalyzerResult {
+    private func run() -> Result {
         let name = spec.name
         let version = spec.version ?? "1.0"
         let moduleName: String
@@ -65,10 +65,10 @@ public struct BaseAnalyzer {
         } else {
             swiftVersion = nil
         }
-        return BaseInfoAnalyzerResult(name: name,
-                                      version: version,
-                                      moduleName: moduleName,
-                                      platforms: platforms,
-                                      swiftVersion: swiftVersion)
+        return Result(name: name,
+                      version: version,
+                      moduleName: moduleName,
+                      platforms: platforms,
+                      swiftVersion: swiftVersion)
     }
 }
