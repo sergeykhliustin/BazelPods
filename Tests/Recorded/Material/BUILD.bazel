@@ -29,7 +29,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/Motion",
+    "//Tests/Pods/Motion:Motion",
     ":Material_com.cosmicmind.material.fonts_Bundle",
     ":Material_com.cosmicmind.material.icons_Bundle"
   ],

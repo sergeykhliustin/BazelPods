@@ -44,7 +44,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/FBRetainCycleDetector"
+    "//Tests/Pods/FBRetainCycleDetector:FBRetainCycleDetector"
   ],
   objc_defines = [
     "COCOAPODS=1"

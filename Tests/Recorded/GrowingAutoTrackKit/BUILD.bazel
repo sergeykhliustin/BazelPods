@@ -44,7 +44,7 @@ apple_framework(
     "ios": "10.0"
   },
   deps = [
-    "//Tests/Pods/GrowingCoreKit"
+    "//Tests/Pods/GrowingCoreKit:GrowingCoreKit"
   ] + select(
     {
       "//conditions:default": [],

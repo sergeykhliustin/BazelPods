@@ -16,7 +16,7 @@ public struct BaseAnalyzer {
         let swiftVersion: String?
     }
 
-    let platform: Platform
+    private let platform: Platform
     private let spec: PodSpec
     private let subspecs: [PodSpec]
     private let options: BuildOptions

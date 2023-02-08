@@ -50,7 +50,7 @@ apple_framework(
     "ios": "10.0"
   },
   deps = [
-    "//Tests/Pods/ADSuyiKit"
+    "//Tests/Pods/ADSuyiKit:ADSuyiKit"
   ] + select(
     {
       "//conditions:default": [],

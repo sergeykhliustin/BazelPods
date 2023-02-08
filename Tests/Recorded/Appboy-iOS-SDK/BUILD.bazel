@@ -147,7 +147,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/SDWebImage",
+    "//Tests/Pods/SDWebImage:SDWebImage",
     ":Appboy_iOS_SDK_AppboyUI.ContentCards_Bundle",
     ":Appboy_iOS_SDK_AppboyUI.InAppMessage_Bundle",
     ":Appboy_iOS_SDK_AppboyUI.NewsFeed_Bundle",

@@ -30,15 +30,15 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/CNIOAtomics",
-    "//Tests/Pods/CNIODarwin",
-    "//Tests/Pods/CNIOLinux",
-    "//Tests/Pods/CNIOWindows",
-    "//Tests/Pods/SwiftNIOConcurrencyHelpers",
-    "//Tests/Pods/SwiftNIOCore",
-    "//Tests/Pods/SwiftNIOEmbedded",
-    "//Tests/Pods/SwiftNIOPosix",
-    "//Tests/Pods/_NIODataStructures"
+    "//Tests/Pods/CNIOAtomics:CNIOAtomics",
+    "//Tests/Pods/CNIODarwin:CNIODarwin",
+    "//Tests/Pods/CNIOLinux:CNIOLinux",
+    "//Tests/Pods/CNIOWindows:CNIOWindows",
+    "//Tests/Pods/SwiftNIOConcurrencyHelpers:SwiftNIOConcurrencyHelpers",
+    "//Tests/Pods/SwiftNIOCore:SwiftNIOCore",
+    "//Tests/Pods/SwiftNIOEmbedded:SwiftNIOEmbedded",
+    "//Tests/Pods/SwiftNIOPosix:SwiftNIOPosix",
+    "//Tests/Pods/_NIODataStructures:_NIODataStructures"
   ],
   objc_defines = [
     "COCOAPODS=1"

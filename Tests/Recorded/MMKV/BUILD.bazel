@@ -47,7 +47,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/MMKVCore"
+    "//Tests/Pods/MMKVCore:MMKVCore"
   ],
   objc_defines = [
     "COCOAPODS=1"

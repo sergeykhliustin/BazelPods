@@ -50,8 +50,8 @@ apple_framework(
     "ios": "10.0"
   },
   deps = [
-    "//Tests/Pods/GoogleUtilities",
-    "//Tests/Pods/nanopb"
+    "//Tests/Pods/GoogleUtilities:GoogleUtilities",
+    "//Tests/Pods/nanopb:nanopb"
   ] + select(
     {
       "//conditions:default": [],

@@ -19,7 +19,7 @@ let pods = keys.map({
 }).joined(separator: "\n")
 
 let deps = keys.map({
-    "      \"\(dep_prefix)/Pods/\($0)\""
+    "      \"\(dep_prefix)/Pods/\($0):\($0)\""
 }).joined(separator: ",\n")
 
 let buildfile = try String(contentsOf: URL(fileURLWithPath: templateFile), encoding: .utf8).replacingOccurrences(of: "[[DEPS]]", with: deps)

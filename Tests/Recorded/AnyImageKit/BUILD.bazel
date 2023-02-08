@@ -32,8 +32,8 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/Kingfisher",
-    "//Tests/Pods/SnapKit",
+    "//Tests/Pods/Kingfisher:Kingfisher",
+    "//Tests/Pods/SnapKit:SnapKit",
     ":AnyImageKit_AnyImageKit_Capture_Bundle",
     ":AnyImageKit_AnyImageKit_Core_Bundle",
     ":AnyImageKit_AnyImageKit_Editor_Bundle",

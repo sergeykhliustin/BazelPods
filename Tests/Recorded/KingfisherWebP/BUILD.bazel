@@ -30,8 +30,8 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/Kingfisher",
-    "//Tests/Pods/libwebp"
+    "//Tests/Pods/Kingfisher:Kingfisher",
+    "//Tests/Pods/libwebp:libwebp"
   ],
   objc_defines = [
     "COCOAPODS=1"

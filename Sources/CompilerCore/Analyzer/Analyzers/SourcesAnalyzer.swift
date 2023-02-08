@@ -7,6 +7,16 @@
 
 import Foundation
 
+private let ObjcLikeFileTypes = Set([".m", ".c", ".s", ".S"])
+private let CppLikeFileTypes  = Set([".mm", ".cpp", ".cxx", ".cc"])
+private let SwiftLikeFileTypes  = Set([".swift"])
+private let HeaderFileTypes = Set([".h", ".hpp", ".hxx"])
+private let ObjcCppLikeFileTypes = ObjcLikeFileTypes.union(CppLikeFileTypes)
+private let AnyFileTypes = ObjcLikeFileTypes
+    .union(CppLikeFileTypes)
+    .union(SwiftLikeFileTypes)
+    .union(HeaderFileTypes)
+
 public struct SourcesAnalyzer {
     public struct Result {
         enum SourcesType {
@@ -124,18 +134,29 @@ public struct SourcesAnalyzer {
                   fileTypes: Set<String>,
                   options: BuildOptions) -> (includes: AttrSet<Set<String>>, excludes: AttrSet<Set<String>>) {
         let includePattern = spec.collectAttribute(with: subspecs, keyPath: includesKeyPath)
-        let depsIncludes = extractFiles(fromPattern: includePattern, includingFileTypes: fileTypes, options: options)
+        let depsIncludes = extractFiles(fromPattern: includePattern, includingFileTypes: fileTypes)
             .map({ Set($0) })
 
         let depsExcludes: AttrSet<Set<String>>
         if let excludesKeyPath = excludesKeyPath {
             let excludesPattern = spec.collectAttribute(with: subspecs, keyPath: excludesKeyPath)
-            depsExcludes = extractFiles(fromPattern: excludesPattern, includingFileTypes: fileTypes, options: options)
+            depsExcludes = extractFiles(fromPattern: excludesPattern, includingFileTypes: fileTypes)
                 .map({ Set($0) })
         } else {
             depsExcludes = .empty
         }
 
         return (depsIncludes, depsExcludes)
+    }
+
+    private func extractFiles(fromPattern patternSet: AttrSet<[String]>,
+                              includingFileTypes: Set<String>) -> AttrSet<[String]> {
+        return patternSet.map { (patterns: [String]) -> [String] in
+            let result = patterns.flatMap { (p: String) -> [String] in
+                pattern(fromPattern: p, includingFileTypes:
+                            includingFileTypes)
+            }
+            return result
+        }
     }
 }

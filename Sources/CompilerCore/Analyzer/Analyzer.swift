@@ -13,6 +13,8 @@ public struct Analyzer {
     private let subspecs: [PodSpec]
     private let options: BuildOptions
 
+    let targetName: TargetName
+
     var baseInfo: BaseAnalyzer.Result
     var sourcesInfo: SourcesAnalyzer.Result
     var resourcesInfo: ResourcesAnalyzer.Result
@@ -20,6 +22,12 @@ public struct Analyzer {
     var vendoredDepsInfo: VendoredDependenciesAnalyzer.Result
     var podDepsInfo: PodDependenciesAnalyzer.Result
     var buildSettingsInfo: BuildSettingsAnalyzer.Result
+
+    var podDependencies: [String] {
+        return podDepsInfo.dependencies.map({
+            targetName.podDependency($0, options: options)
+        })
+    }
 
     init(platform: Platform,
          spec: PodSpec,
@@ -29,6 +37,7 @@ public struct Analyzer {
         self.spec = spec
         self.subspecs = subspecs
         self.options = options
+        self.targetName = TargetName(platform: platform)
 
         baseInfo = BaseAnalyzer(platform: platform,
                                 spec: spec,
@@ -53,7 +62,8 @@ public struct Analyzer {
         podDepsInfo = PodDependenciesAnalyzer(platform: platform,
                                               spec: spec,
                                               subspecs: subspecs,
-                                              options: options).result
+                                              options: options,
+                                              targetName: targetName).result
         buildSettingsInfo = BuildSettingsAnalyzer(platform: platform,
                                                   spec: spec,
                                                   subspecs: subspecs,

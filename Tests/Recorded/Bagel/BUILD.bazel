@@ -28,7 +28,7 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/CocoaAsyncSocket"
+    "//Tests/Pods/CocoaAsyncSocket:CocoaAsyncSocket"
   ],
   objc_defines = [
     "COCOAPODS=1"

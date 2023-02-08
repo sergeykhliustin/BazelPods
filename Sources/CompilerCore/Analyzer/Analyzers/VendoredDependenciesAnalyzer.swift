@@ -173,4 +173,10 @@ public struct VendoredDependenciesAnalyzer {
             return result
         }
     }
+
+    private func isDynamicFramework(_ executable: String) -> Bool {
+        // TODO: Find proper way
+        let output = SystemShellContext().command("/usr/bin/file", arguments: [executable]).standardOutputAsString
+        return output.contains("dynamically")
+    }
 }
