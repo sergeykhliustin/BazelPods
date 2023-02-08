@@ -23,17 +23,27 @@ enum ColorMode: String, ExpressibleByArgument {
     case no
 }
 
+extension Platform: ExpressibleByArgument {}
+
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Generator",
                                                     abstract: "Generates BUILD files for pods")
-    @Argument(help: "Pods.json")
-    var podsJson: String
-
     @Option(name: .long, help: "Sources root where Pods directory located (or renamed by podsRoot)")
     var src: String
 
-    @Option(name: .long, help: "Minimum iOS version to bump if lower")
-    var minIos: String?
+    @Option(help: "Pods.json")
+    var podsJson: String = "Pods/Pods.json"
+
+    @Option(parsing: .upToNextOption,
+            help: """
+            Space separated platforms.
+            Valid values are: ios, osx, tvos, watchos.
+            Currently ignored, only 'ios' supported
+            """)
+    var platforms: [Platform] = [.ios]
+
+    @Option(name: .long, help: "Minimum iOS version")
+    var minIos: String = BasicBuildOptions.defaultVersion(for: .ios)
 
     @Option(name: .long, help: "Dependencies prefix")
     var depsPrefix: String = "//Pods"
@@ -104,8 +114,8 @@ Example:
             // Consider adding a split here to split out sublibs
             let buildOptions = BasicBuildOptions(podName: specification.name,
                                                  subspecs: specification.subspecs,
-                                                 podspecPath: specification.podspec,
                                                  sourcePath: src,
+                                                 platforms: platforms,
                                                  userOptions: userOptions,
                                                  minIosPlatform: minIos,
                                                  depsPrefix: depsPrefix,

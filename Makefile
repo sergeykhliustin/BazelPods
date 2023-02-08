@@ -13,7 +13,7 @@ expunge:
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/TopPods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
-	bazel run :Generator --config=ci -- "Pods/Pods.json" \
+	bazel run :Generator --config=ci -- \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
 	--pods-root "Tests/Pods" -a -f -c \
@@ -72,24 +72,20 @@ integration-setup:
 	swift TestTools/generate_buildfile.swift TestTools/TopPods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
 integration-generate-static:
-	bazel run :Generator --config=ci \
-	-- "Pods/Pods.json" \
+	bazel run :Generator --config=ci -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
-	--min-ios "13.0" \
 	-a -c \
 	--color yes
 
 integration-generate-dynamic:
-	bazel run :Generator --config=ci \
-	-- "Pods/Pods.json" \
+	bazel run :Generator --config=ci -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	-a -c -f \
 	--color yes \
-	--min-ios "13.0" \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \

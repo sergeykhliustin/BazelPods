@@ -87,14 +87,15 @@ Enjoy :)
 
 ### Generator options
 ```
-UUSAGE: Generator <pods-json> --src <src> [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--concurrent] [--print-output] [--dry-run] [--add-podspec] [--color <color>] [--user-options <user-options> ...]
-
-ARGUMENTS:
-  <pods-json>             Pods.json
+USAGE: Generator [<options>] --src <src>
 
 OPTIONS:
   --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
-  --min-ios <min-ios>     Minimum iOS version to bump if lower
+  --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
+  --platforms <platforms> Space separated platforms.
+                          Valid values are: ios, osx, tvos, watchos.
+                          Currently ignored, only 'ios' supported (default: ios)
+  --min-ios <min-ios>     Minimum iOS version (default: 13.0)
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
@@ -116,22 +117,24 @@ OPTIONS:
 ```
 ### Compiler
 ```
-USAGE: Compiler <podspec-json> [--src <src>] [--subspecs <subspecs> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--user-options <user-options> ...]
-
-ARGUMENTS:
-  <podspec-json>          podspec.json
+USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--user-options <user-options> ...]
 
 OPTIONS:
   --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
+  --podspec <podspec>     podspec.json
   --subspecs <subspecs>   Subspecs list
-  --min-ios <min-ios>     Minimum iOS version to bump if lower
+  --platforms <platforms> Space separated platforms.
+                          Valid values are: ios, osx, tvos, watchos.
+                          Currently ignored, only 'ios' supported (default: ios)
+  --min-ios <min-ios>     Minimum iOS version (default: 13.0)
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --user-options <user-options>
                           User extra options.
-                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks'.
+                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
+                          Supported fields for '-=' (remove): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
                           Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
                           Example:
                           'SomePod.sdk_dylibs += something,something'
