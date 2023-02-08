@@ -46,7 +46,7 @@ final class InfoPlist: GenRule {
         super.init(name: name, outs: ["\(name).plist"], cmd: cmd)
     }
 
-    convenience init(name: String, resourceBundle: String, info: BaseInfoAnalyzerResult) {
+    convenience init(name: String, resourceBundle: String, info: BaseAnalyzer.Result) {
         let data = PlistData(
             CFBundleIdentifier: "org.cocoapods.\(resourceBundle)",
             CFBundleName: resourceBundle,
@@ -59,7 +59,7 @@ final class InfoPlist: GenRule {
         self.init(name: name, data: data)
     }
 
-    convenience init(name: String, framework info: BaseInfoAnalyzerResult) {
+    convenience init(name: String, framework info: BaseAnalyzer.Result) {
         let data = PlistData(
             CFBundleIdentifier: "org.cocoapods.\(info.name)",
             CFBundleName: info.name,

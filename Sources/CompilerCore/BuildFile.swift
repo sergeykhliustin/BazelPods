@@ -49,59 +49,52 @@ public struct PodBuildFile: StarlarkConvertible {
         )
     }
 
-    static func makeSourceLibs(info: BaseInfoAnalyzerResult,
-                               sources: SourcesAnalyzerResult,
-                               resources: ResourcesAnalyzer.Result,
-                               sdkDeps: SdkDependenciesAnalyzer.Result,
-                               vendoredDeps: VendoredDependenciesAnalyzer.Result,
-                               spec: PodSpec,
-                               subspecs: [PodSpec],
+    static func makeSourceLibs(analyzer: Analyzer,
                                deps: [String],
-                               conditionalDeps: [String: [Arch]] = [:],
-                               options: BuildOptions)
+                               conditionalDeps: [String: [Arch]])
     -> ([BazelTarget], [InfoPlist]) {
+        let info = analyzer.baseInfo
         var targets: [BazelTarget] = []
         var infoplists: [InfoPlist] = []
-        if sources.linkDynamic {
+        if analyzer.sourcesInfo.linkDynamic {
             let ruleName = "\(info.name)_InfoPlist"
             infoplists.append(InfoPlist(name: ruleName, framework: info))
         }
         let framework = AppleFramework(name: info.name,
                                        info: info,
-                                       sources: sources,
-                                       resources: resources,
-                                       sdkDepsInfo: sdkDeps,
-                                       vendoredDeps: vendoredDeps,
+                                       sources: analyzer.sourcesInfo,
+                                       resources: analyzer.resourcesInfo,
+                                       sdkDeps: analyzer.sdkDepsInfo,
+                                       vendoredDeps: analyzer.vendoredDepsInfo,
+                                       buildSettings: analyzer.buildSettingsInfo,
                                        infoplists: infoplists.map({ $0.name }),
                                        deps: deps,
-                                       conditionalDeps: conditionalDeps,
-                                       spec: spec,
-                                       subspecs: subspecs,
-                                       options: options)
+                                       conditionalDeps: conditionalDeps)
         targets.append(framework)
         return (targets, infoplists)
     }
 
-    static func makeResourceBundles(info: BaseInfoAnalyzerResult,
-                                    resources: ResourcesAnalyzer.Result) -> (targets: [BazelTarget], infoplists: [InfoPlist]) {
+    static func makeResourceBundles(analyzer: Analyzer) -> (targets: [BazelTarget], infoplists: [InfoPlist]) {
         var targets: [BazelTarget] = []
         var infoplists: [InfoPlist] = []
-        for bundle in resources.resourceBundles {
-            let bundleRuleName = "\(info.moduleName)_\(bundle.name)_Bundle"
+        for bundle in analyzer.resourcesInfo.resourceBundles {
+            let bundleRuleName = "\(analyzer.baseInfo.moduleName)_\(bundle.name)_Bundle"
             let infoPlistRuleName = "\(bundleRuleName)_InfoPlist"
             targets.append(AppleResourceBundle(name: bundleRuleName, bundle: bundle, infoplists: [infoPlistRuleName]))
-            infoplists.append(InfoPlist(name: infoPlistRuleName, resourceBundle: bundle.name, info: info))
+            infoplists.append(InfoPlist(name: infoPlistRuleName, resourceBundle: bundle.name, info: analyzer.baseInfo))
         }
         return (targets, infoplists)
     }
 
-    static func makeVendoredTargets(info: BaseInfoAnalyzerResult,
-                                    vendored: VendoredDependenciesAnalyzer.Result)
+    static func makeVendoredTargets(analyzer: Analyzer)
     -> (targets: [BazelTarget], conditions: [String: [Arch]]) {
+        let baseInfo = analyzer.baseInfo
+        let vendored = analyzer.vendoredDepsInfo
+
         var result = vendored.libraries.reduce(([BazelTarget](), [String: [Arch]]())) { partialResult, library in
             var targets = partialResult.0
             var conditions = partialResult.1
-            let name = "\(info.moduleName)_\(library.name)_VendoredLibrary"
+            let name = "\(baseInfo.moduleName)_\(library.name)_VendoredLibrary"
             conditions[name] = library.archs
             targets.append(ObjcImport(name: name, library: library.path))
             return (targets, conditions)
@@ -109,7 +102,7 @@ public struct PodBuildFile: StarlarkConvertible {
         result = vendored.frameworks.reduce(result, { partialResult, framework in
             var targets = partialResult.0
             var conditions = partialResult.1
-            let name = "\(info.moduleName)_\(framework.name)_VendoredFramework"
+            let name = "\(baseInfo.moduleName)_\(framework.name)_VendoredFramework"
             conditions[name] = framework.archs
             targets.append(AppleFrameworkImport(name: name, isDynamic: framework.dynamic, isXCFramework: false, frameworkImport: framework.path))
             return (targets, conditions)
@@ -117,7 +110,7 @@ public struct PodBuildFile: StarlarkConvertible {
         result = vendored.xcFrameworks.reduce(result, { partialResult, xcFramework in
             var targets = partialResult.0
             var conditions = partialResult.1
-            let name = "\(info.moduleName)_\(xcFramework.name)_VendoredXCFramework"
+            let name = "\(baseInfo.moduleName)_\(xcFramework.name)_VendoredXCFramework"
             conditions[name] = xcFramework.archs
             targets.append(AppleFrameworkImport(name: name, isDynamic: xcFramework.dynamic, isXCFramework: true, frameworkImport: xcFramework.path))
             return (targets, conditions)
@@ -125,52 +118,25 @@ public struct PodBuildFile: StarlarkConvertible {
         return result
     }
 
-    static func makeConvertablesAndArchs(fromPodspec podSpec: PodSpec,
+    static func makeConvertablesAndArchs(fromPodspec spec: PodSpec,
                                          options: BuildOptions = BasicBuildOptions.empty)
     -> ([StarlarkConvertible], [Arch]) {
-        let subspecs = podSpec.selectedSubspecs(subspecs: options.subspecs)
+        let subspecs = spec.selectedSubspecs(subspecs: options.subspecs)
         // TODO: Platforms support
         let platform = Platform.ios
-        let baseInfo = BaseAnalyzer(platform: platform,
-                                        spec: podSpec,
-                                        subspecs: subspecs,
-                                        options: options).result
-        let sourcesInfo = SourcesAnalyzer(platform: platform,
-                                          spec: podSpec,
-                                          subspecs: subspecs,
-                                          options: options).result
-        let resourcesInfo = ResourcesAnalyzer(platform: platform,
-                                              spec: podSpec,
-                                              subspecs: subspecs,
-                                              options: options).result
-        let sdkDepsInfo = SdkDependenciesAnalyzer(platform: platform,
-                                                  spec: podSpec,
-                                                  subspecs: subspecs,
-                                                  options: options).result
-        let vendoredDepsInfo = VendoredDependenciesAnalyzer(platform: platform,
-                                                            spec: podSpec,
-                                                            subspecs: subspecs,
-                                                            options: options).result
-        let podDepsInfo = PodDependenciesAnalyzer(platform: platform,
-                                                  spec: podSpec,
-                                                  subspecs: subspecs,
-                                                  options: options).result
+        let analyzer = Analyzer(platform: platform,
+                                spec: spec,
+                                subspecs: subspecs,
+                                options: options)
 
-        let (resourceTargets, resourceInfoplists) = makeResourceBundles(info: baseInfo, resources: resourcesInfo)
-        let (vendoredTargets, conditions) = makeVendoredTargets(info: baseInfo, vendored: vendoredDepsInfo)
+        let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
+        let (vendoredTargets, conditions) = makeVendoredTargets(analyzer: analyzer)
 
-        let deps = ((resourceTargets.map({ $0.name })) + podDepsInfo.dependencies).sorted()
+        let deps = ((resourceTargets.map({ $0.name })) + analyzer.podDepsInfo.dependencies).sorted()
 
-        let (sourceTargets, infoplists) = makeSourceLibs(info: baseInfo,
-                                                         sources: sourcesInfo,
-                                                         resources: resourcesInfo,
-                                                         sdkDeps: sdkDepsInfo,
-                                                         vendoredDeps: vendoredDepsInfo,
-                                                         spec: podSpec,
-                                                         subspecs: subspecs,
+        let (sourceTargets, infoplists) = makeSourceLibs(analyzer: analyzer,
                                                          deps: deps,
-                                                         conditionalDeps: conditions,
-                                                         options: options)
+                                                         conditionalDeps: conditions)
         let archs = conditions.reduce(Set<Arch>()) { partialResult, element in
             var result = partialResult
             element.value.forEach({
@@ -188,7 +154,7 @@ public struct PodBuildFile: StarlarkConvertible {
 
         output = UserConfigurableTransform.transform(convertibles: output,
                                                      options: options,
-                                                     podSpec: podSpec)
+                                                     podSpec: spec)
         return (output, archs)
     }
 

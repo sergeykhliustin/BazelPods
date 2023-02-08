@@ -7,22 +7,22 @@
 
 import Foundation
 
-public struct SourcesAnalyzerResult {
-    enum SourcesType {
-        case empty
-        case headersOnly
-        case objcOnly
-        case swiftOnly
-        case mixed
-    }
-    let sourceFiles: GlobNode
-    let publicHeaders: GlobNode
-    let privateHeaders: GlobNode
-    let sourcesType: SourcesType
-    let linkDynamic: Bool
-}
-
 public struct SourcesAnalyzer {
+    public struct Result {
+        enum SourcesType {
+            case empty
+            case headersOnly
+            case objcOnly
+            case swiftOnly
+            case mixed
+        }
+        let sourceFiles: GlobNode
+        let publicHeaders: GlobNode
+        let privateHeaders: GlobNode
+        let sourcesType: SourcesType
+        let linkDynamic: Bool
+    }
+
     private let platform: Platform
     private let spec: PodSpec
     private let subspecs: [PodSpec]
@@ -38,11 +38,11 @@ public struct SourcesAnalyzer {
         self.options = options
     }
 
-    public var result: SourcesAnalyzerResult {
+    public var result: Result {
         return run()
     }
 
-    private func run() -> SourcesAnalyzerResult {
+    private func run() -> Result {
         let sourceFiles = getFilesNodes(spec: spec,
                                         subspecs: subspecs,
                                         includesKeyPath: \.sourceFiles,
@@ -75,7 +75,7 @@ public struct SourcesAnalyzer {
         let hasObjc = !allSources.isDisjoint(with: ObjcCppLikeFileTypes)
         let hasHeaders = !allSources.isDisjoint(with: HeaderFileTypes)
 
-        let sourcesType: SourcesAnalyzerResult.SourcesType
+        let sourcesType: Result.SourcesType
         if hasSwift && (hasObjc || hasHeaders) {
             sourcesType = .mixed
         } else if hasSwift {
@@ -90,7 +90,7 @@ public struct SourcesAnalyzer {
 
         let linkDynamic = options.useFrameworks && sourceFiles?.isEmpty == false && !spec.staticFramework
 
-        return SourcesAnalyzerResult(
+        return Result(
             sourceFiles: sourceFiles ?? .empty,
             publicHeaders: publicHeaders ?? .empty,
             privateHeaders: privateHeaders ?? .empty,
