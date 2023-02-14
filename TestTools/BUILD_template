@@ -12,17 +12,12 @@ ios_application(
     infoplists = ["TestApp_iOS/Info.plist"],
     launch_storyboard = "TestApp_iOS/Base.lproj/LaunchScreen.storyboard",
     minimum_os_version = "13.4",
-    resources = glob([
-      "TestApp_iOS/**"
-    ], exclude = [
-      "TestApp_iOS/Info.plist"
-    ]),
+    resources = [
+      "TestApp_iOS/Base.lproj/Main.storyboard"
+    ],
     sdk_frameworks = [
       "UIKit",
       "CoreGraphics"
-    ],
-    linkopts = [
-      "-ObjC"
     ],
     xcconfig = {
       "LD_VERIFY_BITCODE": "NO"

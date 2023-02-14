@@ -94,10 +94,10 @@ integration-generate-dynamic:
 	"GoogleUtilities.sdk_frameworks += CoreTelephony"
 
 integration-build-x86_64:
-	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=x86_64
+	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64
 
 integration-build-arm64:
-	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_minimum_os=13.4 --ios_simulator_device="iPhone 8" --ios_multi_cpus=sim_arm64
+	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_multi_cpus=sim_arm64
 
 integration-clean:
 	-cd IntegrationTests; \

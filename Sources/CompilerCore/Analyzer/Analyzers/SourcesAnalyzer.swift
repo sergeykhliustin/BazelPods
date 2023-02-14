@@ -31,6 +31,7 @@ public struct SourcesAnalyzer {
         let privateHeaders: GlobNode
         let sourcesType: SourcesType
         let linkDynamic: Bool
+        let canUseObjcLibrary: Bool
     }
 
     private let platform: Platform
@@ -99,13 +100,15 @@ public struct SourcesAnalyzer {
         }
 
         let linkDynamic = options.useFrameworks && sourceFiles?.isEmpty == false && !spec.staticFramework
+        let canUseObjcLibrary = !options.useFrameworks && !linkDynamic && [Result.SourcesType.empty, .headersOnly].contains(sourcesType)
 
         return Result(
             sourceFiles: sourceFiles ?? .empty,
             publicHeaders: publicHeaders ?? .empty,
             privateHeaders: privateHeaders ?? .empty,
             sourcesType: sourcesType,
-            linkDynamic: linkDynamic
+            linkDynamic: linkDynamic,
+            canUseObjcLibrary: canUseObjcLibrary
         )
     }
 
