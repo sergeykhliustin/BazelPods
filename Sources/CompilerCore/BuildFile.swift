@@ -56,38 +56,24 @@ public struct PodBuildFile: StarlarkConvertible {
         var targets: [BazelTarget] = []
         var infoplists: [InfoPlist] = []
 
-        if analyzer.sourcesInfo.canUseObjcLibrary {
-            let target = ObjcLibrary(name: analyzer.targetName.base(info.name),
-                                     info: info,
-                                     sources: analyzer.sourcesInfo,
-                                     resources: analyzer.resourcesInfo,
-                                     sdkDeps: analyzer.sdkDepsInfo,
-                                     vendoredDeps: analyzer.vendoredDepsInfo,
-                                     buildSettings: analyzer.buildSettingsInfo,
-                                     infoplists: [],
-                                     deps: deps,
-                                     conditionalDeps: conditionalDeps)
-            targets.append(target)
-        } else {
-            var infoplistRuleName: String?
-            if analyzer.sourcesInfo.linkDynamic {
-                let ruleName = analyzer.targetName.baseInfoplist(info.name)
-                infoplists.append(InfoPlist(name: ruleName, framework: info))
-                infoplistRuleName = ruleName
-            }
-
-            let framework = AppleFramework(name: analyzer.targetName.base(info.name),
-                                           info: info,
-                                           sources: analyzer.sourcesInfo,
-                                           resources: analyzer.resourcesInfo,
-                                           sdkDeps: analyzer.sdkDepsInfo,
-                                           vendoredDeps: analyzer.vendoredDepsInfo,
-                                           buildSettings: analyzer.buildSettingsInfo,
-                                           infoplists: [infoplistRuleName].compactMap({ $0 }),
-                                           deps: deps,
-                                           conditionalDeps: conditionalDeps)
-            targets.append(framework)
+        var infoplistRuleName: String?
+        if analyzer.sourcesInfo.linkDynamic {
+            let ruleName = analyzer.targetName.baseInfoplist(info.name)
+            infoplists.append(InfoPlist(name: ruleName, framework: info))
+            infoplistRuleName = ruleName
         }
+
+        let framework = AppleFramework(name: analyzer.targetName.base(info.name),
+                                       info: info,
+                                       sources: analyzer.sourcesInfo,
+                                       resources: analyzer.resourcesInfo,
+                                       sdkDeps: analyzer.sdkDepsInfo,
+                                       vendoredDeps: analyzer.vendoredDepsInfo,
+                                       buildSettings: analyzer.buildSettingsInfo,
+                                       infoplists: [infoplistRuleName].compactMap({ $0 }),
+                                       deps: deps,
+                                       conditionalDeps: conditionalDeps)
+        targets.append(framework)
 
         return (targets, infoplists)
     }

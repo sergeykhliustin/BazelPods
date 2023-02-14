@@ -23,48 +23,35 @@ config_setting(
   }
 )
 config_setting(
-  name = "ios_i386",
-  values = {
-    "cpu": "ios_i386"
-  }
-)
-config_setting(
   name = "ios_x86_64",
   values = {
     "cpu": "ios_x86_64"
   }
 )
 apple_framework(
-  name = "FBSDKMarketingKit",
-  module_name = "FBSDKMarketingKit",
-  bundle_id = "org.cocoapods.FBSDKMarketingKit",
+  name = "FacebookSDK",
+  module_name = "FacebookSDK",
+  bundle_id = "org.cocoapods.FacebookSDK",
+  swift_version = "5",
   link_dynamic = False,
   testonly = False,
   platforms = {
     "ios": "10.0"
   },
-  public_headers = glob(
-    [
-      "FBSDKMarketingKit.framework/**/*.h",
-      "FBSDKMarketingKit.framework/**/*.h"
-    ]
-  ),
-  deps = [
-    "//Tests/Pods/FBSDKCoreKit:FBSDKCoreKit"
-  ] + select(
+  deps = select(
     {
       "//conditions:default": [],
       ":ios_arm64": [
-        ":FBSDKMarketingKit_FBSDKMarketingKit_VendoredFramework"
+        ":FacebookSDK_FBAEMKit_VendoredFramework",
+        ":FacebookSDK_FBSDKCoreKit_Basics_VendoredFramework"
       ],
       ":ios_armv7": [
-        ":FBSDKMarketingKit_FBSDKMarketingKit_VendoredFramework"
-      ],
-      ":ios_i386": [
-        ":FBSDKMarketingKit_FBSDKMarketingKit_VendoredFramework"
+        ":FacebookSDK_FBAEMKit_VendoredFramework",
+        ":FacebookSDK_FBSDKCoreKit_Basics_VendoredFramework"
       ],
       ":ios_x86_64": [
-        ":FBSDKMarketingKit_FBSDKMarketingKit_VendoredFramework"
+        ":FacebookSDK_FBAEMKit_VendoredFramework",
+        ":FacebookSDK_FBSDKCoreKit_Basics_VendoredFramework"
       ]
     }
   ),
@@ -90,15 +77,38 @@ apple_framework(
       ]
     }
   ),
+  weak_sdk_frameworks = [
+    "Accelerate",
+    "Accounts",
+    "AudioToolbox",
+    "CoreGraphics",
+    "Foundation",
+    "QuartzCore",
+    "Security",
+    "Social",
+    "UIKit",
+    "WebKit"
+  ],
   visibility = [
     "//visibility:public"
   ]
 )
 apple_static_framework_import(
-  name = "FBSDKMarketingKit_FBSDKMarketingKit_VendoredFramework",
+  name = "FacebookSDK_FBAEMKit_VendoredFramework",
   framework_imports = glob(
     [
-      "FBSDKMarketingKit.framework/**"
+      "FBAEMKit.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "FacebookSDK_FBSDKCoreKit_Basics_VendoredFramework",
+  framework_imports = glob(
+    [
+      "FBSDKCoreKit_Basics.framework/**"
     ]
   ),
   visibility = [

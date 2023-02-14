@@ -1,3 +1,8 @@
+ifeq ($(strip $(GITHUB_ACTIONS)),)
+  CONFIG =
+else
+  CONFIG = --config=ci
+endif
 
 .PHONY: xcodeproj
 xcodeproj:
@@ -13,7 +18,7 @@ expunge:
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/TopPods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
-	bazel run :Generator --config=ci -- \
+	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
 	--pods-root "Tests/Pods" -a -f -c \
@@ -72,7 +77,7 @@ integration-setup:
 	swift TestTools/generate_buildfile.swift TestTools/TopPods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
 integration-generate-static:
-	bazel run :Generator --config=ci -- \
+	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
@@ -80,7 +85,7 @@ integration-generate-static:
 	--color yes
 
 integration-generate-dynamic:
-	bazel run :Generator --config=ci -- \
+	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
@@ -94,10 +99,10 @@ integration-generate-dynamic:
 	"GoogleUtilities.sdk_frameworks += CoreTelephony"
 
 integration-build-x86_64:
-	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64
+	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64
 
 integration-build-arm64:
-	bazel build --config=ci //IntegrationTests:TestApp_iOS --ios_multi_cpus=sim_arm64
+	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=sim_arm64
 
 integration-clean:
 	-cd IntegrationTests; \
