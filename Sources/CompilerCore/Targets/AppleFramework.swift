@@ -25,8 +25,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let info: BaseAnalyzer.Result
     let sources: SourcesAnalyzer.Result
     let resources: ResourcesAnalyzer.Result
-    let sdkDeps: SdkDependenciesAnalyzer.Result
-    let vendoredDeps: VendoredDependenciesAnalyzer.Result
     let infoplists: [String]
 
     var deps: [String]
@@ -64,8 +62,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
         self.info = info
         self.sources = sources
         self.resources = resources
-        self.sdkDeps = sdkDeps
-        self.vendoredDeps = vendoredDeps
         self.infoplists = infoplists
 
         self.deps = deps

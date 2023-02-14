@@ -8,32 +8,51 @@ http_archive(
 
 http_archive(
     name = "build_bazel_rules_swift",
-    sha256 = "32f95dbe6a88eb298aaa790f05065434f32a662c65ec0a6aabdaf6881e4f169f",
-    url = "https://github.com/bazelbuild/rules_swift/releases/download/1.5.0/rules_swift.1.5.0.tar.gz",
+    sha256 = "84e2cc1c9e3593ae2c0aa4c773bceeb63c2d04c02a74a6e30c1961684d235593",
+    url = "https://github.com/bazelbuild/rules_swift/releases/download/1.5.1/rules_swift.1.5.1.tar.gz",
 )
-
-load("@build_bazel_rules_apple//apple:repositories.bzl", "apple_rules_dependencies")
-
-apple_rules_dependencies()
-
-load("@build_bazel_rules_swift//swift:repositories.bzl", "swift_rules_dependencies")
-
-swift_rules_dependencies()
-
-load("@build_bazel_rules_swift//swift:extras.bzl", "swift_rules_extra_dependencies")
-
-swift_rules_extra_dependencies()
 
 http_archive(
     name = "build_bazel_rules_ios",
-    sha256 = "dfff3ecdce0ca1c1f7ca619b8a7e9f83f22a553f16d2ec321557f1fc4f173b94",
-    strip_prefix = "rules_ios-985d578d8d4c3e4b6fe23dc69436ecafa33d30b4",
-    url = "https://github.com/bazel-ios/rules_ios/archive/985d578d8d4c3e4b6fe23dc69436ecafa33d30b4.zip"
+    sha256 = "68cf4870875f077a30f0fdec732c38f8f6dce31aa9c37a4ae82750810844ed4c",
+    strip_prefix = "rules_ios-ea40a7b13dd1a29a454de2268a3799a65907501a",
+    url = "https://github.com/bazel-ios/rules_ios/archive/ea40a7b13dd1a29a454de2268a3799a65907501a.zip"
 )
 
-load("@build_bazel_rules_ios//rules:repositories.bzl", "rules_ios_dependencies")
+load(
+    "@build_bazel_rules_ios//rules:repositories.bzl",
+    "rules_ios_dependencies"
+)
 
 rules_ios_dependencies()
+
+load(
+    "@build_bazel_rules_apple//apple:repositories.bzl",
+    "apple_rules_dependencies",
+)
+
+apple_rules_dependencies()
+
+load(
+    "@build_bazel_rules_swift//swift:repositories.bzl",
+    "swift_rules_dependencies",
+)
+
+swift_rules_dependencies()
+
+load(
+    "@build_bazel_rules_swift//swift:extras.bzl",
+    "swift_rules_extra_dependencies",
+)
+
+swift_rules_extra_dependencies()
+
+load(
+    "@build_bazel_apple_support//lib:repositories.bzl",
+    "apple_support_dependencies",
+)
+
+apple_support_dependencies()
 
 load("//:repositories.bzl", "bazelpods_dependencies", "bazelpodstests_dependencies")
 
