@@ -25,13 +25,16 @@ public struct SourcesAnalyzer {
             case objcOnly
             case swiftOnly
             case mixed
+
+            func oneOf(_ values: Self...) -> Bool {
+                return values.contains(self)
+            }
         }
-        let sourceFiles: GlobNode
-        let publicHeaders: GlobNode
-        let privateHeaders: GlobNode
+        let sourceFiles: GlobNodeV2
+        let publicHeaders: GlobNodeV2
+        let privateHeaders: GlobNodeV2
         let sourcesType: SourcesType
         let linkDynamic: Bool
-        let canUseObjcLibrary: Bool
     }
 
     private let platform: Platform
@@ -54,16 +57,16 @@ public struct SourcesAnalyzer {
     }
 
     private func run() -> Result {
-        let sourceFiles = getFilesNodes(spec: spec,
+        var sourceFiles = getFilesNodes(spec: spec,
                                         subspecs: subspecs,
                                         includesKeyPath: \.sourceFiles,
                                         excludesKeyPath: \.excludeFiles,
                                         fileTypes: AnyFileTypes,
                                         options: options)
             .platform(platform)
-            .map({ GlobNode(include: $0.include) }) // TODO: Think about it
+            .map({ GlobNodeV2(include: $0.include) })
 
-        let publicHeaders = getFilesNodes(spec: spec,
+        var publicHeaders = getFilesNodes(spec: spec,
                                           subspecs: subspecs,
                                           includesKeyPath: \.publicHeaders,
                                           excludesKeyPath: \.privateHeaders,
@@ -99,16 +102,28 @@ public struct SourcesAnalyzer {
             sourcesType = .empty
         }
 
-        let linkDynamic = options.useFrameworks && sourceFiles?.isEmpty == false && !spec.staticFramework
-        let canUseObjcLibrary = !options.useFrameworks && !linkDynamic && [Result.SourcesType.empty, .headersOnly].contains(sourcesType)
+        if sourcesType == .headersOnly {
+            if let lpublicHeaders = publicHeaders {
+                if let sourceFiles {
+                    publicHeaders = lpublicHeaders <> sourceFiles
+                }
+            } else {
+                publicHeaders = sourceFiles
+            }
+            sourceFiles = nil
+        }
+
+        let linkDynamic =
+        options.useFrameworks &&
+        !spec.staticFramework &&
+        sourcesType.oneOf(.swiftOnly, .objcOnly, .mixed)
 
         return Result(
             sourceFiles: sourceFiles ?? .empty,
             publicHeaders: publicHeaders ?? .empty,
             privateHeaders: privateHeaders ?? .empty,
             sourcesType: sourcesType,
-            linkDynamic: linkDynamic,
-            canUseObjcLibrary: canUseObjcLibrary
+            linkDynamic: linkDynamic
         )
     }
 
@@ -117,7 +132,7 @@ public struct SourcesAnalyzer {
                        includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
                        excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
                        fileTypes: Set<String>,
-                       options: BuildOptions) -> AttrSet<GlobNode> {
+                       options: BuildOptions) -> AttrSet<GlobNodeV2> {
         let (implFiles, implExcludes) = getFiles(spec: spec,
                                                  subspecs: subspecs,
                                                  includesKeyPath: includesKeyPath,
@@ -126,7 +141,7 @@ public struct SourcesAnalyzer {
                                                  options: options)
 
         return implFiles.zip(implExcludes).map {
-            GlobNode(include: .left($0.first?.sorted() ?? []), exclude: .left($0.second?.sorted() ?? []))
+            GlobNodeV2(include: $0.first?.sorted() ?? [], exclude: $0.second?.sorted() ?? [])
         }
     }
 
