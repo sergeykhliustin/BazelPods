@@ -31,9 +31,6 @@ apple_framework(
   platforms = {
     "ios": "13.0"
   },
-  data = [
-    "Maps/Frameworks/GoogleMaps.xcframework/ios-arm64/GoogleMaps.framework/Resources/GoogleMaps.bundle"
-  ],
   deps = select(
     {
       "//conditions:default": [],

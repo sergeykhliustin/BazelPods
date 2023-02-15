@@ -128,10 +128,11 @@ public struct PodBuildFile: StarlarkConvertible {
         let subspecs = spec.selectedSubspecs(subspecs: options.subspecs)
         // TODO: Platforms support
         let platform = Platform.ios
-        let analyzer = Analyzer(platform: platform,
+        var analyzer = Analyzer(platform: platform,
                                 spec: spec,
                                 subspecs: subspecs,
                                 options: options)
+        analyzer.patch(BundlesDeduplicate())
 
         let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
         let (vendoredTargets, conditions) = makeVendoredTargets(analyzer: analyzer)
