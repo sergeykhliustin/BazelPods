@@ -24,7 +24,7 @@ jobs:
         with:
           path: |
             Tests/Pods
-            Tests/Podsfile.lock
+            Tests/Podfile.lock
           key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
           restore-keys: |
             ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
