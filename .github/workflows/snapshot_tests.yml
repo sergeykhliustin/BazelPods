@@ -22,7 +22,9 @@ jobs:
         env:
           cache-name: cache-pods
         with:
-          path: Tests/Pods
+          path: |
+            Tests/Pods
+            Tests/Podsfile.lock
           key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
           restore-keys: |
             ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
