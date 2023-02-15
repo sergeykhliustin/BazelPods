@@ -69,4 +69,14 @@ public struct Analyzer {
                                                   subspecs: subspecs,
                                                   options: options).result
     }
+
+    mutating func patch(_ patch: Patch) {
+        patch.run(base: &baseInfo,
+                  sources: &sourcesInfo,
+                  resources: &resourcesInfo,
+                  sdkDeps: &sdkDepsInfo,
+                  vendoredDeps: &vendoredDepsInfo,
+                  podDeps: &podDepsInfo,
+                  buildSettings: &buildSettingsInfo)
+    }
 }

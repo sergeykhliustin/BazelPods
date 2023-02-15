@@ -13,9 +13,9 @@ public struct ResourcesAnalyzer {
             let name: String
             let resources: [String]
         }
-        let resources: [String]
-        let precompiledBundles: [String]
-        let resourceBundles: [Bundle]
+        var resources: [String]
+        var precompiledBundles: [String]
+        var resourceBundles: [Bundle]
     }
 
     private let platform: Platform
