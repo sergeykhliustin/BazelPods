@@ -5,6 +5,9 @@ on:
       - 'main'
   pull_request:
     types: [opened, synchronize, reopened]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
 jobs:
   test:
     name: Snapshot Tests
