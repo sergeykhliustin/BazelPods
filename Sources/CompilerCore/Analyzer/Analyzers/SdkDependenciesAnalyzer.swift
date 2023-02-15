@@ -9,10 +9,10 @@ import Foundation
 
 public struct SdkDependenciesAnalyzer {
     public struct Result {
-        let sdkDylibs: [String]
-        let sdkFrameworks: [String]
-        let weakSdkFrameworks: [String]
-        let testonly: Bool
+        var sdkDylibs: [String]
+        var sdkFrameworks: [String]
+        var weakSdkFrameworks: [String]
+        var testonly: Bool
     }
 
     private let platform: Platform

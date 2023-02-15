@@ -133,6 +133,7 @@ public struct PodBuildFile: StarlarkConvertible {
                                 subspecs: subspecs,
                                 options: options)
         analyzer.patch(BundlesDeduplicate())
+        analyzer.patch(UserOptionsPatch(options.userOptions))
 
         let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
         let (vendoredTargets, conditions) = makeVendoredTargets(analyzer: analyzer)
@@ -160,9 +161,6 @@ public struct PodBuildFile: StarlarkConvertible {
         output += infoplists
         output += resourceInfoplists
 
-        output = UserConfigurableTransform.transform(convertibles: output,
-                                                     options: options,
-                                                     podSpec: spec)
         return (output, archs)
     }
 
