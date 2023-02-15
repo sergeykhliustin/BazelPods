@@ -126,42 +126,49 @@ public struct PodBuildFile: StarlarkConvertible {
                                          options: BuildOptions)
     -> ([StarlarkConvertible], [Arch]) {
         let subspecs = spec.selectedSubspecs(subspecs: options.subspecs)
-        // TODO: Platforms support
-        let platform = Platform.ios
-        var analyzer = Analyzer(platform: platform,
-                                spec: spec,
-                                subspecs: subspecs,
-                                options: options)
-        analyzer.patch(BundlesDeduplicate())
-        analyzer.patch(UserOptionsPatch(options.userOptions))
-
-        let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
-        let (vendoredTargets, conditions) = makeVendoredTargets(analyzer: analyzer)
-
-        let deps = (
-            (resourceTargets.map({ $0.name })) +
-            analyzer.podDependencies
-        ).sorted()
-
-        let (sourceTargets, infoplists) = makeSourceLibs(analyzer: analyzer,
-                                                         deps: deps,
-                                                         conditionalDeps: conditions)
-        let archs = conditions.reduce(Set<Arch>()) { partialResult, element in
-            var result = partialResult
-            element.value.forEach({
-                result.insert($0)
-            })
-            return result
-        }.sorted()
-
         var output: [BazelTarget] = []
-        output += sourceTargets
-        output += resourceTargets
-        output += vendoredTargets
-        output += infoplists
-        output += resourceInfoplists
+        var archs: Set<Arch> = []
+        for platform in options.platforms {
+            var analyzer: Analyzer
+            do {
+                analyzer = try Analyzer(platform: platform,
+                                        spec: spec,
+                                        subspecs: subspecs,
+                                        options: options)
+            } catch {
+                log_debug(error)
+                continue
+            }
+            analyzer.patch(BundlesDeduplicate())
+            analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
 
-        return (output, archs)
+            let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
+            let (vendoredTargets, conditions) = makeVendoredTargets(analyzer: analyzer)
+
+            let deps = (
+                (resourceTargets.map({ $0.name })) +
+                analyzer.podDependencies
+            ).sorted()
+
+            let (sourceTargets, infoplists) = makeSourceLibs(analyzer: analyzer,
+                                                             deps: deps,
+                                                             conditionalDeps: conditions)
+            archs = conditions.reduce(archs) { partialResult, element in
+                var result = partialResult
+                element.value.forEach({
+                    result.insert($0)
+                })
+                return result
+            }
+
+            output += sourceTargets
+            output += resourceTargets
+            output += vendoredTargets
+            output += infoplists
+            output += resourceInfoplists
+        }
+
+        return (output, archs.sorted())
     }
 
     public func compile() -> String {

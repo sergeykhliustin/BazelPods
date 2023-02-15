@@ -16,7 +16,7 @@ expunge:
 	rm -rf .bazel-cache
 
 prepare-tests:
-	swift TestTools/generate_podfile.swift TestTools/TopPods.json TestTools/Podfile_template > Tests/Podfile
+	swift TestTools/generate_podfile.swift TestTools/Pods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
 	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/Tests" \
@@ -73,15 +73,16 @@ record-tests:
 	done
 
 integration-setup:
-	swift TestTools/generate_podfile.swift TestTools/TopPods_Integration.json TestTools/Podfile_template > IntegrationTests/Podfile
+	swift TestTools/generate_podfile.swift TestTools/Pods_Integration.json TestTools/Podfile_template > IntegrationTests/Podfile
 	cd IntegrationTests && pod install
-	swift TestTools/generate_buildfile.swift TestTools/TopPods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
+	swift TestTools/generate_buildfile.swift TestTools/Pods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
 integration-generate-static:
 	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
+	--platforms ios osx \
 	-a -c \
 	--color yes \
 	--log-level debug \
@@ -91,6 +92,7 @@ integration-generate-dynamic:
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
+	--platforms ios osx \
 	-a -c -f \
 	--color yes \
 	--log-level debug \

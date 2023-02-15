@@ -1,10 +1,18 @@
 install! 'cocoapods',
          :integrate_targets => false
-platform :ios, '13.4'
+
 target 'TestApp_iOS' do
+  platform :ios, '13.4'
   inhibit_all_warnings!
   use_modular_headers!
-[[PODS]]
+[[IOS_PODS]]
+end
+
+target 'TestApp_osx' do
+  platform :osx, '13.4'
+  inhibit_all_warnings!
+  use_modular_headers!
+[[OSX_PODS]]
 end
 
 post_install do |installer|

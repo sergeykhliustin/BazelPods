@@ -11,7 +11,7 @@ private let SEPARATOR = "_"
 
 struct TargetName {
     let platform: Platform
-    let platformSuffix: Bool = false // TODO: Platform support
+    let platformSuffix: Bool
 
     func base(_ baseName: String) -> String {
         return joined([

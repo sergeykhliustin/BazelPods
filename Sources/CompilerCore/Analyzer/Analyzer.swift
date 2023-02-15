@@ -32,17 +32,17 @@ public struct Analyzer {
     init(platform: Platform,
          spec: PodSpec,
          subspecs: [PodSpec],
-         options: BuildOptions) {
+         options: BuildOptions) throws {
         self.platform = platform
         self.spec = spec
         self.subspecs = subspecs
         self.options = options
-        self.targetName = TargetName(platform: platform)
+        self.targetName = TargetName(platform: platform, platformSuffix: options.platforms.count > 1)
 
-        baseInfo = BaseAnalyzer(platform: platform,
-                                spec: spec,
-                                subspecs: subspecs,
-                                options: options).result
+        baseInfo = try BaseAnalyzer(platform: platform,
+                                    spec: spec,
+                                    subspecs: subspecs,
+                                    options: options).run()
         sourcesInfo = SourcesAnalyzer(platform: platform,
                                       spec: spec,
                                       subspecs: subspecs,

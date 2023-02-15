@@ -9,8 +9,11 @@ import Foundation
 
 struct UserOptionsPatch: Patch {
     private let options: [UserOption]
-    init(_ options: [UserOption]) {
+    private let platform: Platform
+
+    init(_ options: [UserOption], platform: Platform) {
         self.options = options
+        self.platform = platform
     }
 
     func run(base: inout BaseAnalyzer.Result,
@@ -20,7 +23,12 @@ struct UserOptionsPatch: Patch {
              vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
              podDeps: inout PodDependenciesAnalyzer.Result,
              buildSettings: inout BuildSettingsAnalyzer.Result) {
-        let options = options.filter({ $0.name == base.name })
+        let options = options
+            .filter({ $0.name == base.name })
+            .filter({
+                guard let platform = $0.platform else { return true }
+                return platform == self.platform
+            })
         for option in options {
             switch option.attribute {
             case .sdk_frameworks(let value):
