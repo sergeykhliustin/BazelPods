@@ -5,19 +5,7 @@
 //  Created by Sergey Khliustin on 04.08.2022.
 //
 
-public enum AppleFrameworkConfigurableAddDeleteKeys: String {
-    case sdkDylibs = "sdk_dylibs"
-    case sdkFrameworks = "sdk_frameworks"
-    case weakSdkFrameworks = "weak_sdk_frameworks"
-    case deps = "deps"
-}
-
-public enum AppleFrameworkConfigurableOverriderKeys: String {
-    case testonly = "testonly"
-    case linkDynamic = "link_dynamic"
-}
-
-struct AppleFramework: BazelTarget, UserConfigurable {
+struct AppleFramework: BazelTarget {
     let loadNode = "load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')"
 
     let name: String
@@ -27,15 +15,15 @@ struct AppleFramework: BazelTarget, UserConfigurable {
     let resources: ResourcesAnalyzer.Result
     let infoplists: [String]
 
-    var deps: [String]
-    var conditionalDeps: [String: [Arch]]
+    let deps: [String]
+    let conditionalDeps: [String: [Arch]]
 
     let objcDefines: AttrSet<[String]>
     let swiftDefines: AttrSet<[String]>
 
-    var sdkDylibs: [String]
-    var sdkFrameworks: [String]
-    var weakSdkFrameworks: [String]
+    let sdkDylibs: [String]
+    let sdkFrameworks: [String]
+    let weakSdkFrameworks: [String]
 
     let objcCopts: [String]
     let swiftCopts: [String]
@@ -81,65 +69,6 @@ struct AppleFramework: BazelTarget, UserConfigurable {
 
         self.testonly = sdkDeps.testonly
         self.linkDynamic = sources.linkDynamic
-    }
-
-    mutating func add(configurableKey: String, value: Any) {
-        guard let key = AppleFrameworkConfigurableAddDeleteKeys(rawValue: configurableKey) else { return }
-        switch key {
-        case .sdkDylibs:
-            if let value = value as? String {
-                self.sdkDylibs.append(value)
-            }
-        case .sdkFrameworks:
-            if let value = value as? String {
-                self.sdkFrameworks.append(value)
-            }
-        case .weakSdkFrameworks:
-            if let value = value as? String {
-                self.weakSdkFrameworks.append(value)
-            }
-        case .deps:
-            if let value = value as? String {
-                self.deps.append(value)
-            }
-        }
-    }
-
-    mutating func delete(configurableKey: String, value: Any) {
-        guard let key = AppleFrameworkConfigurableAddDeleteKeys(rawValue: configurableKey) else { return }
-        switch key {
-        case .sdkDylibs:
-            if let value = value as? String {
-                self.sdkDylibs.removeAll(where: { $0 == value })
-            }
-        case .sdkFrameworks:
-            if let value = value as? String {
-                self.sdkFrameworks.removeAll(where: { $0 == value })
-            }
-        case .weakSdkFrameworks:
-            if let value = value as? String {
-                self.weakSdkFrameworks.removeAll(where: { $0 == value })
-            }
-        case .deps:
-            if let value = value as? String {
-                self.deps = self.deps.filter({ $0 != value })
-                self.conditionalDeps = self.conditionalDeps.filter({ $0.key != value })
-            }
-        }
-    }
-
-    mutating func override(configurableKey: String, value: Any) {
-        guard let key = AppleFrameworkConfigurableOverriderKeys(rawValue: configurableKey) else { return }
-        switch key {
-        case .testonly:
-            if let value = value as? String, let bool = Bool(value) {
-                self.testonly = bool
-            }
-        case .linkDynamic:
-            if let value = value as? String, let bool = Bool(value) {
-                self.linkDynamic = bool
-            }
-        }
     }
 
     func toStarlark() -> StarlarkNode {

@@ -72,22 +72,29 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, parsing: .upToNextOption,
             help: """
 User extra options.
-Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
-Supported fields for '-=' (remove): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
-Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
+Supported fields: \(UserOption.KeyPath.allCases.map({ "'\($0.rawValue)'" }).joined(separator: ", ")).
+Supported operators: \(UserOption.Opt.allCases.map({ "'\($0.rawValue)' (\($0.description))" }).joined(separator: ", ")).
 Example:
 'SomePod.sdk_dylibs += something,something'
 'SomePod.testonly := true'
+Platform specific:
+'SomePod.platform_ios.sdk_dylibs += something,something'
 """
     )
     var userOptions: [String] = []
 
     func run() throws {
         _ = CrashReporter()
+        configureLogger(nil)
         let data = try NSData(contentsOfFile: absoluteSRCPath(podsJson), options: [])
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let json = try decoder.decode([String: PodConfig].self, from: data as Data)
+
+        let userOptions = userOptions
+            .map({ $0.trimmingCharacters(in: .whitespaces) })
+            .filter({ !$0.isEmpty })
+            .compactMap({ UserOption($0) })
 
         let specifications = PodSpecification.resolve(with: json).sorted(by: { $0.name < $1.name })
         let compiler: (PodSpecification) throws -> Void = { specification in

@@ -107,12 +107,13 @@ OPTIONS:
   --color <color>         Logs color (auto|yes|no) (default: auto)
   --user-options <user-options>
                           User extra options.
-                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
-                          Supported fields for '-=' (remove): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
-                          Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
+                          Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
                           'SomePod.testonly := true'
+                          Platform specific:
+                          'SomePod.platform_ios.sdk_dylibs += something,something'
   -h, --help              Show help information.
 ```
 ### Compiler
@@ -133,12 +134,13 @@ OPTIONS:
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --user-options <user-options>
                           User extra options.
-                          Supported fields for '+=' (add): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
-                          Supported fields for '-=' (remove): 'sdk_dylibs', 'sdk_frameworks', 'weak_sdk_frameworks', 'deps'.
-                          Supported fields for ':=' (override): 'testonly', 'link_dynamic'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
+                          Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
                           'SomePod.testonly := true'
+                          Platform specific:
+                          'SomePod.platform_ios.sdk_dylibs += something,something'
   -h, --help              Show help information.
 ```
 ## Contributing and issues

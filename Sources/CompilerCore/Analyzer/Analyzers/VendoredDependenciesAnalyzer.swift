@@ -26,12 +26,9 @@ public struct VendoredDependenciesAnalyzer {
             let archs: [Arch]
             let dynamic: Bool
         }
-        let libraries: [Library]
-        let frameworks: [Framework]
-        let xcFrameworks: [XCFramework]
-        let xcFrameworkPaths: [String]
-
-        let xcFrameworksExternalTarget: Bool = true
+        var libraries: [Library]
+        var frameworks: [Framework]
+        var xcFrameworks: [XCFramework]
     }
     private let platform: Platform
     private let spec: PodSpec
@@ -70,8 +67,7 @@ public struct VendoredDependenciesAnalyzer {
 
         return Result(libraries: resultLibraries,
                       frameworks: resultFrameworks,
-                      xcFrameworks: resultXCFrameworks,
-                      xcFrameworkPaths: resultXCFrameworkPaths)
+                      xcFrameworks: resultXCFrameworks)
     }
 
     private func processXCFrameworks(_ xcframeworks: [String]) -> [String] {

@@ -41,7 +41,7 @@ public protocol BuildOptions {
     var depsPrefix: String { get }
     var podsRoot: String { get }
     var useFrameworks: Bool { get }
-    var userOptions: [String] { get }
+    var userOptions: [UserOption] { get }
     var podTargetSrcRoot: String { get }
     var podTargetAbsoluteRoot: String { get }
 }
@@ -100,7 +100,7 @@ public struct BasicBuildOptions: BuildOptions {
     public let sourcePath: String
     public let platforms: [Platform]
 
-    public let userOptions: [String]
+    public let userOptions: [UserOption]
     public let minIosPlatform: String
     public let depsPrefix: String
     public let podsRoot: String
@@ -110,7 +110,7 @@ public struct BasicBuildOptions: BuildOptions {
                 subspecs: [String],
                 sourcePath: String,
                 platforms: [Platform],
-                userOptions: [String],
+                userOptions: [UserOption],
                 minIosPlatform: String,
                 depsPrefix: String,
                 podsRoot: String,

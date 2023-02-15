@@ -34,7 +34,7 @@ public struct SourcesAnalyzer {
         let publicHeaders: GlobNodeV2
         let privateHeaders: GlobNodeV2
         let sourcesType: SourcesType
-        let linkDynamic: Bool
+        var linkDynamic: Bool
     }
 
     private let platform: Platform
