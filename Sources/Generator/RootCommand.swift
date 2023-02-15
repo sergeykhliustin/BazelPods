@@ -9,6 +9,7 @@ import Foundation
 import ArgumentParser
 import CompilerCore
 import ObjcSupport
+import Logger
 
 private let IGNORE_FILELIST = [
     "build.bazel",
@@ -22,6 +23,8 @@ enum ColorMode: String, ExpressibleByArgument {
     case yes
     case no
 }
+
+extension LogLevel: ExpressibleByArgument {}
 
 extension Platform: ExpressibleByArgument {}
 
@@ -68,6 +71,9 @@ struct RootCommand: ParsableCommand {
 
     @Option(help: "Logs color (auto|yes|no)")
     var color: ColorMode = .auto
+
+    @Option(help: "Log level (\(LogLevel.allCases.map({ $0.rawValue }).joined(separator: "|")))")
+    var logLevel: LogLevel = .info
 
     @Option(name: .long, parsing: .upToNextOption,
             help: """
@@ -215,6 +221,7 @@ Platform specific:
             logger.colors = false
         }
         logger.prefix = prefix
+        logger.level = logLevel
     }
 
     func absoluteSRCPath(_ path: String) -> String {

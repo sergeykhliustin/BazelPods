@@ -22,10 +22,10 @@ jobs:
         env:
           cache-name: cache-pods
         with:
-          path: Tests/Pods
+          path: |
+            Tests/Pods
+            Tests/Podfile.lock
           key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
-          restore-keys: |
-            ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
 
       - name: Cache Bazel output
         id: cache-bazel-output
@@ -35,8 +35,6 @@ jobs:
         with:
           path: bazel-output-base
           key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
-          restore-keys: |
-            ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
 
       - name: make tests
         run: make tests

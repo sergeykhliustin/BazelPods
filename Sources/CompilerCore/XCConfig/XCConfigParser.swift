@@ -63,7 +63,7 @@ final class XCConfigParser {
                 objcCopts += (transformer as? ObjcCoptsProvider)?.objcCopts(value) ?? []
                 linkOpts += (transformer as? LinkOptsProvider)?.linkOpts(value) ?? []
             } else {
-                log_warning("unhandled xcconfig \(key)")
+                log_debug("unhandled xcconfig \(key)")
             }
         }
     }

@@ -9,8 +9,10 @@ import Foundation
 import ArgumentParser
 import CompilerCore
 import ObjcSupport
+import Logger
 
 extension Platform: ExpressibleByArgument {}
+extension LogLevel: ExpressibleByArgument {}
 
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Compiler", abstract: "Compiles podspec.json to BUILD file")
@@ -44,6 +46,9 @@ struct RootCommand: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
+    @Option(help: "Log level (\(LogLevel.allCases.map({ $0.rawValue }).joined(separator: "|")))")
+    var logLevel: LogLevel = .info
+
     @Option(name: .long, parsing: .upToNextOption,
             help: """
 User extra options.
@@ -60,6 +65,7 @@ Platform specific:
 
     func run() throws {
         _ = CrashReporter()
+        logger.level = logLevel
         let jsonData = try NSData(contentsOfFile: podspec, options: []) as Data
         let jsonFile = try JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as AnyObject
 

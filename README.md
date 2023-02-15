@@ -105,6 +105,7 @@ OPTIONS:
   --dry-run               Dry run. Files will not be written
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
   --color <color>         Logs color (auto|yes|no) (default: auto)
+  --log-level <log-level> Log level (debug|info|warning|error|none) (default: 1)
   --user-options <user-options>
                           User extra options.
                           Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
@@ -118,7 +119,7 @@ OPTIONS:
 ```
 ### Compiler
 ```
-USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--user-options <user-options> ...]
+USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--log-level <log-level>] [--user-options <user-options> ...]
 
 OPTIONS:
   --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
@@ -132,6 +133,7 @@ OPTIONS:
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  --log-level <log-level> Log level (debug|info|warning|error|none) (default: 1)
   --user-options <user-options>
                           User extra options.
                           Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.

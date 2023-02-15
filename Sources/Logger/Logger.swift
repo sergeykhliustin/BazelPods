@@ -7,11 +7,27 @@
 
 import Foundation
 
-public enum LogLevel: Int {
-    case debug = 0
+public enum LogLevel: String, CaseIterable {
+    case debug
     case info
     case warning
     case error
+    case none
+
+    var level: Int {
+        switch self {
+        case .debug:
+            return 0
+        case .info:
+            return 1
+        case .warning:
+            return 2
+        case .error:
+            return 3
+        case .none:
+            return 4
+        }
+    }
 }
 
 private extension LogLevel {
@@ -25,19 +41,23 @@ private extension LogLevel {
             return "warning:"
         case .error:
             return "error:"
+        case .none:
+            return ""
         }
     }
 
     var terminalColor: String {
         switch self {
         case .debug:
-            return "[34m" // blue
+            return "[1;34m" // blue
         case .info:
             return "[32m" // green
         case .warning:
             return "[33m" // yellow
         case .error:
             return "[31m" // red
+        case .none:
+            return ""
         }
     }
 
@@ -63,14 +83,11 @@ public class DefaultLogger: LoggerProtocol {
 
     public var prefix: String?
     public var colors: Bool = false
-    #if DEBUG
-    public var level: LogLevel = .debug
-    #else
     public var level: LogLevel = .info
-    #endif
 
     public func log_debug(file: StaticString = #file, function: StaticString = #function, line: Int = #line, _ message: @autoclosure () -> Any) {
-        log(.debug, message: ["\(file)", "\(function)", "\(line)", "\n\(message())"].joined(separator: ": "))
+        let file = ("\(file)" as NSString).lastPathComponent
+        log(.debug, message: ["\(file):\(line)", "\(message())"].joined(separator: ": "))
     }
 
     public func log_info(_ message: @autoclosure () -> Any) {
@@ -86,14 +103,17 @@ public class DefaultLogger: LoggerProtocol {
     }
 
     func log(_ level: LogLevel, message: @autoclosure () -> Any) {
-        guard level.rawValue >= self.level.rawValue else { return }
+        guard level.level >= self.level.level else { return }
         var result = ""
-        if let prefix {
-            result += "[\(prefix)] "
-        }
         if colors {
+            if let prefix {
+                result += "[\u{001b}[35m\(prefix)\u{001b}[0m] "
+            }
             result += level.coloredString
         } else {
+            if let prefix {
+                result += "[\(prefix)] "
+            }
             result += level.string
         }
         result += " "
