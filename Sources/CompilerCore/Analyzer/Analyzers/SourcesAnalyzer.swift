@@ -114,6 +114,7 @@ public struct SourcesAnalyzer {
         }
 
         let linkDynamic =
+        platform.supportsDynamic &&
         options.useFrameworks &&
         !spec.staticFramework &&
         sourcesType.oneOf(.swiftOnly, .objcOnly, .mixed)

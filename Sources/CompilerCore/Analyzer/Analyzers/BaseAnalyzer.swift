@@ -41,7 +41,7 @@ public struct BaseAnalyzer {
         } else {
             moduleName = name.replacingOccurrences(of: "-", with: "_")
         }
-        let platforms = [platform.rawValue: platformVersion]
+        let platforms = [platform.bazelKey: platformVersion]
         let swiftVersion: String?
         if let versions = spec.attr(\.swiftVersions).platform(platform)??.compactMap({ Double($0) }) {
             if versions.contains(where: { $0 >= 5.0 }) {

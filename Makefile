@@ -15,6 +15,23 @@ expunge:
 	bazel clean --expunge
 	rm -rf .bazel-cache
 
+integration: 
+	$(MAKE) integration-clean
+	$(MAKE) integration-setup
+	@echo "\033[32m### integration-generate-static ###\033[0m"
+	$(MAKE) integration-generate-static
+	@echo "\033[32m### static: integration-build-x86_64 ###\033[0m"
+	$(MAKE) integration-build-x86_64
+	@echo "\033[32m### static: integration-build-arm64 ###\033[0m"
+	$(MAKE) integration-build-arm64
+	@echo "\033[32m### integration-generate-dynamic ###\033[0m"
+	$(MAKE) integration-generate-dynamic
+	@echo "\033[32m### dynamic: integration-build-x86_64 ###\033[0m"
+	$(MAKE) integration-build-x86_64
+	@echo "\033[32m### dynamic: integration-build-arm64 ###\033[0m"
+	$(MAKE) integration-build-arm64
+	@echo "\033[32m### finished ###\033[0m"
+
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/Pods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
@@ -105,9 +122,11 @@ integration-generate-dynamic:
 
 integration-build-x86_64:
 	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64
+	bazel build $(CONFIG) //IntegrationTests:TestApp_osx --macos_cpus=x86_64
 
 integration-build-arm64:
 	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=sim_arm64
+	bazel build $(CONFIG) //IntegrationTests:TestApp_osx --macos_cpus=arm64
 
 integration-clean:
 	-cd IntegrationTests; \
@@ -127,23 +146,6 @@ integration-dynamic:
 	$(MAKE) integration-generate-dynamic
 	$(MAKE) integration-build-x86_64
 	$(MAKE) integration-build-arm64
-
-integration: 
-	$(MAKE) integration-clean
-	$(MAKE) integration-setup
-	@echo "\033[32m### integration-generate-static ###\033[0m"
-	$(MAKE) integration-generate-static
-	@echo "\033[32m### static: integration-build-x86_64 ###\033[0m"
-	$(MAKE) integration-build-x86_64
-	@echo "\033[32m### static: integration-build-arm64 ###\033[0m"
-	$(MAKE) integration-build-arm64
-	@echo "\033[32m### integration-generate-dynamic ###\033[0m"
-	$(MAKE) integration-generate-dynamic
-	@echo "\033[32m### dynamic: integration-build-x86_64 ###\033[0m"
-	$(MAKE) integration-build-x86_64
-	@echo "\033[32m### dynamic: integration-build-arm64 ###\033[0m"
-	$(MAKE) integration-build-arm64
-	@echo "\033[32m### finished ###\033[0m"
 
 integration-run-arm64:
 	bazel run //IntegrationTests:TestApp_iOS --ios_multi_cpus=sim_arm64
