@@ -2,49 +2,29 @@
 ![Snapshot tests status](https://github.com/sergeykhliustin/BazelPods/actions/workflows/snapshot_tests.yml/badge.svg?branch=main) ![Integration tests static status](https://github.com/sergeykhliustin/BazelPods/actions/workflows/integration_tests_static.yml/badge.svg?branch=main) ![Integration tests dynamic status](https://github.com/sergeykhliustin/BazelPods/actions/workflows/integration_tests_dynamic.yml/badge.svg?branch=main)
 
 One more way to build CocoaPods with Bazel. It generates Bazel's `BUILD` files for pods using awesome [rules_ios](https://github.com/bazel-ios/rules_ios).  
-Core idea, Podspec parser, Starlark compiler are forked from Pinterest's [PodToBUILD](https://github.com/pinterest/PodToBUILD)
+Core idea, Podspec parser, Starlark compiler are forked from [PodToBUILD](https://github.com/bazel-xcode/PodToBUILD)
 
 #
 
-### 🤔 Motivation
-There are two existing wonderful alternatives to this project: [cocoapods-bazel](https://github.com/bazel-ios/cocoapods-bazel) and [PodToBUILD](https://github.com/pinterest/PodToBUILD).
+### ⚙️ Status and features
 
-`cocoapods-bazel` generates BUILD files based on targets from `Pods.xcodeproj`.  
-As a result of this, we will have some aggregated targets needed for Xcode but redundant for Bazel.  
-These targets cause issues with resources and module name resolving.  
-For example, currently, it's not working out of the box for a custom Firebase setup.
+|                                                                                 | iOS  | macOS | watchOS | tvOS |
+| -                                                                               | -    | -     | -       | -    |
+| static library                                                                  | ✅   | ✅     | ❓      | ❓   |
+| dynamic (`use_framework!`)                                                      | ✅   | 🔜     | ❓      | ❓   |
+| vendored static libs                                                            | ✅   | ❓     | ❓      | ❓   |
+| vendored frameworks                                                             | ✅   | ❓     | ❓      | ❓   |
+| vendored xcframeworks                                                           | ✅   | ❓     | ❓      | ❓   |
+| bundles and resources                                                           | ✅   | ❓     | ❓      | ❓   |
+| [rules_xcodeproj](https://github.com/buildbuddy-io/rules_xcodeproj)             | ✅   | ❓     | ❓      | ❓   |
 
-`PodToBUILD`'s main idea is to generate BUILD files directly from .podspec info and **it's great!**  
-Unfortunately, out of the box, it cannot resolve the whole dependency tree with private pods as Cocoapods do.  
-We can solve it by letting Cocoapods do its work and vendorise pods after. (something like [this](https://github.com/pinterest/PodToBUILD/pull/216/files))  
-Another problem is "mixed code" (Swift + Objective-C). It's still [`in development`](https://github.com/pinterest/PodToBUILD#does-it-work-with-swift), so you cannot resolve it with reasonable effort.  
-Meanwhile, [`rules_ios`](https://github.com/bazel-ios/rules_ios) already supports it.
+###### ✅ - full support (report issues if no), 🔜 - not yet supported, ❓ - unknown, ❌ - not supported
 
-`BazelPods` uses best of all worlds.  
-Let Cocoapods download, resolve and setup everything for us. After that, it will generate `BUILD` files from .podspecs with only needed subspecs with rules from [`rules_ios`](https://github.com/bazel-ios/rules_ios). Written in Swift, so it will do it really fast.
-
-### ⚙️ Features
-
-- Platforms and architectures
-  - [x] iOS full support
-    - [x] Simulator: arm64, x86_64
-    - [x] Device: armv7, arm64, arm64e
-  - [ ] macOS (soon)
-  - [ ] watchOS (soon)
-  - [ ] tvOS (soon)
-- Linking
-  - [x] Static
-  - [x] Dynamic `use_frameworks!` (`--frameworks` option. also check `--extra-sdk` and `--user-options` if you facing missing sdk issues)
-  - [ ] Mixed (?)
-- Pods: 
-  - [x] Autodetect vendored frameworks architectures and ignore unsupported
-  - [x] Almost everything from top pods (vendored frameworks/xcframeworks/libraries, resources/bundles, xcconfigs)
-  - [x] Local pods with custom paths
+  - [x] Autodetect vendored frameworks and libs architectures and ignore unsupported
+  - [x] Local pods with custom paths, private pods (resolved by CocoaPods)
   - [ ] Nested subspecs (possibly works, but not tested yet)
   
-
-
-### 🎸 Let's rock
+ ### 🎸 Let's rock
 Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) and [`rules_apple`](https://github.com/bazelbuild/rules_apple) first.
 
 Add `BazelPods` to your `WORKSPACE`
@@ -80,12 +60,32 @@ end
 ```
 Run `BazelPods`
 ```sh
-bazel run @bazel_pods//:Generator -- Pods/Pods.json --src $PWD
+bazel run @bazel_pods//:Generator -- --src $PWD
 ```
+###### See full list of command line options [below](#%EF%B8%8F-command-line-options)  
 Now you can add first level dependencies to your app as `//Pods/<pod_name>`  
+Note: if you have multiplatform setup (`--platform` with more than 1 option), use `//Pods/<pod_name>:<pod_name>_<platform>`  
 Enjoy :)
 
-### Generator options
+### 🤔 History and motivation
+There are two existing wonderful alternatives to this project: [cocoapods-bazel](https://github.com/bazel-ios/cocoapods-bazel) and [PodToBUILD](https://github.com/pinterest/PodToBUILD).
+
+`cocoapods-bazel` generates BUILD files based on targets from `Pods.xcodeproj`.  
+As a result of this, we will have some aggregated targets needed for Xcode but redundant for Bazel.  
+These targets cause issues with resources and module name resolving.  
+For example, currently, it's not working out of the box for a custom Firebase setup.
+
+`PodToBUILD`'s main idea is to generate BUILD files directly from .podspec info and **it's great!**  
+Unfortunately, out of the box, it cannot resolve the whole dependency tree with private pods as Cocoapods do.  
+We can solve it by letting Cocoapods do its work and vendorise pods after. (something like [this](https://github.com/pinterest/PodToBUILD/pull/216/files))  
+Another problem is "mixed code" (Swift + Objective-C). It's still [`in development`](https://github.com/pinterest/PodToBUILD#does-it-work-with-swift), so you cannot resolve it with reasonable effort.  
+Meanwhile, [`rules_ios`](https://github.com/bazel-ios/rules_ios) already supports it.
+
+`BazelPods` uses best of all worlds.  
+Let Cocoapods download, resolve and setup everything for us. After that, BazelPods will generate `BUILD` files from .podspecs with only needed subspecs with rules from [`rules_ios`](https://github.com/bazel-ios/rules_ios). Written in Swift, so it will do it really fast.
+
+### ⌨️ Command line options
+Generator  
 ```
 USAGE: Generator [<options>] --src <src>
 
@@ -117,7 +117,7 @@ OPTIONS:
                           'SomePod.platform_ios.sdk_dylibs += something,something'
   -h, --help              Show help information.
 ```
-### Compiler
+Compiler  
 ```
 USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--log-level <log-level>] [--user-options <user-options> ...]
 
@@ -148,8 +148,10 @@ OPTIONS:
 ## Contributing and issues
 `make xcodeproj`
 Just contribute and report your issues 
+
 ## Credits 
 - [`PodToBUILD`](https://github.com/pinterest/PodToBUILD)
 - [`rules_ios`](https://github.com/bazel-ios/rules_ios)
 - [`cocoapods-bazel`](https://github.com/bazel-ios/cocoapods-bazel)
-- [`xcodeproj2bazel`](https://github.com/WeijunDeng/xcodeproj2bazel)
+- [`xcodeproj2bazel`](https://github.com/WeijunDeng/xcodeproj2bazel)  
+###### Powered by [sergeykhliustin](https://github.com/sergeykhliustin)
