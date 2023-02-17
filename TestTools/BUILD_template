@@ -1,8 +1,10 @@
 load('@build_bazel_rules_ios//rules:app.bzl', 'ios_application')
+load('@build_bazel_rules_apple//apple:macos.bzl', 'macos_application')
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 ios_application(
     name = "TestApp_iOS",
-    bundle_id = "com.bazelpods.testapp",
+    bundle_id = "com.bazelpods.testapp-ios",
     srcs = glob([
       "TestApp_iOS/**/*.swift",
     ]),
@@ -23,6 +25,28 @@ ios_application(
       "LD_VERIFY_BITCODE": "NO"
     },
     deps = [
-[[DEPS]]
+[[IOS_DEPS]]
     ]
+)
+
+swift_library(
+  name = "TestApp_osx_swift",
+  srcs = glob([
+    "TestApp_osx/**/*.swift"
+  ]),
+  deps = [
+[[OSX_DEPS]]
+  ]
+)
+
+macos_application(
+  name = "TestApp_osx",
+  bundle_id = "com.bazelpods.testapp-osx",
+  infoplists = [
+    "TestApp_osx/Info.plist"
+  ],
+  minimum_os_version = "13.0",
+  deps = [
+    ":TestApp_osx_swift"
+  ]
 )

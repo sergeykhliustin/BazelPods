@@ -11,17 +11,18 @@ let templateFile = args[2]
 let dep_prefix = args[3]
 
 let data = try NSData(contentsOfFile: podsJsonFile) as Data
-let object = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: String]
-let keys = object.keys.sorted()
+let object = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: [String: String]]
 
-let pods = keys.map({
-    "  pod '\($0)', '\(object[$0]!)'"
-}).joined(separator: "\n")
+var buildfile = try String(contentsOf: URL(fileURLWithPath: templateFile), encoding: .utf8)
 
-let deps = keys.map({
-    "      \"\(dep_prefix)/Pods/\($0):\($0)\""
-}).joined(separator: ",\n")
+for platform in object.keys {
+    let platformPods = object[platform]!
+    let keys = platformPods.keys.sorted()
+    let deps = keys.map({
+        "      \"\(dep_prefix)/Pods/\($0):\($0)_\(platform)\""
+    }).joined(separator: ",\n")
 
-let buildfile = try String(contentsOf: URL(fileURLWithPath: templateFile), encoding: .utf8).replacingOccurrences(of: "[[DEPS]]", with: deps)
+    buildfile = buildfile.replacingOccurrences(of: "[[\(platform.uppercased())_DEPS]]", with: deps)
+}
 
 print(buildfile)

@@ -12,6 +12,24 @@ public enum Platform: String {
     case osx
     case tvos
     case watchos
+
+    var supportsDynamic: Bool {
+        switch self {
+        case .osx:
+            return false
+        default:
+            return true
+        }
+    }
+
+    var bazelKey: String {
+        switch self {
+        case .osx:
+            return "macos"
+        default:
+            return rawValue
+        }
+    }
 }
 
 extension Platform {

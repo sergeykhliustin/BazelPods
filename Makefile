@@ -15,8 +15,25 @@ expunge:
 	bazel clean --expunge
 	rm -rf .bazel-cache
 
+integration: 
+	$(MAKE) integration-clean
+	$(MAKE) integration-setup
+	@echo "\033[32m### integration-generate-static ###\033[0m"
+	$(MAKE) integration-generate-static
+	@echo "\033[32m### static: integration-build-x86_64 ###\033[0m"
+	$(MAKE) integration-build-x86_64
+	@echo "\033[32m### static: integration-build-arm64 ###\033[0m"
+	$(MAKE) integration-build-arm64
+	@echo "\033[32m### integration-generate-dynamic ###\033[0m"
+	$(MAKE) integration-generate-dynamic
+	@echo "\033[32m### dynamic: integration-build-x86_64 ###\033[0m"
+	$(MAKE) integration-build-x86_64
+	@echo "\033[32m### dynamic: integration-build-arm64 ###\033[0m"
+	$(MAKE) integration-build-arm64
+	@echo "\033[32m### finished ###\033[0m"
+
 prepare-tests:
-	swift TestTools/generate_podfile.swift TestTools/TopPods.json TestTools/Podfile_template > Tests/Podfile
+	swift TestTools/generate_podfile.swift TestTools/Pods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
 	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/Tests" \
@@ -73,15 +90,16 @@ record-tests:
 	done
 
 integration-setup:
-	swift TestTools/generate_podfile.swift TestTools/TopPods_Integration.json TestTools/Podfile_template > IntegrationTests/Podfile
+	swift TestTools/generate_podfile.swift TestTools/Pods_Integration.json TestTools/Podfile_template > IntegrationTests/Podfile
 	cd IntegrationTests && pod install
-	swift TestTools/generate_buildfile.swift TestTools/TopPods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
+	swift TestTools/generate_buildfile.swift TestTools/Pods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
 integration-generate-static:
 	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
+	--platforms ios osx \
 	-a -c \
 	--color yes \
 	--log-level debug \
@@ -91,6 +109,7 @@ integration-generate-dynamic:
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
+	--platforms ios osx \
 	-a -c -f \
 	--color yes \
 	--log-level debug \
@@ -103,9 +122,11 @@ integration-generate-dynamic:
 
 integration-build-x86_64:
 	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64
+	bazel build $(CONFIG) //IntegrationTests:TestApp_osx --macos_cpus=x86_64
 
 integration-build-arm64:
 	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=sim_arm64
+	bazel build $(CONFIG) //IntegrationTests:TestApp_osx --macos_cpus=arm64
 
 integration-clean:
 	-cd IntegrationTests; \
@@ -122,16 +143,6 @@ integration-static:
 integration-dynamic: 
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
-	$(MAKE) integration-generate-dynamic
-	$(MAKE) integration-build-x86_64
-	$(MAKE) integration-build-arm64
-
-integration: 
-	$(MAKE) integration-clean
-	$(MAKE) integration-setup
-	$(MAKE) integration-generate-static
-	$(MAKE) integration-build-x86_64
-	$(MAKE) integration-build-arm64
 	$(MAKE) integration-generate-dynamic
 	$(MAKE) integration-build-x86_64
 	$(MAKE) integration-build-arm64

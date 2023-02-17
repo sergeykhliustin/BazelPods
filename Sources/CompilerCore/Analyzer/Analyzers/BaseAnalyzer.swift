@@ -31,26 +31,17 @@ public struct BaseAnalyzer {
         self.options = options
     }
 
-    public var result: Result {
-        return run()
-    }
-
-    private func run() -> Result {
+    public func run() throws -> Result {
         let name = spec.name
         let version = spec.version ?? "1.0"
+        let platformVersion = try resolvePlatformVersion(platform)
         let moduleName: String
         if let specModuleName = spec.moduleName ?? spec.platformRepresentable(platform)?.moduleName {
             moduleName = specModuleName
         } else {
             moduleName = name.replacingOccurrences(of: "-", with: "_")
         }
-        let platformVersion = [
-            spec.platforms[platform.rawValue],
-            options.defaultVersion(for: platform)
-        ]
-            .compactMap({ $0 })
-            .max(by: { $0.compareVersion($1) == .orderedAscending }) ?? ""
-        let platforms = [platform.rawValue: platformVersion]
+        let platforms = [platform.bazelKey: platformVersion]
         let swiftVersion: String?
         if let versions = spec.attr(\.swiftVersions).platform(platform)??.compactMap({ Double($0) }) {
             if versions.contains(where: { $0 >= 5.0 }) {
@@ -70,5 +61,23 @@ public struct BaseAnalyzer {
                       moduleName: moduleName,
                       platforms: platforms,
                       swiftVersion: swiftVersion)
+    }
+
+    private func resolvePlatformVersion(_ platform: Platform) throws -> String {
+        let platforms = spec.platforms
+        let defaultVersion = options.defaultVersion(for: platform)
+        // Assume that if no platforms are specified, it supports any.
+        guard
+            !platforms.isEmpty
+        else {
+            return defaultVersion
+        }
+        guard
+            let platformVersion = platforms[platform.rawValue]
+        else {
+            throw "Unsupported platform \(platform.rawValue)"
+        }
+        return [platformVersion, defaultVersion]
+            .max(by: { $0.compareVersion($1) == .orderedAscending }) ?? defaultVersion
     }
 }
