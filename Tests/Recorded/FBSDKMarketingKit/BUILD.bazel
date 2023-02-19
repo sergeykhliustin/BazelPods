@@ -29,6 +29,12 @@ config_setting(
   }
 )
 config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
   name = "ios_x86_64",
   values = {
     "cpu": "ios_x86_64"
@@ -62,6 +68,9 @@ apple_framework(
       ],
       ":ios_i386": [
         ":FBSDKMarketingKit_FBSDKMarketingKit_VendoredFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":FBSDKMarketingKit_FBSDKMarketingKit_ios_sim_arm64__VendoredFramework"
       ],
       ":ios_x86_64": [
         ":FBSDKMarketingKit_FBSDKMarketingKit_VendoredFramework"
@@ -99,6 +108,17 @@ apple_static_framework_import(
   framework_imports = glob(
     [
       "FBSDKMarketingKit.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "FBSDKMarketingKit_FBSDKMarketingKit_ios_sim_arm64__VendoredFramework",
+  framework_imports = glob(
+    [
+      "_ios_sim_arm64_/FBSDKMarketingKit.framework/**"
     ]
   ),
   visibility = [

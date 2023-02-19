@@ -17,6 +17,12 @@ config_setting(
   }
 )
 config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
   name = "ios_x86_64",
   values = {
     "cpu": "ios_x86_64"
@@ -36,6 +42,9 @@ apple_framework(
       "//conditions:default": [],
       ":ios_arm64": [
         ":TensorFlowLiteTaskText_TensorFlowLiteTaskText_VendoredFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":TensorFlowLiteTaskText_TensorFlowLiteTaskText_ios_sim_arm64__VendoredFramework"
       ],
       ":ios_x86_64": [
         ":TensorFlowLiteTaskText_TensorFlowLiteTaskText_VendoredFramework"
@@ -76,6 +85,17 @@ apple_static_framework_import(
   framework_imports = glob(
     [
       "Frameworks/TensorFlowLiteTaskText.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "TensorFlowLiteTaskText_TensorFlowLiteTaskText_ios_sim_arm64__VendoredFramework",
+  framework_imports = glob(
+    [
+      "Frameworks/_ios_sim_arm64_/TensorFlowLiteTaskText.framework/**"
     ]
   ),
   visibility = [

@@ -29,6 +29,12 @@ config_setting(
   }
 )
 config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
   name = "ios_x86_64",
   values = {
     "cpu": "ios_x86_64"
@@ -56,6 +62,9 @@ apple_framework(
       ],
       ":ios_i386": [
         ":GrowingAutoTrackKit_GrowingAutoTrackKit_VendoredFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":GrowingAutoTrackKit_GrowingAutoTrackKit_ios_sim_arm64__VendoredFramework"
       ],
       ":ios_x86_64": [
         ":GrowingAutoTrackKit_GrowingAutoTrackKit_VendoredFramework"
@@ -100,6 +109,17 @@ apple_static_framework_import(
   framework_imports = glob(
     [
       "GrowingIO-iOS-AutoTrackKit/GrowingAutoTrackKit.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "GrowingAutoTrackKit_GrowingAutoTrackKit_ios_sim_arm64__VendoredFramework",
+  framework_imports = glob(
+    [
+      "GrowingIO-iOS-AutoTrackKit/_ios_sim_arm64_/GrowingAutoTrackKit.framework/**"
     ]
   ),
   visibility = [

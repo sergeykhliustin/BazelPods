@@ -23,6 +23,12 @@ config_setting(
   }
 )
 config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
   name = "ios_x86_64",
   values = {
     "cpu": "ios_x86_64"
@@ -48,6 +54,10 @@ apple_framework(
       ":ios_armv7": [
         ":FacebookSDK_FBAEMKit_VendoredFramework",
         ":FacebookSDK_FBSDKCoreKit_Basics_VendoredFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":FacebookSDK_FBAEMKit_ios_sim_arm64__VendoredFramework",
+        ":FacebookSDK_FBSDKCoreKit_Basics_ios_sim_arm64__VendoredFramework"
       ],
       ":ios_x86_64": [
         ":FacebookSDK_FBAEMKit_VendoredFramework",
@@ -109,6 +119,28 @@ apple_static_framework_import(
   framework_imports = glob(
     [
       "FBSDKCoreKit_Basics.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "FacebookSDK_FBAEMKit_ios_sim_arm64__VendoredFramework",
+  framework_imports = glob(
+    [
+      "_ios_sim_arm64_/FBAEMKit.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "FacebookSDK_FBSDKCoreKit_Basics_ios_sim_arm64__VendoredFramework",
+  framework_imports = glob(
+    [
+      "_ios_sim_arm64_/FBSDKCoreKit_Basics.framework/**"
     ]
   ),
   visibility = [

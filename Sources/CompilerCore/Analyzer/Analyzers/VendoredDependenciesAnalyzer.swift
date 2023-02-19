@@ -9,26 +9,15 @@ import Foundation
 
 public struct VendoredDependenciesAnalyzer {
     public struct Result {
-        struct Library {
-            let name: String
-            let path: String
-            let archs: [Arch]
-        }
-        struct Framework {
+        struct Vendored {
             let name: String
             let path: String
             let archs: [Arch]
             let dynamic: Bool
         }
-        struct XCFramework {
-            let name: String
-            let path: String
-            let archs: [Arch]
-            let dynamic: Bool
-        }
-        var libraries: [Library]
-        var frameworks: [Framework]
-        var xcFrameworks: [XCFramework]
+        var libraries: [Vendored]
+        var frameworks: [Vendored]
+        var xcFrameworks: [Vendored]
     }
     private let platform: Platform
     private let spec: PodSpec
@@ -82,7 +71,7 @@ public struct VendoredDependenciesAnalyzer {
         return result
     }
 
-    private func processXCFramework(_ xcframework: String, supportedArchs: [Arch]) -> Result.XCFramework? {
+    private func processXCFramework(_ xcframework: String, supportedArchs: [Arch]) -> Result.Vendored? {
         let name = xcframework.deletingPathExtension.lastPath
         let absolutePath = options.absolutePath(from: xcframework)
         let frameworks = podGlob(pattern: absolutePath.appendingPath("**/*.framework"))
@@ -120,21 +109,21 @@ public struct VendoredDependenciesAnalyzer {
         }
 
         if !librariesArchs.isEmpty {
-            return Result.XCFramework(name: name, path: xcframework, archs: librariesArchs, dynamic: false)
+            return Result.Vendored(name: name, path: xcframework, archs: librariesArchs, dynamic: false)
         } else if !frameworksArchs.isEmpty {
             if !(dynamic.allSatisfy({ $0 == true }) || dynamic.allSatisfy({ $0 == false })) {
                 log_warning("xcframework undefined linkage: \(xcframework)")
             }
             let isDynamic = dynamic.allSatisfy({ $0 == true })
-            return Result.XCFramework(name: name, path: xcframework, archs: frameworksArchs, dynamic: isDynamic)
+            return Result.Vendored(name: name, path: xcframework, archs: frameworksArchs, dynamic: isDynamic)
         } else {
             log_error("unable to process: \(xcframework)")
         }
         return nil
     }
 
-    private func processLibraries(_ libraries: [String], supportedArchs: [Arch]) -> [Result.Library] {
-        return libraries.reduce([Result.Library]()) { partialResult, path in
+    private func processLibraries(_ libraries: [String], supportedArchs: [Arch]) -> [Result.Vendored] {
+        return libraries.reduce([Result.Vendored]()) { partialResult, path in
             var result = partialResult
             let name = path.deletingPathExtension.lastPath
             let absolutePath = options.podTargetAbsoluteRoot.appendingPath(path)
@@ -142,14 +131,14 @@ public struct VendoredDependenciesAnalyzer {
                 .archs(forExecutable: absolutePath)
                 .filter({ supportedArchs.contains($0) })
             if !archs.isEmpty {
-                result.append(.init(name: name, path: path, archs: archs))
+                result.append(.init(name: name, path: path, archs: archs, dynamic: false))
             }
             return result
         }
     }
 
-    private func processFrameworks(_ frameworks: [String], supportedArchs: [Arch]) -> [Result.Framework] {
-        return frameworks.reduce([Result.Framework]()) { partialResult, pattern in
+    private func processFrameworks(_ frameworks: [String], supportedArchs: [Arch]) -> [Result.Vendored] {
+        return frameworks.reduce([Result.Vendored]()) { partialResult, pattern in
             var result = partialResult
             podGlob(pattern: options.podTargetAbsoluteRoot.appendingPath(pattern)).forEach({ absolutePath in
                 let name = absolutePath.deletingPathExtension.lastPath
@@ -172,7 +161,9 @@ public struct VendoredDependenciesAnalyzer {
 
     private func isDynamicFramework(_ executable: String) -> Bool {
         // TODO: Find proper way
-        let output = SystemShellContext().command("/usr/bin/file", arguments: [executable]).standardOutputAsString
+        let output = SystemShellContext().command("/usr/bin/file", arguments: [executable])
+            .standardOutputAsString
+            .deletingPrefix(executable)
         return output.contains("dynamically")
     }
 }

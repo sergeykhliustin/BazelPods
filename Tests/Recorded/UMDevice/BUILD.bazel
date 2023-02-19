@@ -29,6 +29,12 @@ config_setting(
   }
 )
 config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
   name = "ios_x86_64",
   values = {
     "cpu": "ios_x86_64"
@@ -54,6 +60,9 @@ apple_framework(
       ],
       ":ios_i386": [
         ":UMDevice_UMDevice_VendoredFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":UMDevice_UMDevice_ios_sim_arm64__VendoredFramework"
       ],
       ":ios_x86_64": [
         ":UMDevice_UMDevice_VendoredFramework"
@@ -91,6 +100,17 @@ apple_static_framework_import(
   framework_imports = glob(
     [
       "UMDevice_2.2.1/UMDevice.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "UMDevice_UMDevice_ios_sim_arm64__VendoredFramework",
+  framework_imports = glob(
+    [
+      "UMDevice_2.2.1/_ios_sim_arm64_/UMDevice.framework/**"
     ]
   ),
   visibility = [

@@ -141,6 +141,9 @@ public struct PodBuildFile: StarlarkConvertible {
             }
             analyzer.patch(BundlesDeduplicate())
             analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
+            if #available(macOS 10.15.4, *) {
+                analyzer.patch(Arm64ToSimPatch(options: options, platform: platform))
+            }
 
             let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
             let (vendoredTargets, conditions) = makeVendoredTargets(analyzer: analyzer)

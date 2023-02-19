@@ -19,12 +19,8 @@ struct BundlesDeduplicate: Patch {
              buildSettings: inout BuildSettingsAnalyzer.Result) {
 
         var frameworksPaths = [String]()
-        frameworksPaths = vendoredDeps.frameworks.reduce(into: frameworksPaths) { result, framework in
-            if !framework.dynamic {
-                result.append(framework.path)
-            }
-        }
-        frameworksPaths = vendoredDeps.xcFrameworks.reduce(into: frameworksPaths) { result, framework in
+        frameworksPaths = (vendoredDeps.frameworks + vendoredDeps.xcFrameworks)
+            .reduce(into: frameworksPaths) { result, framework in
             if !framework.dynamic {
                 result.append(framework.path)
             }
