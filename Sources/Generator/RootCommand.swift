@@ -25,8 +25,8 @@ enum ColorMode: String, ExpressibleByArgument {
 }
 
 extension LogLevel: ExpressibleByArgument {}
-
 extension Platform: ExpressibleByArgument {}
+extension PatchType: ExpressibleByArgument {}
 
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Generator",
@@ -47,6 +47,29 @@ struct RootCommand: ParsableCommand {
 
     @Option(name: .long, help: "Minimum iOS version")
     var minIos: String = BasicBuildOptions.defaultVersion(for: .ios)
+
+    @Option(name: .long, parsing: .upToNextOption, help: """
+Patches. It will be applied in the order listed here.
+Available options: \(PatchType.allValueStrings.joined(separator: ", ")).
+\(PatchType.user_options.rawValue) requires --user-options configured.
+If no patches are specified, but --user_options exist, user_options patch are applied automatically.
+"""
+    )
+    var patches: [PatchType] = []
+
+    @Option(name: .long, parsing: .upToNextOption,
+            help: """
+User extra options.
+Supported fields: \(UserOption.KeyPath.allCases.map({ "'\($0.rawValue)'" }).joined(separator: ", ")).
+Supported operators: \(UserOption.Opt.allCases.map({ "'\($0.rawValue)' (\($0.description))" }).joined(separator: ", ")).
+Example:
+'SomePod.sdk_dylibs += something,something'
+'SomePod.testonly := true'
+Platform specific:
+'SomePod.platform_ios.sdk_dylibs += something,something'
+"""
+    )
+    var userOptions: [String] = []
 
     @Option(name: .long, help: "Dependencies prefix")
     var depsPrefix: String = "//Pods"
@@ -74,20 +97,6 @@ struct RootCommand: ParsableCommand {
 
     @Option(help: "Log level (\(LogLevel.allCases.map({ $0.rawValue }).joined(separator: "|")))")
     var logLevel: LogLevel = .info
-
-    @Option(name: .long, parsing: .upToNextOption,
-            help: """
-User extra options.
-Supported fields: \(UserOption.KeyPath.allCases.map({ "'\($0.rawValue)'" }).joined(separator: ", ")).
-Supported operators: \(UserOption.Opt.allCases.map({ "'\($0.rawValue)' (\($0.description))" }).joined(separator: ", ")).
-Example:
-'SomePod.sdk_dylibs += something,something'
-'SomePod.testonly := true'
-Platform specific:
-'SomePod.platform_ios.sdk_dylibs += something,something'
-"""
-    )
-    var userOptions: [String] = []
 
     func run() throws {
         _ = CrashReporter()
@@ -129,11 +138,12 @@ Platform specific:
                                                  subspecs: specification.subspecs,
                                                  sourcePath: src,
                                                  platforms: platforms,
+                                                 patches: patches,
                                                  userOptions: userOptions,
                                                  minIosPlatform: minIos,
                                                  depsPrefix: depsPrefix,
                                                  podsRoot: podsRoot,
-                                                 dynamicFrameworks: frameworks)
+                                                 useFrameworks: frameworks)
             let starlarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()

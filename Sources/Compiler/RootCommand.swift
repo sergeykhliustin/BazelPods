@@ -13,6 +13,7 @@ import Logger
 
 extension Platform: ExpressibleByArgument {}
 extension LogLevel: ExpressibleByArgument {}
+extension PatchType: ExpressibleByArgument {}
 
 struct RootCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "Compiler", abstract: "Compiles podspec.json to BUILD file")
@@ -37,17 +38,14 @@ struct RootCommand: ParsableCommand {
     @Option(name: .long, help: "Minimum iOS version")
     var minIos: String = BasicBuildOptions.defaultVersion(for: .ios)
 
-    @Option(name: .long, help: "Dependencies prefix")
-    var depsPrefix: String = "//Pods"
-
-    @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
-    var podsRoot: String = "Pods"
-
-    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
-    var frameworks: Bool = false
-
-    @Option(help: "Log level (\(LogLevel.allCases.map({ $0.rawValue }).joined(separator: "|")))")
-    var logLevel: LogLevel = .info
+    @Option(name: .long, parsing: .upToNextOption, help: """
+Patches. It will be applied in the order listed here.
+Available options: \(PatchType.allValueStrings.joined(separator: ", ")).
+\(PatchType.user_options.rawValue) requires --user-options configured.
+If no patches are specified, but --user_options exist, user_options patch are applied automatically.
+"""
+    )
+    var patches: [PatchType] = []
 
     @Option(name: .long, parsing: .upToNextOption,
             help: """
@@ -62,6 +60,18 @@ Platform specific:
 """
     )
     var userOptions: [String] = []
+
+    @Option(name: .long, help: "Dependencies prefix")
+    var depsPrefix: String = "//Pods"
+
+    @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
+    var podsRoot: String = "Pods"
+
+    @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
+    var frameworks: Bool = false
+
+    @Option(help: "Log level (\(LogLevel.allCases.map({ $0.rawValue }).joined(separator: "|")))")
+    var logLevel: LogLevel = .info
 
     func run() throws {
         _ = CrashReporter()
@@ -86,11 +96,12 @@ Platform specific:
                                         subspecs: subspecs,
                                         sourcePath: src,
                                         platforms: platforms,
+                                        patches: patches,
                                         userOptions: userOptions,
                                         minIosPlatform: minIos,
                                         depsPrefix: depsPrefix,
                                         podsRoot: podsRoot,
-                                        dynamicFrameworks: frameworks)
+                                        useFrameworks: frameworks)
 
         let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()
         print(result)

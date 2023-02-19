@@ -55,11 +55,14 @@ public protocol BuildOptions {
     var subspecs: [String] { get }
     var sourcePath: String { get }
     var platforms: [Platform] { get }
+
+    var patches: [PatchType] { get }
+    var userOptions: [UserOption] { get }
     var minIosPlatform: String { get }
     var depsPrefix: String { get }
     var podsRoot: String { get }
     var useFrameworks: Bool { get }
-    var userOptions: [UserOption] { get }
+
     var podTargetSrcRoot: String { get }
     var podTargetAbsoluteRoot: String { get }
 }
@@ -118,6 +121,7 @@ public struct BasicBuildOptions: BuildOptions {
     public let sourcePath: String
     public let platforms: [Platform]
 
+    public let patches: [PatchType]
     public let userOptions: [UserOption]
     public let minIosPlatform: String
     public let depsPrefix: String
@@ -128,20 +132,22 @@ public struct BasicBuildOptions: BuildOptions {
                 subspecs: [String],
                 sourcePath: String,
                 platforms: [Platform],
+                patches: [PatchType],
                 userOptions: [UserOption],
                 minIosPlatform: String,
                 depsPrefix: String,
                 podsRoot: String,
-                dynamicFrameworks: Bool) {
+                useFrameworks: Bool) {
         self.podName = podName
         self.subspecs = subspecs
         self.sourcePath = sourcePath
         self.platforms = platforms
+        self.patches = patches
         self.userOptions = userOptions
         self.minIosPlatform = minIosPlatform
         self.depsPrefix = depsPrefix
         self.podsRoot = podsRoot
-        self.useFrameworks = dynamicFrameworks
+        self.useFrameworks = useFrameworks
     }
 
     public var podTargetSrcRoot: String {

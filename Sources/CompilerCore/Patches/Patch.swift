@@ -7,6 +7,12 @@
 
 import Foundation
 
+public enum PatchType: String, CaseIterable {
+    case bundle_deduplicate
+    case arm64_to_sim
+    case user_options
+}
+
 protocol Patch {
     func run(
         base: inout BaseAnalyzer.Result,
