@@ -29,6 +29,12 @@ config_setting(
   }
 )
 config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
   name = "ios_x86_64",
   values = {
     "cpu": "ios_x86_64"
@@ -56,6 +62,9 @@ apple_framework(
       ],
       ":ios_i386": [
         ":GrowingCoreKit_GrowingCoreKit_VendoredFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":GrowingCoreKit_GrowingCoreKit_ios_sim_arm64__VendoredFramework"
       ],
       ":ios_x86_64": [
         ":GrowingCoreKit_GrowingCoreKit_VendoredFramework"
@@ -109,6 +118,17 @@ apple_static_framework_import(
   framework_imports = glob(
     [
       "GrowingIO-iOS-CoreKit/GrowingCoreKit.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_framework_import(
+  name = "GrowingCoreKit_GrowingCoreKit_ios_sim_arm64__VendoredFramework",
+  framework_imports = glob(
+    [
+      "GrowingIO-iOS-CoreKit/_ios_sim_arm64_/GrowingCoreKit.framework/**"
     ]
   ),
   visibility = [
