@@ -42,6 +42,7 @@ prepare-tests:
 	--min-ios "10.0" \
 	--color yes \
 	--log-level debug \
+	--patches bundle_deduplicate arm64_to_sim user_options \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
@@ -100,6 +101,7 @@ integration-generate-static:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	--platforms ios osx \
+	--patches bundle_deduplicate arm64_to_sim user_options \
 	-a -c \
 	--color yes \
 	--log-level debug \
@@ -113,6 +115,7 @@ integration-generate-dynamic:
 	-a -c -f \
 	--color yes \
 	--log-level debug \
+	--patches bundle_deduplicate arm64_to_sim user_options \
 	--user-options \
 	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
 	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \

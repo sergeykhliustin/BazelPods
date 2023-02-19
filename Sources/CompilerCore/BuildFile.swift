@@ -139,10 +139,22 @@ public struct PodBuildFile: StarlarkConvertible {
                 log_debug(error)
                 continue
             }
-            analyzer.patch(BundlesDeduplicate())
-            analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
-            if #available(macOS 10.15.4, *) {
-                analyzer.patch(Arm64ToSimPatch(options: options, platform: platform))
+
+            if options.patches.isEmpty && !options.userOptions.isEmpty {
+                analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
+            }
+
+            for patch in options.patches {
+                switch patch {
+                case .bundle_deduplicate:
+                    analyzer.patch(BundlesDeduplicate())
+                case .arm64_to_sim:
+                    if #available(macOS 10.15.4, *) {
+                        analyzer.patch(Arm64ToSimPatch(options: options, platform: platform))
+                    }
+                case .user_options:
+                    analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
+                }
             }
 
             let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
