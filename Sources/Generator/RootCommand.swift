@@ -41,7 +41,6 @@ struct RootCommand: ParsableCommand {
             help: """
             Space separated platforms.
             Valid values are: ios, osx, tvos, watchos.
-            Currently ignored, only 'ios' supported
             """)
     var platforms: [Platform] = [.ios]
 
@@ -52,7 +51,7 @@ struct RootCommand: ParsableCommand {
 Patches. It will be applied in the order listed here.
 Available options: \(PatchType.allValueStrings.joined(separator: ", ")).
 \(PatchType.user_options.rawValue) requires --user-options configured.
-If no patches are specified, but --user_options exist, user_options patch are applied automatically.
+If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
 """
     )
     var patches: [PatchType] = []

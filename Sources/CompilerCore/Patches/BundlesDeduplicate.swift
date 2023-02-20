@@ -29,7 +29,7 @@ struct BundlesDeduplicate: Patch {
         resources.precompiledBundles = resources.precompiledBundles
             .reduce(into: [String](), { result, bundle in
                 if let path = frameworksPaths.first(where: { bundle.contains($0) }) {
-                    log_debug("Removed bundle \"\(bundle.lastPath)\" since conflicts with \"\(path.lastPath)\"")
+                    log_info("Removing bundle \(bundle.lastPath) since \(path.lastPath) alredy includes it")
                 } else {
                     result.append(bundle)
                 }

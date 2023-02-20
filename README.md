@@ -67,6 +67,81 @@ Now you can add first level dependencies to your app as `//Pods/<pod_name>`
 Note: if you have multiplatform setup (`--platform` with more than 1 option), use `//Pods/<pod_name>:<pod_name>_<platform>`  
 Enjoy :)
 
+#### Patches
+You can specify patches to use in order you want. Also you can use same patch several times.
+- `bundle_deduplicate` checks if final bundle will contain bundles with same name and avoids them.  
+For example, [GoogleMaps](https://github.com/CocoaPods/Specs/blob/master/Specs/a/d/d/GoogleMaps/7.3.0/GoogleMaps.podspec.json) contains `GoogleMaps.bundle` in `resources` and vendored `GoogleMaps.xcframework` also contains same bundle.
+- `arm64_to_sim` patches legacy frameworks and libraries to support arm64 simulator. Read more [arm64-to-sim](https://github.com/bogo/arm64-to-sim)
+- `user_options` applies options from `--user-options`. If not specified but `--user-options` not empty will be applied in the end.
+
+### ⌨️ Command line options
+Generator  
+```
+USAGE: Generator [<options>] --src <src>
+
+OPTIONS:
+  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
+  --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
+  --platforms <platforms> Space separated platforms.
+                          Valid values are: ios, osx, tvos, watchos. (default: ios)
+  --min-ios <min-ios>     Minimum iOS version (default: 13.0)
+  --patches <patches>     Patches. It will be applied in the order listed here.
+                          Available options: bundle_deduplicate, arm64_to_sim, user_options.
+                          user_options requires --user-options configured.
+                          If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
+  --user-options <user-options>
+                          User extra options.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
+                          Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
+                          Example:
+                          'SomePod.sdk_dylibs += something,something'
+                          'SomePod.testonly := true'
+                          Platform specific:
+                          'SomePod.platform_ios.sdk_dylibs += something,something'
+  --deps-prefix <deps-prefix>
+                          Dependencies prefix (default: //Pods)
+  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
+  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  -c, --concurrent        Concurrent mode for generating files faster
+  --print-output          Print BUILD files contents to terminal output
+  --dry-run               Dry run. Files will not be written
+  -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
+  --color <color>         Logs color (auto|yes|no) (default: auto)
+  --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  -h, --help              Show help information.
+```
+Compiler  
+```
+USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--patches <patches> ...] [--user-options <user-options> ...] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--log-level <log-level>]
+
+OPTIONS:
+  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
+  --podspec <podspec>     podspec.json
+  --subspecs <subspecs>   Subspecs list
+  --platforms <platforms> Space separated platforms.
+                          Valid values are: ios, osx, tvos, watchos. (default: ios)
+  --min-ios <min-ios>     Minimum iOS version (default: 13.0)
+  --patches <patches>     Patches. It will be applied in the order listed here.
+                          Available options: bundle_deduplicate, arm64_to_sim, user_options.
+                          user_options requires --user-options configured.
+                          If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
+  --user-options <user-options>
+                          User extra options.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
+                          Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
+                          Example:
+                          'SomePod.sdk_dylibs += something,something'
+                          'SomePod.testonly := true'
+                          Platform specific:
+                          'SomePod.platform_ios.sdk_dylibs += something,something'
+  --deps-prefix <deps-prefix>
+                          Dependencies prefix (default: //Pods)
+  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
+  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  -h, --help              Show help information.
+```
+
 ### 🤔 History and motivation
 There are two existing wonderful alternatives to this project: [cocoapods-bazel](https://github.com/bazel-ios/cocoapods-bazel) and [PodToBUILD](https://github.com/pinterest/PodToBUILD).
 
@@ -84,67 +159,6 @@ Meanwhile, [`rules_ios`](https://github.com/bazel-ios/rules_ios) already support
 `BazelPods` uses best of all worlds.  
 Let Cocoapods download, resolve and setup everything for us. After that, BazelPods will generate `BUILD` files from .podspecs with only needed subspecs with rules from [`rules_ios`](https://github.com/bazel-ios/rules_ios). Written in Swift, so it will do it really fast.
 
-### ⌨️ Command line options
-Generator  
-```
-USAGE: Generator [<options>] --src <src>
-
-OPTIONS:
-  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
-  --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
-  --platforms <platforms> Space separated platforms.
-                          Valid values are: ios, osx, tvos, watchos.
-                          Currently ignored, only 'ios' supported (default: ios)
-  --min-ios <min-ios>     Minimum iOS version (default: 13.0)
-  --deps-prefix <deps-prefix>
-                          Dependencies prefix (default: //Pods)
-  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
-  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
-  -c, --concurrent        Concurrent mode for generating files faster
-  --print-output          Print BUILD files contents to terminal output
-  --dry-run               Dry run. Files will not be written
-  -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
-  --color <color>         Logs color (auto|yes|no) (default: auto)
-  --log-level <log-level> Log level (debug|info|warning|error|none) (default: 1)
-  --user-options <user-options>
-                          User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
-                          Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
-                          Example:
-                          'SomePod.sdk_dylibs += something,something'
-                          'SomePod.testonly := true'
-                          Platform specific:
-                          'SomePod.platform_ios.sdk_dylibs += something,something'
-  -h, --help              Show help information.
-```
-Compiler  
-```
-USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--log-level <log-level>] [--user-options <user-options> ...]
-
-OPTIONS:
-  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
-  --podspec <podspec>     podspec.json
-  --subspecs <subspecs>   Subspecs list
-  --platforms <platforms> Space separated platforms.
-                          Valid values are: ios, osx, tvos, watchos.
-                          Currently ignored, only 'ios' supported (default: ios)
-  --min-ios <min-ios>     Minimum iOS version (default: 13.0)
-  --deps-prefix <deps-prefix>
-                          Dependencies prefix (default: //Pods)
-  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
-  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
-  --log-level <log-level> Log level (debug|info|warning|error|none) (default: 1)
-  --user-options <user-options>
-                          User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
-                          Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
-                          Example:
-                          'SomePod.sdk_dylibs += something,something'
-                          'SomePod.testonly := true'
-                          Platform specific:
-                          'SomePod.platform_ios.sdk_dylibs += something,something'
-  -h, --help              Show help information.
-```
 ## Contributing and issues
 `make xcodeproj`
 Just contribute and report your issues 
