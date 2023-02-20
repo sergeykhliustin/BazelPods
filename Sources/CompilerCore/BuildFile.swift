@@ -140,10 +140,6 @@ public struct PodBuildFile: StarlarkConvertible {
                 continue
             }
 
-            if options.patches.isEmpty && !options.userOptions.isEmpty {
-                analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
-            }
-
             for patch in options.patches {
                 switch patch {
                 case .bundle_deduplicate:
@@ -155,6 +151,10 @@ public struct PodBuildFile: StarlarkConvertible {
                 case .user_options:
                     analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
                 }
+            }
+
+            if !options.patches.contains(.user_options) && !options.userOptions.isEmpty {
+                analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
             }
 
             let (resourceTargets, resourceInfoplists) = makeResourceBundles(analyzer: analyzer)
