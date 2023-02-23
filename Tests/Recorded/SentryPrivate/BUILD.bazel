@@ -50,7 +50,8 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "Foundation"
+    "Foundation",
+    "MetricKit"
   ],
   visibility = [
     "//visibility:public"

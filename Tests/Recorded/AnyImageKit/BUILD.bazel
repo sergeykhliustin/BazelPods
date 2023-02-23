@@ -62,7 +62,18 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "Foundation"
+    "Foundation",
+    "AVFoundation",
+    "CoreGraphics",
+    "CoreImage",
+    "CoreMedia",
+    "CoreMotion",
+    "ImageIO",
+    "MediaPlayer",
+    "MobileCoreServices",
+    "Photos",
+    "PhotosUI",
+    "VideoToolbox"
   ],
   xcconfig = {
     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": [

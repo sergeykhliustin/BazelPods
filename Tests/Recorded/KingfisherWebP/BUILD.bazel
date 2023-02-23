@@ -56,7 +56,9 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "Accelerate"
+    "Accelerate",
+    "CoreFoundation",
+    "CoreGraphics"
   ],
   visibility = [
     "//visibility:public"

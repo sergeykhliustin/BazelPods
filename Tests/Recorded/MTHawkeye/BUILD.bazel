@@ -134,7 +134,8 @@ apple_framework(
     "SceneKit",
     "SystemConfiguration",
     "UIKit",
-    "WebKit"
+    "WebKit",
+    "CoreFoundation"
   ],
   visibility = [
     "//visibility:public"

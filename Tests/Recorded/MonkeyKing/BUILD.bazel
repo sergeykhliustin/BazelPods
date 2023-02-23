@@ -49,6 +49,11 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "MobileCoreServices",
+    "Security",
+    "WebKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

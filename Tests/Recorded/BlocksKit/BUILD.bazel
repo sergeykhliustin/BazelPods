@@ -61,7 +61,8 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "MessageUI"
+    "MessageUI",
+    "CoreGraphics"
   ],
   visibility = [
     "//visibility:public"

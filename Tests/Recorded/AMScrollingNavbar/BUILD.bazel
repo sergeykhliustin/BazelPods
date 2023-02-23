@@ -49,6 +49,9 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "WebKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

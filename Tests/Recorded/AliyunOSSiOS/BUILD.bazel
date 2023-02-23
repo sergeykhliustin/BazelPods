@@ -62,7 +62,8 @@ apple_framework(
   ],
   sdk_frameworks = [
     "CoreTelephony",
-    "SystemConfiguration"
+    "SystemConfiguration",
+    "CoreFoundation"
   ],
   visibility = [
     "//visibility:public"

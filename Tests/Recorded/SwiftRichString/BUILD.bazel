@@ -61,7 +61,10 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "Foundation"
+    "Foundation",
+    "CoreGraphics",
+    "CoreText",
+    "MobileCoreServices"
   ],
   visibility = [
     "//visibility:public"

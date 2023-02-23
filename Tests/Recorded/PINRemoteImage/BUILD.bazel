@@ -64,7 +64,12 @@ apple_framework(
   sdk_frameworks = [
     "Accelerate",
     "ImageIO",
-    "UIKit"
+    "UIKit",
+    "CoreGraphics",
+    "CoreServices",
+    "CoreVideo",
+    "MobileCoreServices",
+    "SystemConfiguration"
   ],
   visibility = [
     "//visibility:public"

@@ -85,7 +85,8 @@ apple_framework(
   ],
   sdk_frameworks = [
     "Security",
-    "SystemConfiguration"
+    "SystemConfiguration",
+    "CoreTelephony"
   ],
   objc_copts = [
     "-ITests/Pods/GoogleUtilities"

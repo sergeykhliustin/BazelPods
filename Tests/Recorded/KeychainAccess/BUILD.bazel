@@ -49,6 +49,10 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "LocalAuthentication",
+    "Security"
+  ],
   visibility = [
     "//visibility:public"
   ]

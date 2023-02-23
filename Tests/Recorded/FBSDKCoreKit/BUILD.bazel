@@ -93,7 +93,12 @@ apple_framework(
     "z"
   ],
   sdk_frameworks = [
-    "StoreKit"
+    "AdSupport",
+    "AuthenticationServices",
+    "CoreTelephony",
+    "MobileCoreServices",
+    "StoreKit",
+    "WebKit"
   ],
   weak_sdk_frameworks = [
     "Accelerate",

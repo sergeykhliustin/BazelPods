@@ -62,6 +62,18 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "AVFoundation",
+    "AudioToolbox",
+    "CoreGraphics",
+    "CoreImage",
+    "CoreLocation",
+    "MapKit",
+    "QuartzCore",
+    "SceneKit",
+    "SpriteKit",
+    "StoreKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

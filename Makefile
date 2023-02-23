@@ -42,12 +42,7 @@ prepare-tests:
 	--min-ios "10.0" \
 	--color yes \
 	--log-level debug \
-	--patches bundle_deduplicate arm64_to_sim user_options \
-	--user-options \
-	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
-	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
-	"CocoaLumberjack.sdk_frameworks += CoreGraphics" \
-	"FBSDKCoreKit.sdk_frameworks += StoreKit"
+	--patches bundle_deduplicate arm64_to_sim missing_sdks
 
 diff-generated-files:
 	@echo "Starting tests with $(shell find Tests/Recorded -type d | wc -l) test cases"
@@ -101,7 +96,7 @@ integration-generate-static:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	--platforms ios osx \
-	--patches bundle_deduplicate arm64_to_sim user_options \
+	--patches bundle_deduplicate arm64_to_sim missing_sdks \
 	-a \
 	--color yes \
 	--log-level debug \
@@ -115,13 +110,8 @@ integration-generate-dynamic:
 	-a -f \
 	--color yes \
 	--log-level debug \
-	--patches bundle_deduplicate arm64_to_sim user_options \
-	--user-options \
-	"Bolts.sdk_frameworks += CoreGraphics, WebKit" \
-	"SDWebImage.sdk_frameworks += CoreGraphics, CoreImage, QuartzCore, Accelerate" \
-	"CocoaLumberjack.sdk_frameworks += CoreGraphics" \
-	"FBSDKCoreKit.sdk_frameworks += StoreKit" \
-	"GoogleUtilities.sdk_frameworks += CoreTelephony"
+	--patches bundle_deduplicate arm64_to_sim missing_sdks user_options \
+	--user-options "CocoaLumberjack.platform_ios.sdk_frameworks += CoreGraphics"
 
 integration-build-x86_64:
 	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64

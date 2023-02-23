@@ -25,7 +25,7 @@ public struct GlobNodeV2: StarlarkConvertible {
     }
 
     func absolutePaths(_ options: BuildOptions) -> GlobNodeV2 {
-        return map({ options.podTargetAbsoluteRoot.appendingPath($0) })
+        return map({ options.absolutePath(from: $0) })
     }
 
     public func toStarlark() -> StarlarkNode {
