@@ -11,9 +11,10 @@ extension String {
     func compareVersion(_ withVersion: String) -> ComparisonResult {
         var components1 = self.components(separatedBy: ".")
         var components2 = withVersion.components(separatedBy: ".")
-        if components1.count < components2.count {
+        while components1.count < components2.count {
             components1.append("0")
-        } else if components2.count < components1.count {
+        }
+        while components2.count < components1.count {
             components2.append("0")
         }
         let count = components1.count
