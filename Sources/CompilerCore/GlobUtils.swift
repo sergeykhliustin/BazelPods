@@ -502,7 +502,18 @@ public func pattern(fromPattern pattern: String, includingFileTypes fileTypes: S
 // Glob with the semantics of pod `source_file` globs.
 // @note the original PodSpec globs are based on the ruby glob semantics
 public func podGlob(pattern: String) -> [String] {
-    return Glob(pattern: pattern, behavior: GlobBehaviorBashV4).paths
+    var paths = Glob(pattern: pattern, behavior: GlobBehaviorBashV4).paths
+    // We should ignore hidden files and directories if not specified in pattern
+    paths = paths.filter({
+        let components = $0.components(separatedBy: "/")
+        for component in components where component.starts(with: ".") {
+            if !pattern.contains(component) {
+                return false
+            }
+        }
+        return true
+    })
+    return paths
 }
 
 // MARK: - NSRegularExpression

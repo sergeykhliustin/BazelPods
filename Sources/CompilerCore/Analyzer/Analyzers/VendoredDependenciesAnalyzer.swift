@@ -147,7 +147,7 @@ public struct VendoredDependenciesAnalyzer {
                 let archs = Arch
                     .archs(forExecutable: executable)
                     .filter({ supportedArchs.contains($0) })
-                if !archs.isEmpty && !absolutePath.contains(_ios_sim_arm64_) {
+                if !archs.isEmpty {
                     result.append(.init(name: name,
                                         path: options.relativePath(from: absolutePath),
                                         archs: archs,
