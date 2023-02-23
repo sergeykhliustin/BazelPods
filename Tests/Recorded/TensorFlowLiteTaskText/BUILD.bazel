@@ -95,7 +95,7 @@ apple_static_framework_import(
   name = "TensorFlowLiteTaskText_TensorFlowLiteTaskText_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "Frameworks/_ios_sim_arm64_/TensorFlowLiteTaskText.framework/**"
+      "Frameworks/._ios_sim_arm64_/TensorFlowLiteTaskText.framework/**"
     ]
   ),
   visibility = [

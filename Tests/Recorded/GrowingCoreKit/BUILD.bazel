@@ -128,7 +128,7 @@ apple_static_framework_import(
   name = "GrowingCoreKit_GrowingCoreKit_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "GrowingIO-iOS-CoreKit/_ios_sim_arm64_/GrowingCoreKit.framework/**"
+      "GrowingIO-iOS-CoreKit/._ios_sim_arm64_/GrowingCoreKit.framework/**"
     ]
   ),
   visibility = [
