@@ -119,7 +119,7 @@ apple_static_framework_import(
   name = "GrowingAutoTrackKit_GrowingAutoTrackKit_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "GrowingIO-iOS-AutoTrackKit/_ios_sim_arm64_/GrowingAutoTrackKit.framework/**"
+      "GrowingIO-iOS-AutoTrackKit/._ios_sim_arm64_/GrowingAutoTrackKit.framework/**"
     ]
   ),
   visibility = [

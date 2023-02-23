@@ -111,6 +111,17 @@ apple_dynamic_framework_import(
   name = "QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework",
   framework_imports = glob(
     [
+      "QYSDK/._ios_sim_arm64_/NIMSDK2.framework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_framework_import(
+  name = "QY_NIM_iOS_SDK_NIMSDK2_VendoredFramework",
+  framework_imports = glob(
+    [
       "QYSDK/NIMSDK2.framework/**"
     ]
   ),
@@ -122,7 +133,7 @@ apple_dynamic_framework_import(
   name = "QY_NIM_iOS_SDK_NIMSDK2_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "QYSDK/_ios_sim_arm64_/NIMSDK2.framework/**"
+      "QYSDK/._ios_sim_arm64_/NIMSDK2.framework/**"
     ]
   ),
   visibility = [

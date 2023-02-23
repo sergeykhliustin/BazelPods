@@ -9,7 +9,8 @@ import Foundation
 
 private typealias Vendored = VendoredDependenciesAnalyzer.Result.Vendored
 
-private let _ios_sim_arm64_ = "_ios_sim_arm64_"
+private let nameSuffix = "_ios_sim_arm64_"
+private let _ios_sim_arm64_ = "._ios_sim_arm64_"
 private let _tmp = "_tmp"
 
 @available(macOS 10.15.4, *)
@@ -73,7 +74,7 @@ struct Arm64ToSimPatch: Patch {
             try? fileManager.removeItem(atPath: tmpPath)
             return nil
         }
-        return Vendored(name: executableName + _ios_sim_arm64_,
+        return Vendored(name: executableName + nameSuffix,
                         path: options.relativePath(from: resultLibPath),
                         archs: [.ios_sim_arm64],
                         dynamic: library.dynamic)
@@ -119,7 +120,7 @@ struct Arm64ToSimPatch: Patch {
             return nil
         }
 
-        return Vendored(name: name + _ios_sim_arm64_,
+        return Vendored(name: name + nameSuffix,
                         path: options.relativePath(from: resultFrameworkPath),
                         archs: [.ios_sim_arm64],
                         dynamic: framework.dynamic)

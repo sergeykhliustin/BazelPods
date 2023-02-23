@@ -118,7 +118,7 @@ apple_static_framework_import(
   name = "FBSDKMarketingKit_FBSDKMarketingKit_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "_ios_sim_arm64_/FBSDKMarketingKit.framework/**"
+      "._ios_sim_arm64_/FBSDKMarketingKit.framework/**"
     ]
   ),
   visibility = [

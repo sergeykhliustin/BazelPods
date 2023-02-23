@@ -129,7 +129,7 @@ apple_static_framework_import(
   name = "FacebookSDK_FBAEMKit_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "_ios_sim_arm64_/FBAEMKit.framework/**"
+      "._ios_sim_arm64_/FBAEMKit.framework/**"
     ]
   ),
   visibility = [
@@ -140,7 +140,7 @@ apple_static_framework_import(
   name = "FacebookSDK_FBSDKCoreKit_Basics_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "_ios_sim_arm64_/FBSDKCoreKit_Basics.framework/**"
+      "._ios_sim_arm64_/FBSDKCoreKit_Basics.framework/**"
     ]
   ),
   visibility = [
