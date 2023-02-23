@@ -79,8 +79,8 @@ Platform specific:
     @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
-    @Flag(name: .shortAndLong, help: "Concurrent mode for generating files faster")
-    var concurrent: Bool = false
+    @Flag(name: .long, help: "Disable concurrency.")
+    var noConcurrency: Bool = false
 
     @Flag(name: .long, help: "Print BUILD files contents to terminal output")
     var printOutput: Bool = false
@@ -142,7 +142,8 @@ Platform specific:
                                                  minIosPlatform: minIos,
                                                  depsPrefix: depsPrefix,
                                                  podsRoot: podsRoot,
-                                                 useFrameworks: frameworks)
+                                                 useFrameworks: frameworks,
+                                                 noConcurrency: noConcurrency)
             let starlarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()
@@ -190,7 +191,7 @@ Platform specific:
             }
         }
 
-        if concurrent {
+        if !noConcurrency {
             let dGroup = DispatchGroup()
             specifications.forEach({ specification in
                 dGroup.enter()

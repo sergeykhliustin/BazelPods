@@ -62,6 +62,7 @@ public protocol BuildOptions {
     var depsPrefix: String { get }
     var podsRoot: String { get }
     var useFrameworks: Bool { get }
+    var noConcurrency: Bool { get }
 
     var podTargetSrcRoot: String { get }
     var podTargetAbsoluteRoot: String { get }
@@ -127,6 +128,7 @@ public struct BasicBuildOptions: BuildOptions {
     public let depsPrefix: String
     public let podsRoot: String
     public let useFrameworks: Bool
+    public let noConcurrency: Bool
 
     public init(podName: String,
                 subspecs: [String],
@@ -137,7 +139,8 @@ public struct BasicBuildOptions: BuildOptions {
                 minIosPlatform: String,
                 depsPrefix: String,
                 podsRoot: String,
-                useFrameworks: Bool) {
+                useFrameworks: Bool,
+                noConcurrency: Bool) {
         self.podName = podName
         self.subspecs = subspecs
         self.sourcePath = sourcePath
@@ -148,6 +151,7 @@ public struct BasicBuildOptions: BuildOptions {
         self.depsPrefix = depsPrefix
         self.podsRoot = podsRoot
         self.useFrameworks = useFrameworks
+        self.noConcurrency = noConcurrency
     }
 
     public var podTargetSrcRoot: String {
