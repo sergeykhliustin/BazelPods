@@ -109,7 +109,11 @@ apple_framework(
     "CoreImage",
     "Foundation",
     "ImageIO",
-    "UIKit"
+    "UIKit",
+    "AVFoundation",
+    "AVKit",
+    "Accelerate",
+    "QuartzCore"
   ],
   visibility = [
     "//visibility:public"

@@ -50,7 +50,12 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "CFNetwork"
+    "CFNetwork",
+    "Combine",
+    "CoreServices",
+    "MobileCoreServices",
+    "SystemConfiguration",
+    "UniformTypeIdentifiers"
   ],
   visibility = [
     "//visibility:public"

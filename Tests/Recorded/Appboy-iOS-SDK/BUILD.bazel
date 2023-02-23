@@ -201,7 +201,8 @@ apple_framework(
     "CoreText",
     "QuartzCore",
     "SystemConfiguration",
-    "WebKit"
+    "WebKit",
+    "CoreLocation"
   ],
   weak_sdk_frameworks = [
     "CoreTelephony",

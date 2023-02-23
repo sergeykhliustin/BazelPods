@@ -57,6 +57,11 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "AVFoundation",
+    "CoreGraphics",
+    "MapKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

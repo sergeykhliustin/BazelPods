@@ -106,7 +106,8 @@ apple_framework(
   ),
   sdk_frameworks = [
     "Foundation",
-    "UIKit"
+    "UIKit",
+    "CoreFoundation"
   ],
   xcconfig = {
     "OTHER_SWIFT_FLAGS": [

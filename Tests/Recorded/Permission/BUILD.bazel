@@ -50,6 +50,18 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "AVFoundation",
+    "Contacts",
+    "CoreBluetooth",
+    "CoreLocation",
+    "CoreMotion",
+    "EventKit",
+    "Intents",
+    "MediaPlayer",
+    "Photos",
+    "UserNotifications"
+  ],
   weak_sdk_frameworks = [
     "Speech"
   ],

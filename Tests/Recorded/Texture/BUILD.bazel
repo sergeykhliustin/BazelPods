@@ -75,7 +75,12 @@ apple_framework(
     "CoreLocation",
     "CoreMedia",
     "MapKit",
-    "Photos"
+    "Photos",
+    "CoreFoundation",
+    "CoreGraphics",
+    "CoreText",
+    "GLKit",
+    "QuartzCore"
   ],
   xcconfig = {
     "CLANG_CXX_LANGUAGE_STANDARD": "c++11",

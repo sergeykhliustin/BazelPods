@@ -59,6 +59,9 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "CoreData"
+  ],
   visibility = [
     "//visibility:public"
   ]

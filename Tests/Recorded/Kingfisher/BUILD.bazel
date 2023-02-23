@@ -51,7 +51,14 @@ apple_framework(
   ),
   sdk_frameworks = [
     "Accelerate",
-    "CFNetwork"
+    "CFNetwork",
+    "AVKit",
+    "CarPlay",
+    "CoreGraphics",
+    "CoreImage",
+    "CoreServices",
+    "ImageIO",
+    "MobileCoreServices"
   ],
   weak_sdk_frameworks = [
     "Combine",

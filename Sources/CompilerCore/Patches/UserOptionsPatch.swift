@@ -34,7 +34,7 @@ struct UserOptionsPatch: Patch {
             case .sdk_frameworks(let value):
                 switch option.opt {
                 case .append:
-                    sdkDeps.sdkFrameworks += value
+                    sdkDeps.sdkFrameworks += value.filter({ !sdkDeps.sdkFrameworks.contains($0) })
                 case .delete:
                     sdkDeps.sdkFrameworks.removeAll(where: { value.contains($0) })
                 case .replace:
@@ -43,7 +43,7 @@ struct UserOptionsPatch: Patch {
             case .sdk_dylibs(let value):
                 switch option.opt {
                 case .append:
-                    sdkDeps.sdkDylibs += value
+                    sdkDeps.sdkDylibs += value.filter({ !sdkDeps.sdkDylibs.contains($0) })
                 case .delete:
                     sdkDeps.sdkDylibs.removeAll(where: { value.contains($0) })
                 case .replace:
@@ -52,7 +52,7 @@ struct UserOptionsPatch: Patch {
             case .weak_sdk_frameworks(let value):
                 switch option.opt {
                 case .append:
-                    sdkDeps.weakSdkFrameworks += value
+                    sdkDeps.weakSdkFrameworks += value.filter({ !sdkDeps.weakSdkFrameworks.contains($0) })
                 case .delete:
                     sdkDeps.weakSdkFrameworks.removeAll(where: { value.contains($0) })
                 case .replace:

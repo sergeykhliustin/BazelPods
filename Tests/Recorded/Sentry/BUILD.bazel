@@ -74,7 +74,8 @@ apple_framework(
     "z"
   ],
   sdk_frameworks = [
-    "Foundation"
+    "Foundation",
+    "CoreData"
   ],
   xcconfig = {
     "CLANG_CXX_LANGUAGE_STANDARD": "c++14",

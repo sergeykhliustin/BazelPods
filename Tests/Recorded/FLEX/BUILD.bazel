@@ -83,7 +83,8 @@ apple_framework(
     "SceneKit",
     "Security",
     "UIKit",
-    "WebKit"
+    "WebKit",
+    "UserNotifications"
   ],
   xcconfig = {
     "CLANG_CXX_LANGUAGE_STANDARD": "gnu++11"

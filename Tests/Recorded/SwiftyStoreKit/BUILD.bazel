@@ -49,6 +49,9 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "StoreKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

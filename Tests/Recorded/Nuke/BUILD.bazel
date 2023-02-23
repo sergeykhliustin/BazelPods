@@ -60,6 +60,14 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "AVKit",
+    "Combine",
+    "CoreGraphics",
+    "CoreImage",
+    "ImageIO",
+    "SwiftUI"
+  ],
   visibility = [
     "//visibility:public"
   ]

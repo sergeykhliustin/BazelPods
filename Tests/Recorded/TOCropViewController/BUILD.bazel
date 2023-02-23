@@ -53,6 +53,9 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "QuartzCore"
+  ],
   visibility = [
     "//visibility:public"
   ]

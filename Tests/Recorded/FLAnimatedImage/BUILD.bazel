@@ -52,7 +52,9 @@ apple_framework(
   sdk_frameworks = [
     "CoreGraphics",
     "ImageIO",
-    "QuartzCore"
+    "QuartzCore",
+    "CoreServices",
+    "MobileCoreServices"
   ],
   visibility = [
     "//visibility:public"

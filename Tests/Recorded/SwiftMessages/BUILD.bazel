@@ -54,7 +54,8 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "UIKit"
+    "UIKit",
+    "QuartzCore"
   ],
   visibility = [
     "//visibility:public"

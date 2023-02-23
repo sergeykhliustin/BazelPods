@@ -73,6 +73,14 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "CoreGraphics",
+    "CoreServices",
+    "MobileCoreServices",
+    "Security",
+    "SystemConfiguration",
+    "WebKit"
+  ],
   visibility = [
     "//visibility:public"
   ]

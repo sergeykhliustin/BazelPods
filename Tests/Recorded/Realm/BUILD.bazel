@@ -314,7 +314,8 @@ apple_framework(
     "z"
   ],
   sdk_frameworks = [
-    "Security"
+    "Security",
+    "AuthenticationServices"
   ],
   objc_copts = [
     "-fapplication-extension"

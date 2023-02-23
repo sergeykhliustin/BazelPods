@@ -10,6 +10,7 @@ import Foundation
 public enum PatchType: String, CaseIterable {
     case bundle_deduplicate
     case arm64_to_sim
+    case missing_sdks
     case user_options
 }
 

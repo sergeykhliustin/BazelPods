@@ -73,6 +73,7 @@ You can specify patches to use in order you want. Also you can use same patch se
 For example, [GoogleMaps](https://github.com/CocoaPods/Specs/blob/master/Specs/a/d/d/GoogleMaps/7.3.0/GoogleMaps.podspec.json) contains `GoogleMaps.bundle` in `resources` and vendored `GoogleMaps.xcframework` also contains same bundle.
 - `arm64_to_sim` patches legacy frameworks and libraries to support arm64 simulator. Read more [arm64-to-sim](https://github.com/bogo/arm64-to-sim)
 - `user_options` applies options from `--user-options`. If not specified but `--user-options` not empty will be applied in the end.
+- `missing_sdks` scans all sources for `import`, `@import` and `#import` to find missing sdk frameworks and adds them to final configuration.
 
 ### ⌨️ Command line options
 Generator  
@@ -86,7 +87,7 @@ OPTIONS:
                           Valid values are: ios, osx, tvos, watchos. (default: ios)
   --min-ios <min-ios>     Minimum iOS version (default: 13.0)
   --patches <patches>     Patches. It will be applied in the order listed here.
-                          Available options: bundle_deduplicate, arm64_to_sim, user_options.
+                          Available options: bundle_deduplicate, arm64_to_sim, missing_sdks, user_options.
                           user_options requires --user-options configured.
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>
@@ -122,7 +123,7 @@ OPTIONS:
                           Valid values are: ios, osx, tvos, watchos. (default: ios)
   --min-ios <min-ios>     Minimum iOS version (default: 13.0)
   --patches <patches>     Patches. It will be applied in the order listed here.
-                          Available options: bundle_deduplicate, arm64_to_sim, user_options.
+                          Available options: bundle_deduplicate, arm64_to_sim, missing_sdks, user_options.
                           user_options requires --user-options configured.
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>

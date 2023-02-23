@@ -63,7 +63,8 @@ apple_framework(
   sdk_frameworks = [
     "CoreGraphics",
     "QuartzCore",
-    "UIKit"
+    "UIKit",
+    "CoreText"
   ],
   visibility = [
     "//visibility:public"

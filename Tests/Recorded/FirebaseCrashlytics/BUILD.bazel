@@ -86,7 +86,8 @@ apple_framework(
   ],
   sdk_frameworks = [
     "Security",
-    "SystemConfiguration"
+    "SystemConfiguration",
+    "MetricKit"
   ],
   objc_copts = [
     "-ITests/Pods/FirebaseCrashlytics"

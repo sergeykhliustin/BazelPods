@@ -148,6 +148,8 @@ public struct PodBuildFile: StarlarkConvertible {
                     if #available(macOS 10.15.4, *) {
                         analyzer.patch(Arm64ToSimPatch(options: options, platform: platform))
                     }
+                case .missing_sdks:
+                    analyzer.patch(MissingSdksPatch(options, platform: platform))
                 case .user_options:
                     analyzer.patch(UserOptionsPatch(options.userOptions, platform: platform))
                 }
