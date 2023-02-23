@@ -16,9 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Cache Pods
-        id: cache-pods
-        uses: actions/cache@v3
+      - name: Restore Cache Pods
+        id: restore-cache-pods
+        uses: actions/cache/restore@v3
         env:
           cache-name: cache-pods
         with:
@@ -27,9 +27,9 @@ jobs:
             Tests/Podfile.lock
           key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
 
-      - name: Cache Bazel output
-        id: cache-bazel-output
-        uses: actions/cache@v3
+      - name: Restore Cache Bazel output
+        id: restore-cache-bazel-output
+        uses: actions/cache/restore@v3
         env:
           cache-name: cache-bazel-output
         with:
@@ -38,3 +38,25 @@ jobs:
 
       - name: make tests
         run: make tests
+
+      - name: Save Cache Pods
+        id: save-cache-pods
+        uses: actions/cache/save@v3
+        if: always()
+        env:
+          cache-name: cache-pods
+        with:
+          path: |
+            Tests/Pods
+            Tests/Podfile.lock
+          key: ${{ steps.restore-cache-pods.outputs.cache-primary-key }}
+
+      - name: Save Cache Bazel output
+        id: save-cache-bazel-output
+        uses: actions/cache/save@v3
+        if: always()
+        env:
+          cache-name: cache-bazel-output
+        with:
+          path: bazel-output-base
+          key: ${{ steps.restore-cache-bazel-output.outputs.cache-primary-key }}

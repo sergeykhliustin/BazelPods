@@ -14,16 +14,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Cache Bazel output
-        id: cache-bazel-output
-        uses: actions/cache@v3
+      - name: Restore Cache Bazel output
+        id: restore-cache-bazel-output
+        uses: actions/cache/restore@v3
         env:
           cache-name: cache-bazel-output
         with:
           path: bazel-output-base
           key: ${{ runner.os }}-integration-dynamic-${{ env.cache-name }}
-          restore-keys: |
-            ${{ runner.os }}-integration-dynamic-${{ env.cache-name }}
 
       - name: make integration-dynamic
         run: make integration-dynamic
+
+      - name: Save Cache Bazel output
+        id: save-cache-bazel-output
+        uses: actions/cache/save@v3
+        if: always()
+        env:
+          cache-name: cache-bazel-output
+        with:
+          path: bazel-output-base
+          key: ${{ steps.restore-cache-bazel-output.outputs.cache-primary-key }}
