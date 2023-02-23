@@ -38,7 +38,7 @@ prepare-tests:
 	bazel run :Generator $(CONFIG) -- \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
-	--pods-root "Tests/Pods" -a -f -c \
+	--pods-root "Tests/Pods" -a -f \
 	--min-ios "10.0" \
 	--color yes \
 	--log-level debug \
@@ -102,7 +102,7 @@ integration-generate-static:
 	--pods-root "IntegrationTests/Pods" \
 	--platforms ios osx \
 	--patches bundle_deduplicate arm64_to_sim user_options \
-	-a -c \
+	-a \
 	--color yes \
 	--log-level debug \
 
@@ -112,7 +112,7 @@ integration-generate-dynamic:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	--platforms ios osx \
-	-a -c -f \
+	-a -f \
 	--color yes \
 	--log-level debug \
 	--patches bundle_deduplicate arm64_to_sim user_options \

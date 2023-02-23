@@ -66,6 +66,9 @@ Platform specific:
     @Option(name: .long, help: "Pods root relative to workspace. Used for headers search paths")
     var podsRoot: String = "Pods"
 
+    @Flag(name: .long, help: "Disable concurrency.")
+    var noConcurrency: Bool = false
+
     @Flag(name: .shortAndLong, help: "Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)")
     var frameworks: Bool = false
 
@@ -100,7 +103,8 @@ Platform specific:
                                         minIosPlatform: minIos,
                                         depsPrefix: depsPrefix,
                                         podsRoot: podsRoot,
-                                        useFrameworks: frameworks)
+                                        useFrameworks: frameworks,
+                                        noConcurrency: noConcurrency)
 
         let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()
         print(result)

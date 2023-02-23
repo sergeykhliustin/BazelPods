@@ -102,7 +102,7 @@ OPTIONS:
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
-  -c, --concurrent        Concurrent mode for generating files faster
+  --no-concurrency        Disable concurrency.
   --print-output          Print BUILD files contents to terminal output
   --dry-run               Dry run. Files will not be written
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
@@ -112,7 +112,7 @@ OPTIONS:
 ```
 Compiler  
 ```
-USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--patches <patches> ...] [--user-options <user-options> ...] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--log-level <log-level>]
+USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--patches <patches> ...] [--user-options <user-options> ...] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--no-concurrency] [--frameworks] [--log-level <log-level>]
 
 OPTIONS:
   --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
@@ -137,6 +137,7 @@ OPTIONS:
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
+  --no-concurrency        Disable concurrency.
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
   -h, --help              Show help information.

@@ -10,7 +10,7 @@ import Foundation
 private typealias Vendored = VendoredDependenciesAnalyzer.Result.Vendored
 
 private let nameSuffix = "_ios_sim_arm64_"
-private let _ios_sim_arm64_ = "._ios_sim_arm64_"
+let _ios_sim_arm64_ = "._ios_sim_arm64_"
 private let _tmp = "_tmp"
 
 @available(macOS 10.15.4, *)

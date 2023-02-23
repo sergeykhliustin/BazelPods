@@ -126,7 +126,7 @@ public struct VendoredDependenciesAnalyzer {
         return libraries.reduce([Result.Vendored]()) { partialResult, path in
             var result = partialResult
             let name = path.deletingPathExtension.lastPath
-            let absolutePath = options.podTargetAbsoluteRoot.appendingPath(path)
+            let absolutePath = options.absolutePath(from: path)
             let archs = Arch
                 .archs(forExecutable: absolutePath)
                 .filter({ supportedArchs.contains($0) })
@@ -140,14 +140,14 @@ public struct VendoredDependenciesAnalyzer {
     private func processFrameworks(_ frameworks: [String], supportedArchs: [Arch]) -> [Result.Vendored] {
         return frameworks.reduce([Result.Vendored]()) { partialResult, pattern in
             var result = partialResult
-            podGlob(pattern: options.podTargetAbsoluteRoot.appendingPath(pattern)).forEach({ absolutePath in
+            podGlob(pattern: options.absolutePath(from: pattern)).forEach({ absolutePath in
                 let name = absolutePath.deletingPathExtension.lastPath
                 let executable = absolutePath.appendingPath(name)
                 let dynamic = isDynamicFramework(executable)
                 let archs = Arch
                     .archs(forExecutable: executable)
                     .filter({ supportedArchs.contains($0) })
-                if !archs.isEmpty {
+                if !archs.isEmpty && !absolutePath.contains(_ios_sim_arm64_) {
                     result.append(.init(name: name,
                                         path: options.relativePath(from: absolutePath),
                                         archs: archs,
