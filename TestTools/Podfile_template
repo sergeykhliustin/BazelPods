@@ -1,6 +1,6 @@
 install! 'cocoapods',
          :integrate_targets => false,
-         :parallel_pod_downloads => true if Gem::Version.new(Pod::VERSION) >= Gem::Version.new('1.12.0')
+         :parallel_pod_downloads => true
 
 target 'TestApp_iOS' do
   platform :ios, '13.4'
