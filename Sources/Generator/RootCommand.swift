@@ -88,6 +88,9 @@ Platform specific:
     @Flag(name: .long, help: "Dry run. Files will not be written")
     var dryRun: Bool = false
 
+    @Flag(name: .shortAndLong, help: "Print diff between previous and new generated BUILD files")
+    var diff: Bool = false
+
     @Flag(name: .shortAndLong, help: "Will add podspec.json to the pod directory. Just for debugging purposes.")
     var addPodspec: Bool = false
 
@@ -111,85 +114,6 @@ Platform specific:
             .compactMap({ UserOption($0) })
 
         let specifications = PodSpecification.resolve(with: json).sorted(by: { $0.name < $1.name })
-        let compiler: (PodSpecification) throws -> Void = { specification in
-            logger.log_info("Generating..." + (specification.subspecs.isEmpty ? "" : " subspecs: " +
-                                               specification.subspecs.joined(separator: " ")))
-            let podSpec: PodSpec
-            var podSpecJson: JSONDict?
-            if specification.podspec.hasSuffix(".json") {
-                let jsonData = try NSData(contentsOfFile: absoluteSRCPath(specification.podspec), options: []) as Data
-                let jsonFile = try JSONSerialization.jsonObject(with: jsonData, options: .allowFragments)
-                guard let jsonPodspec = jsonFile as? JSONDict else {
-                    throw "Error parsing podspec at path \(specification.podspec)"
-                }
-                podSpec = try PodSpec(JSONPodspec: jsonPodspec)
-                podSpecJson = jsonPodspec
-            } else {
-                let jsonPodspec = try getJSONPodspec(shell: SystemShellContext(trace: false),
-                                                     podspecName: specification.name,
-                                                     path: absoluteSRCPath(specification.podspec))
-                podSpec = try PodSpec(JSONPodspec: jsonPodspec)
-                podSpecJson = jsonPodspec
-            }
-
-            // Consider adding a split here to split out sublibs
-            let buildOptions = BasicBuildOptions(podName: specification.name,
-                                                 subspecs: specification.subspecs,
-                                                 sourcePath: src,
-                                                 platforms: platforms,
-                                                 patches: patches,
-                                                 userOptions: userOptions,
-                                                 minIosPlatform: minIos,
-                                                 depsPrefix: depsPrefix,
-                                                 podsRoot: podsRoot,
-                                                 useFrameworks: frameworks,
-                                                 noConcurrency: noConcurrency)
-            let starlarkString = PodBuildFile
-                .with(podSpec: podSpec, buildOptions: buildOptions)
-                .compile()
-
-            if printOutput {
-                print(starlarkString)
-            }
-            if !dryRun {
-                if var developmentPath = specification.developmentPath {
-                    try? FileManager.default.removeItem(atPath: absoluteSRCPath("Pods/\(specification.name)"))
-                    try? FileManager.default.createDirectory(atPath: absoluteSRCPath("Pods/\(specification.name)"),
-                                                             withIntermediateDirectories: false)
-                    if developmentPath.lastPath.hasSuffix("podspec") || developmentPath.lastPath.hasSuffix("podspec.json") {
-                        developmentPath = developmentPath.deletingLastPath
-                    }
-
-                    let contents = (try? FileManager.default.contentsOfDirectory(atPath: absolutePath(developmentPath, base: src))) ?? []
-                    contents.forEach({ file in
-                        guard !file.starts(with: ".") else { return }
-                        guard !file.starts(with: "bazel-") else { return }
-                        guard !IGNORE_FILELIST.contains(file.lowercased()) else { return }
-                        let sourcePath = absolutePath(file, base: developmentPath)
-                        let symlinkPath = absoluteSRCPath("Pods/\(specification.name)/\(file)")
-                        do {
-                            try FileManager.default.createSymbolicLink(atPath: symlinkPath,
-                                                                       withDestinationPath: sourcePath)
-                        } catch {
-                            log_error("creating symlink: \(error)")
-                        }
-                    })
-                }
-                let filePath = "Pods/\(specification.name)/BUILD.bazel"
-                if let data = starlarkString.data(using: .utf8) {
-                    try data.write(to: URL(fileURLWithPath: absoluteSRCPath(filePath)))
-                } else {
-                    throw "Error writing file: \(filePath)"
-                }
-                if addPodspec,
-                   let podSpecJson = podSpecJson,
-                   let data = try? JSONSerialization.data(withJSONObject: podSpecJson, options: .prettyPrinted) {
-                    try? data.write(to:
-                        URL(fileURLWithPath: absoluteSRCPath("Pods/\(specification.name)/\(specification.name).json"))
-                    )
-                }
-            }
-        }
 
         if !noConcurrency {
             let dGroup = DispatchGroup()
@@ -198,7 +122,7 @@ Platform specific:
                 DispatchQueue.global().async {
                     configureLogger(specification.name)
                     do {
-                        try compiler(specification)
+                        try process(specification: specification, userOptions: userOptions)
                     } catch {
                         log_error(error)
                     }
@@ -210,7 +134,7 @@ Platform specific:
             specifications.forEach({ specification in
                 configureLogger(specification.name)
                 do {
-                    try compiler(specification)
+                    try process(specification: specification, userOptions: userOptions)
                 } catch {
                     log_error(error)
                 }
@@ -219,6 +143,124 @@ Platform specific:
         if !dryRun {
             try Data().write(to: URL(fileURLWithPath: absoluteSRCPath("Pods/BUILD.bazel")))
         }
+    }
+
+    func process(specification: PodSpecification, userOptions: [UserOption]) throws {
+        logger.log_info("Generating..." + (specification.subspecs.isEmpty ? "" : " subspecs: " +
+                                           specification.subspecs.joined(separator: " ")))
+        let podSpec: PodSpec
+        var podSpecJson: JSONDict?
+        if specification.podspec.hasSuffix(".json") {
+            let jsonData = try NSData(contentsOfFile: absoluteSRCPath(specification.podspec), options: []) as Data
+            let jsonFile = try JSONSerialization.jsonObject(with: jsonData, options: .allowFragments)
+            guard let jsonPodspec = jsonFile as? JSONDict else {
+                throw "Error parsing podspec at path \(specification.podspec)"
+            }
+            podSpec = try PodSpec(JSONPodspec: jsonPodspec)
+            podSpecJson = jsonPodspec
+        } else {
+            let jsonPodspec = try getJSONPodspec(shell: SystemShellContext(trace: false),
+                                                 podspecName: specification.name,
+                                                 path: absoluteSRCPath(specification.podspec))
+            podSpec = try PodSpec(JSONPodspec: jsonPodspec)
+            podSpecJson = jsonPodspec
+        }
+
+        // Consider adding a split here to split out sublibs
+        let buildOptions = BasicBuildOptions(podName: specification.name,
+                                             subspecs: specification.subspecs,
+                                             sourcePath: src,
+                                             platforms: platforms,
+                                             patches: patches,
+                                             userOptions: userOptions,
+                                             minIosPlatform: minIos,
+                                             depsPrefix: depsPrefix,
+                                             podsRoot: podsRoot,
+                                             useFrameworks: frameworks,
+                                             noConcurrency: noConcurrency)
+        let starlarkString = PodBuildFile
+            .with(podSpec: podSpec, buildOptions: buildOptions)
+            .compile()
+
+        let filePath = "Pods/\(specification.name)/BUILD.bazel"
+
+        if printOutput {
+            print(starlarkString)
+        }
+
+        processDiff(filePath: filePath, string: starlarkString)
+
+        guard !dryRun else { return }
+
+        if var developmentPath = specification.developmentPath {
+            try? FileManager.default.removeItem(atPath: absoluteSRCPath("Pods/\(specification.name)"))
+            try? FileManager.default.createDirectory(atPath: absoluteSRCPath("Pods/\(specification.name)"),
+                                                     withIntermediateDirectories: false)
+            if developmentPath.lastPath.hasSuffix("podspec") || developmentPath.lastPath.hasSuffix("podspec.json") {
+                developmentPath = developmentPath.deletingLastPath
+            }
+
+            let contents = (try? FileManager.default.contentsOfDirectory(atPath: absolutePath(developmentPath, base: src))) ?? []
+            contents.forEach({ file in
+                guard !file.starts(with: ".") else { return }
+                guard !file.starts(with: "bazel-") else { return }
+                guard !IGNORE_FILELIST.contains(file.lowercased()) else { return }
+                let sourcePath = absolutePath(file, base: developmentPath)
+                let symlinkPath = absoluteSRCPath("Pods/\(specification.name)/\(file)")
+                do {
+                    try FileManager.default.createSymbolicLink(atPath: symlinkPath,
+                                                               withDestinationPath: sourcePath)
+                } catch {
+                    log_error("creating symlink: \(error)")
+                }
+            })
+        }
+
+        if let data = starlarkString.data(using: .utf8) {
+            try data.write(to: URL(fileURLWithPath: absoluteSRCPath(filePath)))
+        } else {
+            throw "Error writing file: \(filePath)"
+        }
+        if addPodspec,
+           let podSpecJson = podSpecJson,
+           let data = try? JSONSerialization.data(withJSONObject: podSpecJson, options: .prettyPrinted) {
+            try? data.write(to: URL(fileURLWithPath: absoluteSRCPath("Pods/\(specification.name)/\(specification.name).json")))
+        }
+    }
+
+    func processDiff(filePath: String, string: String) {
+        guard diff else { return }
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: absoluteSRCPath(filePath))) else { return }
+        guard let prevString = String(data: data, encoding: .utf8) else { return }
+
+        let str1Lines = string.components(separatedBy: .newlines)
+        let str2Lines = prevString.components(separatedBy: .newlines)
+        let lineChanges = str1Lines.difference(from: str2Lines)
+            .sorted(by: { diff1, diff2 in
+                switch (diff1, diff2) {
+                case (.insert(let offset1, _, _), .insert(let offset2, _, _)):
+                    return offset1 < offset2
+                case (.remove(let offset1, _, _), .remove(let offset2, _, _)):
+                    return offset1 < offset2
+                case (.insert(let offset1, _, _), .remove(let offset2, _, _)):
+                    return offset1 < offset2
+                case (.remove(let offset1, _, _), .insert(let offset2, _, _)):
+                    return offset1 < offset2
+                }
+            })
+        var output = ""
+
+        for change in lineChanges {
+            switch change {
+            case .remove(let offset, let element, _):
+                output += "-\(offset): \(element)\n"
+            case .insert(let offset, let element, _):
+                output += "+\(offset): \(element)\n"
+            }
+        }
+        guard !output.isEmpty else { return }
+        output = "Found BUILD.bazel diff\n" + output
+        log_info(output)
     }
 
     func configureLogger(_ prefix: String?) {
