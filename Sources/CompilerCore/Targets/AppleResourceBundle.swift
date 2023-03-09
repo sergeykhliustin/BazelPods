@@ -35,7 +35,7 @@ struct AppleResourceBundle: BazelTarget {
                 .named(name: "bundle_name", value: bundleName.toStarlark()),
                 .named(name: "infoplists", value: infoplists.map({ ":" + $0 }).toStarlark()),
                 .named(name: "resources",
-                       value: GlobNode(include: resources).toStarlark() )
+                       value: GlobNodeV2(include: resources).toStarlark() )
         ])
     }
 }

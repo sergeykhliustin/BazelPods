@@ -103,17 +103,6 @@ extension BuildOptions {
             return Self.defaultVersion(for: platform)
         }
     }
-
-    func resolvePlatforms(_ platforms: [String: String]) -> [String: String] {
-        var platforms = platforms
-        if let iosPlatform = platforms["ios"],
-           iosPlatform.compareVersion(minIosPlatform) == .orderedAscending {
-            platforms["ios"] = minIosPlatform
-        } else if platforms.isEmpty {
-            platforms["ios"] = minIosPlatform
-        }
-        return platforms
-    }
 }
 
 public struct BasicBuildOptions: BuildOptions {

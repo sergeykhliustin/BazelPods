@@ -93,8 +93,4 @@ extension GlobNodeV2 {
         }
         return includedFiles.subtracting(excludedFiles)
     }
-
-    func hasSourcesOnDisk(_ options: BuildOptions) -> Bool {
-        return sourcesOnDisk(options).count > 0
-    }
 }
