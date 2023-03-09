@@ -16,9 +16,10 @@ expunge:
 	rm -rf .bazel-cache
 
 bootstrap:
+	@bundle install
 	@echo "build --swiftcopt=-j`sysctl -n hw.ncpu`" > .env_bazelrc
 
-integration: bootstrap
+integration:
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	@echo "\033[32m### integration-generate-static ###\033[0m"
@@ -76,7 +77,7 @@ diff-generated-files:
 	fi
 
 .PHONY: tests
-tests: bootstrap prepare-tests diff-generated-files
+tests: prepare-tests diff-generated-files
 
 record-tests:
 	rm -rf Tests/Recorded
@@ -130,14 +131,14 @@ integration-clean:
 	rm BUILD.bazel Podfile Podfile.lock; \
 	rm -rf Pods
 
-integration-static: bootstrap
+integration-static:
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	$(MAKE) integration-generate-static
 	$(MAKE) integration-build-x86_64
 	$(MAKE) integration-build-arm64
 
-integration-dynamic: bootstrap
+integration-dynamic:
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	$(MAKE) integration-generate-dynamic

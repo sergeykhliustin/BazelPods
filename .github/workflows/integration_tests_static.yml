@@ -23,6 +23,9 @@ jobs:
           path: bazel-output-base
           key: ${{ runner.os }}-integration-static-${{ env.cache-name }}
 
+      - name: make bootstrap
+        run: make bootstrap
+
       - name: make integration-static
         run: make integration-static
 

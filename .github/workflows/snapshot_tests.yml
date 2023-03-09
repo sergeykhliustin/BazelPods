@@ -36,6 +36,9 @@ jobs:
           path: bazel-output-base
           key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
 
+      - name: make bootstrap
+        run: make bootstrap
+
       - name: make tests
         run: make tests
 
