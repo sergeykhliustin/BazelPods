@@ -1,1 +1,0 @@
-RootCommand.main()

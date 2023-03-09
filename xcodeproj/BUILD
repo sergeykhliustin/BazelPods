@@ -17,8 +17,7 @@ else
 fi
     """,
     top_level_targets = [
-        top_level_target("//:Compiler", target_environments = []),
-        top_level_target("//:Generator", target_environments = []),
+        top_level_target("//:bazelpods", target_environments = []),
         top_level_target("//:Analyzer", target_environments = []),
     ],
     tags = ["manual"],

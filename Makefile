@@ -39,7 +39,7 @@ integration:
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/Pods.json TestTools/Podfile_template > Tests/Podfile
 	cd Tests && pod install
-	bazel run :Generator $(CONFIG) -- \
+	bazel run :bazelpods $(CONFIG) -- \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
 	--pods-root "Tests/Pods" -a -f \
@@ -96,7 +96,7 @@ integration-setup:
 	swift TestTools/generate_buildfile.swift TestTools/Pods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
 integration-generate-static:
-	bazel run :Generator $(CONFIG) -- \
+	bazel run :bazelpods $(CONFIG) -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
@@ -107,7 +107,7 @@ integration-generate-static:
 	--log-level debug
 
 integration-generate-dynamic:
-	bazel run :Generator $(CONFIG) -- \
+	bazel run :bazelpods $(CONFIG) -- \
 	--src "$(shell pwd)/IntegrationTests" \
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \

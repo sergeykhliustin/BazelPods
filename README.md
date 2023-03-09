@@ -60,7 +60,7 @@ end
 ```
 Run `BazelPods`
 ```sh
-bazel run @bazel_pods//:Generator -- --src $PWD
+bazel run @bazel_pods//:bazelpods -- --src $PWD
 ```
 ###### See full list of command line options [below](#%EF%B8%8F-command-line-options)  
 Now you can add first level dependencies to your app as `//Pods/<pod_name>`  
@@ -76,13 +76,14 @@ For example, [GoogleMaps](https://github.com/CocoaPods/Specs/blob/master/Specs/a
 - `missing_sdks` scans all sources for `import`, `@import` and `#import` to find missing sdk frameworks and adds them to final configuration.
 
 ### ⌨️ Command line options
-Generator  
+Generate  
 ```
-USAGE: Generator [<options>] --src <src>
+OVERVIEW: Generates BUILD files for pods
+
+USAGE: bazelpods generate [<options>] --src <src>
 
 OPTIONS:
   --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
-  --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
   --platforms <platforms> Space separated platforms.
                           Valid values are: ios, osx, tvos, watchos. (default: ios)
   --min-ios <min-ios>     Minimum iOS version (default: 13.0)
@@ -104,22 +105,23 @@ OPTIONS:
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --no-concurrency        Disable concurrency.
+  --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
   --print-output          Print BUILD files contents to terminal output
   --dry-run               Dry run. Files will not be written
   -d, --diff              Print diff between previous and new generated BUILD files
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
   --color <color>         Logs color (auto|yes|no) (default: auto)
-  --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
   -h, --help              Show help information.
 ```
-Compiler  
+Compile  
 ```
-USAGE: Compiler --src <src> --podspec <podspec> [--subspecs <subspecs> ...] [--platforms <platforms> ...] [--min-ios <min-ios>] [--patches <patches> ...] [--user-options <user-options> ...] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--no-concurrency] [--frameworks] [--log-level <log-level>]
+OVERVIEW: Compiles podspec.json to BUILD file
+
+USAGE: bazelpods compile --src <src> [--platforms <platforms> ...] [--min-ios <min-ios>] [--patches <patches> ...] [--user-options <user-options> ...] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--no-concurrency] [--log-level <log-level>] --podspec <podspec> [--subspecs <subspecs> ...]
 
 OPTIONS:
   --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
-  --podspec <podspec>     podspec.json
-  --subspecs <subspecs>   Subspecs list
   --platforms <platforms> Space separated platforms.
                           Valid values are: ios, osx, tvos, watchos. (default: ios)
   --min-ios <min-ios>     Minimum iOS version (default: 13.0)
@@ -139,9 +141,11 @@ OPTIONS:
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
-  --no-concurrency        Disable concurrency.
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  --no-concurrency        Disable concurrency.
   --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  --podspec <podspec>     podspec.json
+  --subspecs <subspecs>   Subspecs list
   -h, --help              Show help information.
 ```
 
