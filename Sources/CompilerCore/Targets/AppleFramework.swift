@@ -176,7 +176,7 @@ struct AppleFramework: BazelTarget {
         let data: StarlarkNode
         let resources = self.resources.resources
         let bundles = self.resources.precompiledBundles
-        let resourcesNode = GlobNode(include: resources).toStarlark()
+        let resourcesNode = GlobNodeV2(include: resources).toStarlark()
         let bundlesNode = bundles.toStarlark()
 
         switch (!resources.isEmpty, !bundles.isEmpty) {

@@ -115,13 +115,6 @@ class ShellTask: NSObject {
         return description
     }
 
-    class RunLoopContext {
-        var process: Process
-        init (process: Process) {
-            self.process = process
-        }
-    }
-
     /// Launch a task and get the output
     func launch() -> CommandOutput {
         // Setup outputs
