@@ -37,53 +37,35 @@ swift_library(
     copts = ["-swift-version", SWIFT_VERSION],
 )
 
-# CompilerCore is a core library enabling Starlark code generation
+# BazelPods
+
+macos_command_line_application(
+    name = "bazelpods",
+    minimum_os_version = MACOS_VERSION,
+    deps = [":BazelPodsLib"],
+    visibility = ["//xcodeproj:__pkg__"]
+)
+
 swift_library(
-    name = "CompilerCore",
+    name = "BazelPodsLib",
     srcs = glob([
-        "Sources/CompilerCore/**/*.swift",
+        "Sources/BazelPods/**/*.swift",
+        "Sources/Shared/**/*.swift"
+    ]),
+    deps = [":BazelPodsCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
+    copts = ["-swift-version", SWIFT_VERSION]
+)
+
+# BazelPodsCore is a core library enabling Starlark code generation
+swift_library(
+    name = "BazelPodsCore",
+    srcs = glob([
+        "Sources/BazelPodsCore/**/*.swift",
         "Sources/Shared/**/*.swift"
     ]),
     deps = [":ObjcSupport", ":Logger"],
     copts = ["-swift-version", SWIFT_VERSION],
     visibility = ["//Tests:__pkg__"]
-)
-
-# Compiler
-macos_command_line_application(
-    name = "Compiler",
-    minimum_os_version = MACOS_VERSION,
-    deps = [":CompilerLib"],
-    visibility = ["//xcodeproj:__pkg__"]
-)
-
-swift_library(
-    name = "CompilerLib",
-    srcs = glob([
-        "Sources/Compiler/**/*.swift",
-        "Sources/Shared/**/*.swift"
-    ]),
-    deps = [":CompilerCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
-    copts = ["-swift-version", SWIFT_VERSION],
-)
-
-# Generator
-
-macos_command_line_application(
-    name = "Generator",
-    minimum_os_version = MACOS_VERSION,
-    deps = [":GeneratorLib"],
-    visibility = ["//xcodeproj:__pkg__"]
-)
-
-swift_library(
-    name = "GeneratorLib",
-    srcs = glob([
-        "Sources/Generator/**/*.swift",
-        "Sources/Shared/**/*.swift"
-    ]),
-    deps = [":CompilerCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
-    copts = ["-swift-version", SWIFT_VERSION],
 )
 
 # Analyzer
@@ -101,6 +83,6 @@ swift_library(
         "Sources/Analyzer/**/*.swift",
         "Sources/Shared/**/*.swift"
     ]),
-    deps = [":CompilerCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
+    deps = [":BazelPodsCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
     copts = ["-swift-version", SWIFT_VERSION],
 )
