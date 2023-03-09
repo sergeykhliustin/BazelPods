@@ -106,6 +106,7 @@ OPTIONS:
   --no-concurrency        Disable concurrency.
   --print-output          Print BUILD files contents to terminal output
   --dry-run               Dry run. Files will not be written
+  -d, --diff              Print diff between previous and new generated BUILD files
   -a, --add-podspec       Will add podspec.json to the pod directory. Just for debugging purposes.
   --color <color>         Logs color (auto|yes|no) (default: auto)
   --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)

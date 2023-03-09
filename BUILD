@@ -3,6 +3,7 @@ load("@build_bazel_rules_apple//apple:macos.bzl", "macos_command_line_applicatio
 load("@rules_cc//cc:defs.bzl", "objc_library")
 
 SWIFT_VERSION = "5"
+MACOS_VERSION = "10.15"
 
 # CI configuration
 xcode_version(
@@ -51,7 +52,7 @@ swift_library(
 # Compiler
 macos_command_line_application(
     name = "Compiler",
-    minimum_os_version = "10.11",
+    minimum_os_version = MACOS_VERSION,
     deps = [":CompilerLib"],
     visibility = ["//xcodeproj:__pkg__"]
 )
@@ -70,7 +71,7 @@ swift_library(
 
 macos_command_line_application(
     name = "Generator",
-    minimum_os_version = "10.11",
+    minimum_os_version = MACOS_VERSION,
     deps = [":GeneratorLib"],
     visibility = ["//xcodeproj:__pkg__"]
 )
@@ -89,7 +90,7 @@ swift_library(
 
 macos_command_line_application(
     name = "Analyzer",
-    minimum_os_version = "10.11",
+    minimum_os_version = MACOS_VERSION,
     deps = [":AnalyzerLib"],
     visibility = ["//xcodeproj:__pkg__"]
 )

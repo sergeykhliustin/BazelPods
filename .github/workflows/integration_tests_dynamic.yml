@@ -23,6 +23,9 @@ jobs:
           path: bazel-output-base
           key: ${{ runner.os }}-integration-dynamic-${{ env.cache-name }}
 
+      - name: make bootstrap
+        run: make bootstrap
+
       - name: make integration-dynamic
         run: make integration-dynamic
 

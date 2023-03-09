@@ -15,7 +15,11 @@ expunge:
 	bazel clean --expunge
 	rm -rf .bazel-cache
 
-integration: 
+bootstrap:
+	@bundle install
+	@echo "build --swiftcopt=-j`sysctl -n hw.ncpu`" > .env_bazelrc
+
+integration:
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	@echo "\033[32m### integration-generate-static ###\033[0m"
@@ -42,7 +46,8 @@ prepare-tests:
 	--min-ios "10.0" \
 	--color yes \
 	--log-level debug \
-	--patches bundle_deduplicate arm64_to_sim missing_sdks
+	--patches bundle_deduplicate arm64_to_sim missing_sdks \
+	--diff
 
 diff-generated-files:
 	@echo "Starting tests with $(shell find Tests/Recorded -type d | wc -l) test cases"
@@ -97,9 +102,9 @@ integration-generate-static:
 	--pods-root "IntegrationTests/Pods" \
 	--platforms ios osx \
 	--patches bundle_deduplicate arm64_to_sim missing_sdks \
-	-a \
+	-a -d \
 	--color yes \
-	--log-level debug \
+	--log-level debug
 
 integration-generate-dynamic:
 	bazel run :Generator $(CONFIG) -- \
@@ -107,7 +112,7 @@ integration-generate-dynamic:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	--platforms ios osx \
-	-a -f \
+	-a -f -d \
 	--color yes \
 	--log-level debug \
 	--patches bundle_deduplicate arm64_to_sim missing_sdks user_options \
@@ -126,14 +131,14 @@ integration-clean:
 	rm BUILD.bazel Podfile Podfile.lock; \
 	rm -rf Pods
 
-integration-static: 
+integration-static:
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	$(MAKE) integration-generate-static
 	$(MAKE) integration-build-x86_64
 	$(MAKE) integration-build-arm64
 
-integration-dynamic: 
+integration-dynamic:
 	$(MAKE) integration-clean
 	$(MAKE) integration-setup
 	$(MAKE) integration-generate-dynamic

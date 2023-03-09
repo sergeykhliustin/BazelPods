@@ -2,6 +2,7 @@ startup --output_base=./bazel-output-base
 
 build --announce_rc
 build --spawn_strategy=local
+build --strategy=SwiftCompile=worker
 build --verbose_failures
 build --compilation_mode=fastbuild
 build --experimental_multi_threaded_digest
@@ -11,3 +12,5 @@ build --xcode_version_config=//:host_xcodes
 
 common:ci --isatty=1
 common:ci --terminal_columns=127
+
+import %workspace%/.env_bazelrc
