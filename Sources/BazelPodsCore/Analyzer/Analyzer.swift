@@ -29,10 +29,10 @@ public struct Analyzer {
         })
     }
 
-    init(platform: Platform,
-         spec: PodSpec,
-         subspecs: [PodSpec],
-         options: BuildOptions) throws {
+    public init(platform: Platform,
+                spec: PodSpec,
+                subspecs: [PodSpec],
+                options: BuildOptions) throws {
         self.platform = platform
         self.spec = spec
         self.subspecs = subspecs
@@ -70,7 +70,7 @@ public struct Analyzer {
                                                   options: options).result
     }
 
-    mutating func patch(_ patch: Patch) {
+    public mutating func patch(_ patch: Patch) {
         patch.run(base: &baseInfo,
                   sources: &sourcesInfo,
                   resources: &resourcesInfo,

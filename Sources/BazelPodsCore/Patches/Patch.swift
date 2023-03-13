@@ -10,11 +10,12 @@ import Foundation
 public enum PatchType: String, CaseIterable {
     case bundle_deduplicate
     case arm64_to_sim
+    case arm64_to_sim_forced
     case missing_sdks
     case user_options
 }
 
-protocol Patch {
+public protocol Patch {
     func run(
         base: inout BaseAnalyzer.Result,
         sources: inout SourcesAnalyzer.Result,

@@ -89,7 +89,7 @@ public struct ResourcesAnalyzer {
                 .filter({ !$0.isEmpty })
                 .forEach({
                     if result[$0.lastPath] != nil {
-                        log_warning("duplicate bundle \($0.lastPath). Will use first matched.")
+                        log_debug("duplicate bundle \($0.lastPath). Will use first matched.")
                     } else {
                         result[$0.lastPath] = $0
                     }

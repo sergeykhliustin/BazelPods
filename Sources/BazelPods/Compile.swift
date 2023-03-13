@@ -52,15 +52,11 @@ extension BazelPods {
                                             depsPrefix: options.depsPrefix,
                                             podsRoot: options.podsRoot,
                                             useFrameworks: options.frameworks,
-                                            noConcurrency: options.noConcurrency)
+                                            noConcurrency: options.noConcurrency,
+                                            hostArm64: isHostArm64)
 
             let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()
             print(result)
-        }
-
-        func absolutePath(_ path: String) -> String {
-            guard !path.starts(with: "/") else { return path }
-            return (options.src as NSString).appendingPathComponent(path)
         }
     }
 }

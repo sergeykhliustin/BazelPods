@@ -3,7 +3,7 @@ load("@build_bazel_rules_apple//apple:macos.bzl", "macos_command_line_applicatio
 load("@rules_cc//cc:defs.bzl", "objc_library")
 
 SWIFT_VERSION = "5"
-MACOS_VERSION = "10.15"
+MACOS_VERSION = "10.15.4"
 
 # CI configuration
 xcode_version(

@@ -62,7 +62,16 @@ extension BazelPods {
 
             let specifications = PodSpecification.resolve(with: json).sorted(by: { $0.name < $1.name })
 
-            if !options.noConcurrency {
+            if options.noConcurrency {
+                specifications.forEach({ specification in
+                    configureLogger(specification.name)
+                    do {
+                        try process(specification: specification, userOptions: userOptions)
+                    } catch {
+                        log_error(error)
+                    }
+                })
+            } else {
                 let dGroup = DispatchGroup()
                 specifications.forEach({ specification in
                     dGroup.enter()
@@ -77,15 +86,6 @@ extension BazelPods {
                     }
                 })
                 dGroup.wait()
-            } else {
-                specifications.forEach({ specification in
-                    configureLogger(specification.name)
-                    do {
-                        try process(specification: specification, userOptions: userOptions)
-                    } catch {
-                        log_error(error)
-                    }
-                })
             }
             if !dryRun {
                 try Data().write(to: URL(fileURLWithPath: absoluteSRCPath("Pods/BUILD.bazel")))
@@ -108,12 +108,13 @@ extension BazelPods {
             } else {
                 let jsonPodspec = try getJSONPodspec(shell: SystemShellContext(trace: false),
                                                      podspecName: specification.name,
-                                                     path: absoluteSRCPath(specification.podspec))
+                                                     path: absoluteSRCPath(specification.podspec),
+                                                     src: options.src,
+                                                     podsRoot: options.podsRoot)
                 podSpec = try PodSpec(JSONPodspec: jsonPodspec)
                 podSpecJson = jsonPodspec
             }
 
-            // Consider adding a split here to split out sublibs
             let buildOptions = BasicBuildOptions(podName: specification.name,
                                                  subspecs: specification.subspecs,
                                                  sourcePath: options.src,
@@ -124,7 +125,8 @@ extension BazelPods {
                                                  depsPrefix: options.depsPrefix,
                                                  podsRoot: options.podsRoot,
                                                  useFrameworks: options.frameworks,
-                                                 noConcurrency: options.noConcurrency)
+                                                 noConcurrency: options.noConcurrency,
+                                                 hostArm64: isHostArm64)
             let starlarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()
@@ -226,47 +228,5 @@ extension BazelPods {
         func absoluteSRCPath(_ path: String) -> String {
             return absolutePath(path, base: options.src)
         }
-
-        func absolutePath(_ path: String, base: String) -> String {
-            guard !path.starts(with: "/") else { return path }
-            return (base as NSString).appendingPathComponent(path)
-        }
-
-        func getJSONPodspec(shell: ShellContext, podspecName: String, path: String) throws -> JSONDict {
-            let jsonData: Data
-            // Check the path and child paths
-            let podspecPath = path
-            let currentDirectoryPath = options.src
-            if FileManager.default.fileExists(atPath: "\(podspecPath).json") {
-                jsonData = shell.command("/bin/cat", arguments: [podspecPath + ".json"]).standardOutputData
-            } else if FileManager.default.fileExists(atPath: podspecPath) {
-                // This uses the current environment's cocoapods installation.
-                let whichPod = shell.shellOut("which pod").standardOutputAsString
-                if whichPod.isEmpty {
-                    throw "RepoTools requires a cocoapod installation on host"
-                }
-                let podBin = whichPod.components(separatedBy: "\n")[0]
-                let podResult = shell.command(podBin, arguments: ["ipc", "spec", podspecPath])
-                guard podResult.terminationStatus == 0 else {
-                    throw """
-                            PodSpec decoding failed \(podResult.terminationStatus)
-                            stdout: \(podResult.standardOutputAsString)
-                            stderr: \(podResult.standardErrorAsString)
-                    """
-                }
-                jsonData = podResult.standardOutputData
-            } else {
-                throw "Missing podspec ( \(podspecPath) ) inside \(currentDirectoryPath)"
-            }
-
-            guard let JSONFile = try? JSONSerialization.jsonObject(with: jsonData, options:
-                JSONSerialization.ReadingOptions.allowFragments) as AnyObject,
-                let JSONPodspec = JSONFile as? JSONDict
-            else {
-                throw "Invalid JSON Podspec: (look inside \(currentDirectoryPath))"
-            }
-            return JSONPodspec
-        }
     }
-
 }
