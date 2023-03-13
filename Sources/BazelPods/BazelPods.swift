@@ -14,12 +14,64 @@ extension Platform: ExpressibleByArgument {}
 extension LogLevel: ExpressibleByArgument {}
 extension PatchType: ExpressibleByArgument {}
 
+func absolutePath(_ path: String, base: String) -> String {
+    guard !path.starts(with: "/") else { return path }
+    return base.appendingPath(path)
+}
+
+func getJSONPodspec(shell: ShellContext,
+                    podspecName: String,
+                    path: String,
+                    src: String,
+                    podsRoot: String) throws -> JSONDict {
+    let jsonData: Data
+    // Check the path and child paths
+    let podspecPath = path
+    if FileManager.default.fileExists(atPath: "\(podspecPath).json") {
+        jsonData = shell.command("/bin/cat", arguments: [podspecPath + ".json"]).standardOutputData
+    } else if let data = try? Data(contentsOf: URL(fileURLWithPath: absolutePath(podsRoot, base: src).appendingPath("\(podspecName)/\(podspecName).json"))) {
+        jsonData = data
+    } else if FileManager.default.fileExists(atPath: podspecPath) {
+        // This uses the current environment's cocoapods installation.
+
+        let whichPod = shell.shellOut("/usr/bin/which pod").standardOutputAsString
+        if whichPod.isEmpty {
+            throw "BazelPods requires a cocoapod installation on host"
+        }
+        let podBin = whichPod.components(separatedBy: "\n")[0]
+        let podResult = shell.command(podBin, arguments: ["ipc", "spec", podspecPath])
+        guard podResult.terminationStatus == 0 else {
+            throw """
+                    PodSpec decoding failed \(podResult.terminationStatus)
+                    stdout: \(podResult.standardOutputAsString)
+                    stderr: \(podResult.standardErrorAsString)
+            """
+        }
+        jsonData = podResult.standardOutputData
+    } else {
+        throw "Missing podspec ( \(podspecPath) )"
+    }
+
+    guard let JSONFile = try? JSONSerialization.jsonObject(with: jsonData, options:
+        JSONSerialization.ReadingOptions.allowFragments) as AnyObject,
+        let JSONPodspec = JSONFile as? JSONDict
+    else {
+        throw "Invalid JSON Podspec"
+    }
+    return JSONPodspec
+}
+
+let isHostArm64 = SystemShellContext()
+    .command("/usr/bin/arch")
+    .standardOutputAsString
+    .trimmingCharacters(in: .whitespacesAndNewlines) == "arm64"
+
 @main
 struct BazelPods: ParsableCommand {
     static var configuration = CommandConfiguration(
         commandName: "bazelpods",
         abstract: "One more way to convert CocoaPods into Bazel.",
-        subcommands: [Generate.self, Compile.self],
+        subcommands: [Generate.self, Compile.self, Arm64sim.self],
         defaultSubcommand: Generate.self)
 
     struct Options: ParsableArguments {

@@ -26,8 +26,6 @@ extension Array where Element == Data {
     }
 }
 
-// support peeking at Data contents
-@available(macOS 10.15.4, *)
 extension FileHandle {
     func peek(upToCount count: Int) throws -> Data? {
         // persist the current offset, since `upToCount` doesn't guarantee all bytes will be read

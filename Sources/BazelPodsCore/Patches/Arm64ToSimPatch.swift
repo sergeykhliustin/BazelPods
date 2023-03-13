@@ -9,27 +9,29 @@ import Foundation
 
 private typealias Vendored = VendoredDependenciesAnalyzer.Result.Vendored
 
-private let nameSuffix = "_ios_sim_arm64_"
-let _ios_sim_arm64_ = "._ios_sim_arm64_"
-private let _tmp = "_tmp"
-
-@available(macOS 10.15.4, *)
-struct Arm64ToSimPatch: Patch {
+public struct Arm64ToSimPatch: Patch {
     private let options: BuildOptions
     private let platform: Platform
+    private let nameSuffix: String
+    private let outputPath: String
 
-    init(options: BuildOptions, platform: Platform) {
+    public init(options: BuildOptions,
+                platform: Platform,
+                nameSuffix: String = "_ios_sim_arm64_",
+                outputPath: String = "._ios_sim_arm64_") {
         self.options = options
         self.platform = platform
+        self.nameSuffix = nameSuffix
+        self.outputPath = outputPath
     }
 
-    func run(base: inout BaseAnalyzer.Result,
-             sources: inout SourcesAnalyzer.Result,
-             resources: inout ResourcesAnalyzer.Result,
-             sdkDeps: inout SdkDependenciesAnalyzer.Result,
-             vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
-             podDeps: inout PodDependenciesAnalyzer.Result,
-             buildSettings: inout BuildSettingsAnalyzer.Result) {
+    public func run(base: inout BaseAnalyzer.Result,
+                    sources: inout SourcesAnalyzer.Result,
+                    resources: inout ResourcesAnalyzer.Result,
+                    sdkDeps: inout SdkDependenciesAnalyzer.Result,
+                    vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
+                    podDeps: inout PodDependenciesAnalyzer.Result,
+                    buildSettings: inout BuildSettingsAnalyzer.Result) {
         guard platform == .ios else { return }
         vendoredDeps.frameworks += vendoredDeps.frameworks.compactMap({ processFramework($0) })
         vendoredDeps.libraries += vendoredDeps.libraries.compactMap({ processLibrary($0) })
@@ -41,9 +43,9 @@ struct Arm64ToSimPatch: Patch {
         let path = options.absolutePath(from: library.path)
         let executableName = path.lastPath
         let enclosingPath = path.deletingLastPath
-        let resultPath = enclosingPath.appendingPath(_ios_sim_arm64_)
+        let resultPath = enclosingPath.appendingPath(outputPath)
         let resultLibPath = resultPath.appendingPath(executableName)
-        let tmpPath = enclosingPath.appendingPath(_tmp)
+        let tmpPath = NSTemporaryDirectory().appendingPath(UUID().uuidString)
         let fileManager = FileManager.default
 
         defer {
@@ -87,9 +89,9 @@ struct Arm64ToSimPatch: Patch {
         let frameworkPath: String = options.absolutePath(from: framework.path)
         let executable = frameworkPath.appendingPath(name)
         let enclosingPath = frameworkPath.deletingLastPath
-        let resultPath = enclosingPath.appendingPath(_ios_sim_arm64_)
+        let resultPath = enclosingPath.appendingPath(outputPath)
         let resultFrameworkPath = resultPath.appendingPath(frameworkPath.lastPath)
-        let tmpPath = resultPath.appendingPath(_tmp)
+        let tmpPath = NSTemporaryDirectory().appendingPath(UUID().uuidString)
         let fileManager = FileManager.default
         defer {
             try? fileManager.removeItem(atPath: tmpPath)
@@ -108,7 +110,7 @@ struct Arm64ToSimPatch: Patch {
             if !Arch.archs(forExecutable: tmpExecutable).contains(.ios_sim_arm64) {
                 throw "arm64 to sim not patched"
             }
-            if fileManager.fileExists(atPath: resultFrameworkPath) {
+            if fileManager.fileExists(atPath: resultFrameworkPath) && frameworkPath != resultFrameworkPath {
                 try fileManager.removeItem(atPath: resultFrameworkPath)
             }
             try fileManager.copyItem(atPath: frameworkPath, toPath: resultFrameworkPath)
