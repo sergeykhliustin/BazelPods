@@ -46,7 +46,7 @@ prepare-tests:
 	--min-ios "10.0" \
 	--color yes \
 	--log-level debug \
-	--patches bundle_deduplicate arm64_to_sim missing_sdks \
+	--patches bundle_deduplicate arm64_to_sim_forced missing_sdks \
 	--diff
 
 diff-generated-files:
@@ -101,7 +101,7 @@ integration-generate-static:
 	--deps-prefix "//IntegrationTests/Pods" \
 	--pods-root "IntegrationTests/Pods" \
 	--platforms ios osx \
-	--patches bundle_deduplicate arm64_to_sim missing_sdks \
+	--patches bundle_deduplicate arm64_to_sim_forced missing_sdks \
 	-a -d \
 	--color yes \
 	--log-level debug
@@ -115,7 +115,7 @@ integration-generate-dynamic:
 	-a -f -d \
 	--color yes \
 	--log-level debug \
-	--patches bundle_deduplicate arm64_to_sim missing_sdks user_options \
+	--patches bundle_deduplicate arm64_to_sim_forced missing_sdks user_options \
 	--user-options "CocoaLumberjack.platform_ios.sdk_frameworks += CoreGraphics"
 
 integration-build-x86_64:
