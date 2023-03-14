@@ -71,7 +71,7 @@ Enjoy :)
 You can specify patches to use in order you want. Also you can use same patch several times.
 - `bundle_deduplicate` checks if final bundle will contain bundles with same name and avoids them.  
 For example, [GoogleMaps](https://github.com/CocoaPods/Specs/blob/master/Specs/a/d/d/GoogleMaps/7.3.0/GoogleMaps.podspec.json) contains `GoogleMaps.bundle` in `resources` and vendored `GoogleMaps.xcframework` also contains same bundle.
-- `arm64_to_sim` patches legacy frameworks and libraries to support arm64 simulator. Read more [arm64-to-sim](https://github.com/bogo/arm64-to-sim). By default will run only on arm64 host machine.
+- `arm64_to_sim` patches legacy frameworks and libraries to support arm64 simulator. Read more [arm64-to-sim](https://github.com/bogo/arm64-to-sim). By default will run only on arm64 host machine. Use `arm64_to_sim_forced` to override.
 - `user_options` applies options from `--user-options`. If not specified but `--user-options` not empty will be applied in the end.
 - `missing_sdks` scans all sources for `import`, `@import` and `#import` to find missing sdk frameworks and adds them to final configuration.
 
@@ -146,6 +146,41 @@ OPTIONS:
   --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
   --podspec <podspec>     podspec.json
   --subspecs <subspecs>   Subspecs list
+  -h, --help              Show help information.
+```
+arm64sim. Parses all pods same way like `generate` and replaces frameworks and libraries with patched if required.
+```
+OVERVIEW: Converts existing frameworks and static libs to arm64 simulator
+
+USAGE: bazelpods arm64sim [<options>] --src <src>
+
+OPTIONS:
+  --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
+  --platforms <platforms> Space separated platforms.
+                          Valid values are: ios, osx, tvos, watchos. (default: ios)
+  --min-ios <min-ios>     Minimum iOS version (default: 13.0)
+  --patches <patches>     Patches. It will be applied in the order listed here.
+                          Available options: bundle_deduplicate, arm64_to_sim, arm64_to_sim_forced, missing_sdks, user_options.
+                          user_options requires --user-options configured.
+                          If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
+  --user-options <user-options>
+                          User extra options.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
+                          Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
+                          Example:
+                          'SomePod.sdk_dylibs += something,something'
+                          'SomePod.testonly := true'
+                          Platform specific:
+                          'SomePod.platform_ios.sdk_dylibs += something,something'
+  --deps-prefix <deps-prefix>
+                          Dependencies prefix (default: //Pods)
+  --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
+  -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
+  --no-concurrency        Disable concurrency.
+  --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
+  --subspecs <subspecs>   Subspecs list
+  --force                 By default it will run only on arm64 host. Use this option to override.
   -h, --help              Show help information.
 ```
 
