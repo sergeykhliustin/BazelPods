@@ -28,6 +28,7 @@ extension BazelPods {
         func run() throws {
             _ = CrashReporter()
             guard isHostArm64 && !force else { return }
+            configureLogger(color: .auto, logLevel: options.logLevel)
             let data = try NSData(contentsOfFile: absolutePath(podsJson, base: options.src), options: [])
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
