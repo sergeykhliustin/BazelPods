@@ -49,7 +49,7 @@ extension BazelPods {
 
         func run() throws {
             _ = CrashReporter()
-            configureLogger(nil)
+            configureLogger(color: color, logLevel: options.logLevel)
             let data = try NSData(contentsOfFile: absoluteSRCPath(podsJson), options: [])
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -64,7 +64,7 @@ extension BazelPods {
 
             if options.noConcurrency {
                 specifications.forEach({ specification in
-                    configureLogger(specification.name)
+                    configureLogger(color: color, logLevel: options.logLevel, prefix: specification.name)
                     do {
                         try process(specification: specification, userOptions: userOptions)
                     } catch {
@@ -76,7 +76,7 @@ extension BazelPods {
                 specifications.forEach({ specification in
                     dGroup.enter()
                     DispatchQueue.global().async {
-                        configureLogger(specification.name)
+                        configureLogger(color: color, logLevel: options.logLevel, prefix: specification.name)
                         do {
                             try process(specification: specification, userOptions: userOptions)
                         } catch {
@@ -210,19 +210,6 @@ extension BazelPods {
             guard !output.isEmpty else { return }
             output = "Found BUILD.bazel diff\n" + output
             log_info(output)
-        }
-
-        func configureLogger(_ prefix: String?) {
-            switch color {
-            case .auto:
-                logger.colors = getenv("TERM") != nil
-            case .yes:
-                logger.colors = true
-            case .no:
-                logger.colors = false
-            }
-            logger.prefix = prefix
-            logger.level = options.logLevel
         }
 
         func absoluteSRCPath(_ path: String) -> String {

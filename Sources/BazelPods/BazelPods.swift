@@ -66,6 +66,19 @@ let isHostArm64 = SystemShellContext()
     .standardOutputAsString
     .trimmingCharacters(in: .whitespacesAndNewlines) == "arm64"
 
+func configureLogger(color: ColorMode, logLevel: LogLevel, prefix: String? = nil) {
+    switch color {
+    case .auto:
+        logger.colors = getenv("TERM") != nil
+    case .yes:
+        logger.colors = true
+    case .no:
+        logger.colors = false
+    }
+    logger.prefix = prefix
+    logger.level = logLevel
+}
+
 @main
 struct BazelPods: ParsableCommand {
     static var configuration = CommandConfiguration(

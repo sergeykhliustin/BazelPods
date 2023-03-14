@@ -71,7 +71,7 @@ public struct Arm64ToSimPatch: Patch {
             }
             try fileManager.copyItem(atPath: tmpExecutable, toPath: resultLibPath)
         } catch {
-            log_debug(error)
+            log_error(error)
             try? fileManager.removeItem(atPath: resultPath.appendingPath(executableName))
             try? fileManager.removeItem(atPath: tmpPath)
             return nil
@@ -110,15 +110,19 @@ public struct Arm64ToSimPatch: Patch {
             if !Arch.archs(forExecutable: tmpExecutable).contains(.ios_sim_arm64) {
                 throw "arm64 to sim not patched"
             }
-            if fileManager.fileExists(atPath: resultFrameworkPath) && frameworkPath != resultFrameworkPath {
-                try fileManager.removeItem(atPath: resultFrameworkPath)
+            if frameworkPath != resultFrameworkPath {
+                if fileManager.fileExists(atPath: resultFrameworkPath) {
+                    try fileManager.removeItem(atPath: resultFrameworkPath)
+                }
+                try fileManager.copyItem(atPath: frameworkPath, toPath: resultFrameworkPath)
             }
-            try fileManager.copyItem(atPath: frameworkPath, toPath: resultFrameworkPath)
             try fileManager.removeItem(atPath: resultFrameworkPath.appendingPath(name))
             try fileManager.copyItem(atPath: tmpExecutable, toPath: resultFrameworkPath.appendingPath(name))
         } catch {
-            log_debug(error)
-            try? fileManager.removeItem(atPath: resultFrameworkPath)
+            log_error(error)
+            if frameworkPath != resultFrameworkPath {
+                try? fileManager.removeItem(atPath: resultFrameworkPath)
+            }
             return nil
         }
 
@@ -137,9 +141,32 @@ public struct Arm64ToSimPatch: Patch {
                 .contentsOfDirectory(atPath: tmpPath)
                 .filter({ $0.pathExtention == "o" })
                 .map({ tmpPath.appendingPath($0) })
-            for object in objects {
+            let processBlock: (String) throws -> Void = { object in
                 let isDynamic = try isDynamic(object)
                 try Transmogrifier.processBinary(atPath: object, outputPath: object, isDynamic: isDynamic)
+            }
+            if options.noConcurrency {
+                try objects.forEach(processBlock)
+            } else {
+                let dGroup = DispatchGroup()
+                var dError: Error?
+                objects.forEach({ object in
+                    dGroup.enter()
+                    DispatchQueue.global().async {
+                        do {
+                            try processBlock(object)
+                        } catch {
+                            if dError == nil {
+                                dError = error
+                            }
+                        }
+                        dGroup.leave()
+                    }
+                })
+                dGroup.wait()
+                if let dError {
+                    throw dError
+                }
             }
             try fileManager.removeItem(atPath: tmpExecutable)
             try archive(dir: tmpPath, name: tmpExecutable.lastPath)
