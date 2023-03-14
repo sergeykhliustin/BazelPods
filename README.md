@@ -30,13 +30,13 @@ Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) and 
 Add `BazelPods` to your `WORKSPACE`
 ```starlark
 http_archive(
-    name = "bazel_pods",
+    name = "bazelpods",
     sha256 = "<sha256>",
     strip_prefix = "BazelPods-<version>",
     urls = ["https://github.com/sergeykhliustin/BazelPods/archive/refs/tags/<version>.tar.gz"],
 )
 
-load("@bazel_pods//:repositories.bzl", "bazelpods_dependencies")
+load("@bazelpods//:repositories.bzl", "bazelpods_dependencies")
 
 bazelpods_dependencies()
 ```
@@ -60,7 +60,7 @@ end
 ```
 Run `BazelPods`
 ```sh
-bazel run @bazel_pods//:bazelpods -- --src $PWD
+bazel run @bazelpods//:bazelpods -- --src $PWD
 ```
 ###### See full list of command line options [below](#%EF%B8%8F-command-line-options)  
 Now you can add first level dependencies to your app as `//Pods/<pod_name>`  
