@@ -32,8 +32,7 @@ Add `BazelPods` to your `WORKSPACE`
 http_archive(
     name = "bazelpods",
     sha256 = "<sha256>",
-    strip_prefix = "BazelPods-<version>",
-    urls = ["https://github.com/sergeykhliustin/BazelPods/archive/refs/tags/<version>.tar.gz"],
+    url = "https://github.com/sergeykhliustin/BazelPods/releases/download/<version>/release.tar.gz"
 )
 
 load("@bazelpods//:repositories.bzl", "bazelpods_dependencies")

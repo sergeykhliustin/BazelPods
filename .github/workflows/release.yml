@@ -1,4 +1,4 @@
-name: Create Release
+name: Release
 
 on:
   push:
@@ -45,11 +45,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: ${{ github.ref#refs/tags/ }}
           body: |
-            Release notes for version ${{ github.ref }}:
+            ## Workspace Snippet
 
-            SHA256: ${{ env.SHA256 }}
+            ```starlark
+            http_archive(
+                name = "bazelpods",
+                sha256 = "${{ env.SHA256 }}",
+                url = "https://github.com/sergeykhliustin/BazelPods/releases/download/${{ github.ref#refs/tags/ }}/release.tar.gz"
+            )
+
+            load("@bazelpods//:repositories.bzl", "bazelpods_dependencies")
+
+            bazelpods_dependencies()
+            ```
           draft: true
           prerelease: false
 
