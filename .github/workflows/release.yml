@@ -1,0 +1,65 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get latest release tag
+        id: latesttag
+        run: |
+          CURRENT_VERSION=$(gh release list --limit 1 --json version | jq .[0].tagName | tr -d '"')
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
+      - name: Validate new version
+        run: |
+          NEW_VERSION=${GITHUB_REF#refs/tags/}
+          if ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "The new tag $NEW_VERSION is not a valid semantic version"
+            exit 1
+          fi
+          if [[ $(printf '%s\n' "$NEW_VERSION" "$CURRENT_VERSION" | sort -V | head -n1) != "$CURRENT_VERSION" ]]; then
+            echo "The new version $NEW_VERSION is not greater than the current version $CURRENT_VERSION"
+            exit 1
+          fi
+
+      - name: Archive sources
+        run: |
+          tar czvf release.tar.gz Sources BUILD repositories.bzl
+
+      - name: Calculate SHA256
+        run: |
+          echo "SHA256=$(shasum -a 256 release.tar.gz | cut -d ' ' -f 1)" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Release notes for version ${{ github.ref }}:
+
+            SHA256: ${{ env.SHA256 }}
+          draft: true
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./release.tar.gz
+          asset_name: release.tar.gz
+          asset_content_type: application/gzip
