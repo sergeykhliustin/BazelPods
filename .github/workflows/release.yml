@@ -45,7 +45,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref#refs/tags/ }}
+          release_name: ${{ github.ref }}
           body: |
             ## Workspace Snippet
 
@@ -53,7 +53,7 @@ jobs:
             http_archive(
                 name = "bazelpods",
                 sha256 = "${{ env.SHA256 }}",
-                url = "https://github.com/sergeykhliustin/BazelPods/releases/download/${{ github.ref#refs/tags/ }}/release.tar.gz"
+                url = "https://github.com/sergeykhliustin/BazelPods/releases/download/${{ github.ref }}/release.tar.gz"
             )
 
             load("@bazelpods//:repositories.bzl", "bazelpods_dependencies")
