@@ -100,7 +100,7 @@ apple_static_framework_import(
   name = "UMCommon_UMCommon_VendoredFramework",
   framework_imports = glob(
     [
-      "UMCommon_7.3.8/UMCommon.framework/**"
+      "UMCommon_7.4.1/UMCommon.framework/**"
     ]
   ),
   visibility = [
