@@ -4,7 +4,7 @@ module.exports = {
   gitAuthor: 'Renovate Bot <bot@renovateapp.com>',
   extends: ["config:base"],
   platform: 'github',
-  includeForks: false,
+  forkProcessing: false,
   repositories: [
     'sergeykhliustin/BazelPods'
   ]
