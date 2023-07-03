@@ -23,6 +23,7 @@ jobs:
           cache-name: cache-pods
         with:
           path: |
+            ~/.cocoapods
             Tests/Pods
             Tests/Podfile.lock
           key: ${{ runner.os }}-snapshot-tests-${{ env.cache-name }}
@@ -50,6 +51,7 @@ jobs:
           cache-name: cache-pods
         with:
           path: |
+            ~/.cocoapods
             Tests/Pods
             Tests/Podfile.lock
           key: ${{ steps.restore-cache-pods.outputs.cache-primary-key }}

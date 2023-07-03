@@ -39,7 +39,7 @@ integration:
 
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/Pods.json TestTools/Podfile_template > Tests/Podfile
-	cd Tests && pod install
+	cd Tests && pod install || pod install --repo-update
 	bazel run :bazelpods $(CONFIG) -- \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
