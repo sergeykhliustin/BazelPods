@@ -5,24 +5,6 @@ load("@rules_cc//cc:defs.bzl", "objc_library")
 SWIFT_VERSION = "5"
 MACOS_VERSION = "10.15.4"
 
-# CI configuration
-xcode_version(
-  name = 'version14_2_0_14C18',
-  version = '14.2.0.14C18',
-  aliases = ['14.2.0.14C18', '14.2.0', '14C18', '14.2', '14'],
-  default_ios_sdk_version = '16.2',
-  default_tvos_sdk_version = '16.1',
-  default_macos_sdk_version = '13.1',
-  default_watchos_sdk_version = '9.1',
-)
-
-xcode_config(
-  name = 'host_xcodes',
-  versions = [':version14_2_0_14C18'],
-  default = ':version14_2_0_14C18',
-)
-# End CI configuration
-
 objc_library(
     name = "ObjcSupport",
     srcs = glob(["Sources/ObjcSupport/*.m"]),

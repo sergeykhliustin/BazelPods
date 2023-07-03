@@ -10,3 +10,4 @@ Tests/Podfile
 Tests/Podfile.lock
 Tests/Pods
 .env_bazelrc
+xcodeconfig/BUILD.bazel

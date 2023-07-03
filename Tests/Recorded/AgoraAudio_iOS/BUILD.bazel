@@ -50,6 +50,7 @@ apple_framework(
         ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraCore_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
@@ -60,6 +61,7 @@ apple_framework(
         ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraCore_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
@@ -70,6 +72,7 @@ apple_framework(
         ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraCore_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
@@ -80,6 +83,7 @@ apple_framework(
         ":AgoraAudio_iOS_AgoraAiEchoCancellationExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAiNoiseSuppressionExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraAudioBeautyExtension_VendoredXCFramework",
+        ":AgoraAudio_iOS_AgoraCore_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraDrmLoaderExtension_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraRtcKit_VendoredXCFramework",
         ":AgoraAudio_iOS_AgoraSoundTouch_VendoredXCFramework",
@@ -141,6 +145,17 @@ apple_dynamic_xcframework_import(
   xcframework_imports = glob(
     [
       "AgoraAudioBeautyExtension.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "AgoraAudio_iOS_AgoraCore_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "AgoraCore.xcframework/**"
     ]
   ),
   visibility = [

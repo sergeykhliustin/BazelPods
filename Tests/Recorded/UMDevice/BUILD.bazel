@@ -99,7 +99,7 @@ apple_static_framework_import(
   name = "UMDevice_UMDevice_VendoredFramework",
   framework_imports = glob(
     [
-      "UMDevice_2.2.1/UMDevice.framework/**"
+      "UMDevice_3.1.0/UMDevice.framework/**"
     ]
   ),
   visibility = [
@@ -110,7 +110,7 @@ apple_static_framework_import(
   name = "UMDevice_UMDevice_ios_sim_arm64__VendoredFramework",
   framework_imports = glob(
     [
-      "UMDevice_2.2.1/._ios_sim_arm64_/UMDevice.framework/**"
+      "UMDevice_3.1.0/._ios_sim_arm64_/UMDevice.framework/**"
     ]
   ),
   visibility = [
