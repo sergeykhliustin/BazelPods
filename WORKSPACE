@@ -14,8 +14,8 @@ http_archive(
 
 http_archive(
     name = "build_bazel_rules_ios",
-    sha256 = "31350fbb0beac980ec2c5db407ba359b7fc517b845d487df0aad4d815bffa451",
-    url = "https://github.com/bazel-ios/rules_ios/releases/download/2.0.0/rules_ios.2.0.0.tar.gz",
+    sha256 = "ec856c88d2f767431189e66031edc4c04626eb9b145338171d007f88f4a3df21",
+    url = "https://github.com/bazel-ios/rules_ios/releases/download/2.0.1/rules_ios.2.0.1.tar.gz",
 )
 
 load(
