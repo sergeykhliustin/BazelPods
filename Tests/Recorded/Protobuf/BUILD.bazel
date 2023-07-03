@@ -10,45 +10,33 @@ config_setting(
   }
 )
 apple_framework(
-  name = "MMKV",
-  module_name = "MMKV",
-  bundle_id = "org.cocoapods.MMKV",
+  name = "Protobuf",
+  module_name = "Protobuf",
+  bundle_id = "org.cocoapods.Protobuf",
   link_dynamic = True,
   testonly = False,
   infoplists = [
-    ":MMKV_InfoPlist"
+    ":Protobuf_InfoPlist"
   ],
   platforms = {
     "ios": "10.0"
   },
   non_arc_srcs = glob(
     [
-      "iOS/MMKV/MMKV/**/*.S",
-      "iOS/MMKV/MMKV/**/*.c",
-      "iOS/MMKV/MMKV/**/*.cc",
-      "iOS/MMKV/MMKV/**/*.cpp",
-      "iOS/MMKV/MMKV/**/*.cxx",
-      "iOS/MMKV/MMKV/**/*.h",
-      "iOS/MMKV/MMKV/**/*.hpp",
-      "iOS/MMKV/MMKV/**/*.hxx",
-      "iOS/MMKV/MMKV/**/*.m",
-      "iOS/MMKV/MMKV/**/*.mm",
-      "iOS/MMKV/MMKV/**/*.s",
-      "iOS/MMKV/MMKV/**/*.swift",
-      "iOS/MMKV/MMKV/*.h",
-      "iOS/MMKV/MMKV/*.hpp",
-      "iOS/MMKV/MMKV/*.mm"
+      "objectivec/*.h",
+      "objectivec/*.m",
+      "objectivec/google/protobuf/Any.pbobjc.h",
+      "objectivec/google/protobuf/Api.pbobjc.h",
+      "objectivec/google/protobuf/Duration.pbobjc.h",
+      "objectivec/google/protobuf/Empty.pbobjc.h",
+      "objectivec/google/protobuf/FieldMask.pbobjc.h",
+      "objectivec/google/protobuf/SourceContext.pbobjc.h",
+      "objectivec/google/protobuf/Struct.pbobjc.h",
+      "objectivec/google/protobuf/Timestamp.pbobjc.h",
+      "objectivec/google/protobuf/Type.pbobjc.h",
+      "objectivec/google/protobuf/Wrappers.pbobjc.h"
     ]
   ),
-  public_headers = glob(
-    [
-      "iOS/MMKV/MMKV/MMKV.h",
-      "iOS/MMKV/MMKV/MMKVHandler.h"
-    ]
-  ),
-  deps = [
-    "//Tests/Pods/MMKVCore:MMKVCore"
-  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -71,27 +59,20 @@ apple_framework(
       ]
     }
   ),
-  sdk_dylibs = [
-    "c++",
-    "z"
-  ],
-  sdk_frameworks = [
-    "CoreFoundation"
-  ],
   xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++17",
-    "CLANG_CXX_LIBRARY": "libc++",
-    "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "NO"
+    "GCC_PREPROCESSOR_DEFINITIONS": [
+      "GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1"
+    ]
   },
   visibility = [
     "//visibility:public"
   ]
 )
 genrule(
-  name = "MMKV_InfoPlist",
+  name = "Protobuf_InfoPlist",
   srcs = [],
   outs = [
-    "MMKV_InfoPlist.plist"
+    "Protobuf_InfoPlist.plist"
   ],
   cmd = """cat <<EOF > $@
 <?xml version="1.0" encoding="UTF-8"?>
@@ -99,15 +80,15 @@ genrule(
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.MMKV</string>
+	<string>org.cocoapods.Protobuf</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>MMKV</string>
+	<string>Protobuf</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.15</string>
+	<string>3.22.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

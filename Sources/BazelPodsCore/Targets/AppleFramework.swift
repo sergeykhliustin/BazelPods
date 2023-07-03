@@ -142,6 +142,7 @@ struct AppleFramework: BazelTarget {
             .named(name: "infoplists", value: infoplists.map({ ":" + $0 }).toStarlark()),
             .named(name: "platforms", value: info.platforms.toStarlark()),
             .named(name: "srcs", value: sources.sourceFiles.toStarlark()),
+            .named(name: "non_arc_srcs", value: sources.nonArcSourceFiles.toStarlark()),
             .named(name: "public_headers", value: sources.publicHeaders.toStarlark()),
             .named(name: "private_headers", value: sources.privateHeaders.toStarlark()),
             .named(name: "data", value: packData()),
