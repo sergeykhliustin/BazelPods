@@ -229,3 +229,5 @@ public indirect enum Either<T, U> {
         }
     }
 }
+
+extension Either: Equatable where T: Equatable, U: Equatable { }

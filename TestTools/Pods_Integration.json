@@ -29,6 +29,7 @@
         "ObjectMapper": "4.2.0",
         "Onfido": "25.2.0",
         "PromiseKit": "6.18.1",
+        "Protobuf": "3.22.0",
         "R.swift": "6.1.0",
         "ReSwift": "6.1.0",
         "ReachabilitySwift": "5.0.0",

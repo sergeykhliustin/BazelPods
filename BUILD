@@ -25,7 +25,7 @@ macos_command_line_application(
     name = "bazelpods",
     minimum_os_version = MACOS_VERSION,
     deps = [":BazelPodsLib"],
-    visibility = ["//xcodeproj:__pkg__"]
+    visibility = ["//visibility:public"]
 )
 
 swift_library(
@@ -56,7 +56,7 @@ macos_command_line_application(
     name = "Analyzer",
     minimum_os_version = MACOS_VERSION,
     deps = [":AnalyzerLib"],
-    visibility = ["//xcodeproj:__pkg__"]
+    visibility = ["//visibility:public"]
 )
 
 swift_library(

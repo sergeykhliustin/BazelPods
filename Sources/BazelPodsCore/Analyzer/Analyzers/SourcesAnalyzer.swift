@@ -33,6 +33,7 @@ public struct SourcesAnalyzer {
         let sourceFiles: GlobNodeV2
         let publicHeaders: GlobNodeV2
         let privateHeaders: GlobNodeV2
+        let nonArcSourceFiles: GlobNodeV2
         let sourcesType: SourcesType
         var linkDynamic: Bool
     }
@@ -119,10 +120,18 @@ public struct SourcesAnalyzer {
         !spec.staticFramework &&
         sourcesType.oneOf(.swiftOnly, .objcOnly, .mixed)
 
+        let requiresArc: Bool
+        if (spec.requiresArc == .left(false) || spec.requiresArc == .right(["false"])) && subspecs.isEmpty {
+            requiresArc = false
+        } else {
+            requiresArc = true
+        }
+
         return Result(
-            sourceFiles: sourceFiles ?? .empty,
+            sourceFiles: requiresArc ? sourceFiles ?? .empty : .empty,
             publicHeaders: publicHeaders ?? .empty,
             privateHeaders: privateHeaders ?? .empty,
+            nonArcSourceFiles: !requiresArc ? sourceFiles ?? .empty : .empty,
             sourcesType: sourcesType,
             linkDynamic: linkDynamic
         )
