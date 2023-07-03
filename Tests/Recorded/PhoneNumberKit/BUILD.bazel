@@ -20,23 +20,12 @@ apple_framework(
     ":PhoneNumberKit_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0"
+    "ios": "11.0"
   },
   srcs = glob(
     [
       "PhoneNumberKit/*.swift",
-      "PhoneNumberKit/UI/**/*.S",
-      "PhoneNumberKit/UI/**/*.c",
-      "PhoneNumberKit/UI/**/*.cc",
-      "PhoneNumberKit/UI/**/*.cpp",
-      "PhoneNumberKit/UI/**/*.cxx",
-      "PhoneNumberKit/UI/**/*.h",
-      "PhoneNumberKit/UI/**/*.hpp",
-      "PhoneNumberKit/UI/**/*.hxx",
-      "PhoneNumberKit/UI/**/*.m",
-      "PhoneNumberKit/UI/**/*.mm",
-      "PhoneNumberKit/UI/**/*.s",
-      "PhoneNumberKit/UI/**/*.swift"
+      "PhoneNumberKit/UI/*.swift"
     ]
   ),
   data = glob(
@@ -67,7 +56,7 @@ apple_framework(
     }
   ),
   sdk_frameworks = [
-    "CoreTelephony"
+    "Contacts"
   ],
   xcconfig = {
     "SWIFT_VERSION": "5.0"
@@ -96,7 +85,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.3.4</string>
+	<string>3.6.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -107,7 +96,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>11.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
