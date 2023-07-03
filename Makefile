@@ -18,7 +18,6 @@ expunge:
 bootstrap:
 	@bundle install
 	@echo "build --swiftcopt=-j`sysctl -n hw.ncpu`" > .env_bazelrc
-	@sh ./xcodeconfig/xcodeconfig.sh > ./xcodeconfig/BUILD.bazel
 
 integration:
 	$(MAKE) integration-clean

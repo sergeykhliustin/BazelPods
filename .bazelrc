@@ -7,7 +7,7 @@ build --verbose_failures
 build --compilation_mode=fastbuild
 build --experimental_multi_threaded_digest
 build --verbose_failures
-build --xcode_version_config=//xcodeconfig:host_xcodes
+build:rules_xcodeproj --xcode_version_config=@local_config_xcode//:host_xcodes
 
 common:ci --isatty=1
 common:ci --terminal_columns=127
