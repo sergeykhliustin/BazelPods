@@ -60,8 +60,8 @@ bazelpodstests_dependencies()
 
 http_archive(
     name = "com_github_buildbuddy_io_rules_xcodeproj",
-    sha256 = "f836d2a516a911dc0ace44b1f51aa575613f149a934f4be1e7bd551a549672ff",
-    url = "https://github.com/buildbuddy-io/rules_xcodeproj/releases/download/1.7.1/release.tar.gz",
+    sha256 = "5baccdd6a2734a0adeb9cb6175691d0609f8bdbd7c5f516e828d0df744ee9f6c",
+    url = "https://github.com/buildbuddy-io/rules_xcodeproj/releases/download/1.9.1/release.tar.gz",
 )
 
 load(
