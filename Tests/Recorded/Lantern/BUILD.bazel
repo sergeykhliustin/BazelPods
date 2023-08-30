@@ -60,6 +60,9 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "AVFoundation"
+  ],
   visibility = [
     "//visibility:public"
   ]
@@ -84,7 +87,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.4</string>
+	<string>1.1.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
