@@ -29,6 +29,7 @@ jobs:
             echo "The new version $NEW_VERSION is not greater than the current version $CURRENT_VERSION"
             exit 1
           fi
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Archive sources
         run: |
@@ -53,7 +54,7 @@ jobs:
             http_archive(
                 name = "bazelpods",
                 sha256 = "${{ env.SHA256 }}",
-                url = "https://github.com/sergeykhliustin/BazelPods/releases/download/${{ github.ref }}/release.tar.gz"
+                url = "https://github.com/sergeykhliustin/BazelPods/releases/download/${{ env.NEW_VERSION }}/release.tar.gz"
             )
 
             load("@bazelpods//:repositories.bzl", "bazelpods_dependencies")
