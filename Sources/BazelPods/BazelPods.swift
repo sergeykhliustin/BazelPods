@@ -23,7 +23,8 @@ func getJSONPodspec(shell: ShellContext,
                     podspecName: String,
                     path: String,
                     src: String,
-                    podsRoot: String) throws -> JSONDict {
+                    podsRoot: String,
+                    useBundler: Bool) throws -> JSONDict {
     let jsonData: Data
     // Check the path and child paths
     let podspecPath = path
@@ -34,12 +35,28 @@ func getJSONPodspec(shell: ShellContext,
     } else if FileManager.default.fileExists(atPath: podspecPath) {
         // This uses the current environment's cocoapods installation.
 
-        let whichPod = shell.shellOut("/usr/bin/which pod").standardOutputAsString
-        if whichPod.isEmpty {
-            throw "BazelPods requires a cocoapod installation on host"
+        let commandBin: String
+        let arguments: [String]
+
+        if useBundler {
+            let whichBundle = shell.shellOut("/usr/bin/which bundle").standardOutputAsString
+            guard !whichBundle.isEmpty else {
+                throw "BazelPods requires bundler installation on host"
+            }
+            let bundleBin = whichBundle.components(separatedBy: "\n")[0]
+            commandBin = bundleBin
+            arguments = ["exec", "pod", "ipc", "spec", podspecPath]
+        } else {
+            let whichPod = shell.shellOut("/usr/bin/which pod").standardOutputAsString
+            if whichPod.isEmpty {
+                throw "BazelPods requires a cocoapod installation on host"
+            }
+            let podBin = whichPod.components(separatedBy: "\n")[0]
+            commandBin = podBin
+            arguments = ["ipc", "spec", podspecPath]
         }
-        let podBin = whichPod.components(separatedBy: "\n")[0]
-        let podResult = shell.command(podBin, arguments: ["ipc", "spec", podspecPath])
+
+        let podResult = shell.command(commandBin, arguments: arguments)
         guard podResult.terminationStatus == 0 else {
             throw """
                     PodSpec decoding failed \(podResult.terminationStatus)
@@ -138,5 +155,8 @@ Platform specific:
 
         @Option(help: "Log level (\(LogLevel.allCases.map({ $0.rawValue }).joined(separator: "|")))")
         var logLevel: LogLevel = .info
+
+        @Flag(help: "Option to use `bundle exec` for `pod` calls")
+        var useBundler: Bool = false
     }
 }

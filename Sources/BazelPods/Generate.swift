@@ -110,7 +110,8 @@ extension BazelPods {
                                                      podspecName: specification.name,
                                                      path: absoluteSRCPath(specification.podspec),
                                                      src: options.src,
-                                                     podsRoot: options.podsRoot)
+                                                     podsRoot: options.podsRoot,
+                                                     useBundler: options.useBundler)
                 podSpec = try PodSpec(JSONPodspec: jsonPodspec)
                 podSpecJson = jsonPodspec
             }

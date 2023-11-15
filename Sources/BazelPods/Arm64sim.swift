@@ -55,7 +55,8 @@ extension BazelPods {
                                                      podspecName: name,
                                                      path: absolutePath(specification.podspec, base: options.src),
                                                      src: options.src,
-                                                     podsRoot: options.podsRoot)
+                                                     podsRoot: options.podsRoot,
+                                                     useBundler: options.useBundler)
                 podSpec = try PodSpec(JSONPodspec: jsonPodspec)
             }
 
