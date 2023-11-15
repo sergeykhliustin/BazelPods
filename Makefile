@@ -47,7 +47,8 @@ prepare-tests:
 	--color yes \
 	--log-level debug \
 	--patches bundle_deduplicate arm64_to_sim_forced missing_sdks \
-	--diff
+	--diff \
+	--use-bundler
 
 diff-generated-files:
 	@echo "Starting tests with $(shell find Tests/Recorded -type d | wc -l) test cases"
