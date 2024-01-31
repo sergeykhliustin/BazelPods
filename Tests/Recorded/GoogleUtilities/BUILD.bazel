@@ -29,6 +29,8 @@ apple_framework(
       "GoogleUtilities/Common/*.h",
       "GoogleUtilities/Environment/**/*.h",
       "GoogleUtilities/Environment/**/*.m",
+      "GoogleUtilities/ISASwizzler/**/*.h",
+      "GoogleUtilities/ISASwizzler/**/*.m",
       "GoogleUtilities/Logger/**/*.h",
       "GoogleUtilities/Logger/**/*.m",
       "GoogleUtilities/MethodSwizzler/**/*.h",
@@ -39,19 +41,25 @@ apple_framework(
       "GoogleUtilities/Network/**/*.m",
       "GoogleUtilities/Reachability/**/*.h",
       "GoogleUtilities/Reachability/**/*.m",
+      "GoogleUtilities/SwizzlerTestHelpers/**/*.h",
+      "GoogleUtilities/SwizzlerTestHelpers/**/*.m",
       "GoogleUtilities/UserDefaults/**/*.h",
-      "GoogleUtilities/UserDefaults/**/*.m"
+      "GoogleUtilities/UserDefaults/**/*.m",
+      "third_party/IsAppEncrypted/**/*.h",
+      "third_party/IsAppEncrypted/**/*.m"
     ]
   ),
   public_headers = glob(
     [
       "GoogleUtilities/AppDelegateSwizzler/Public/GoogleUtilities/*.h",
       "GoogleUtilities/Environment/Public/GoogleUtilities/*.h",
+      "GoogleUtilities/ISASwizzler/Public/GoogleUtilities/*.h",
       "GoogleUtilities/Logger/Public/GoogleUtilities/*.h",
       "GoogleUtilities/MethodSwizzler/Public/GoogleUtilities/*.h",
       "GoogleUtilities/NSData+zlib/Public/GoogleUtilities/*.h",
       "GoogleUtilities/Network/Public/GoogleUtilities/*.h",
       "GoogleUtilities/Reachability/Public/GoogleUtilities/*.h",
+      "GoogleUtilities/SwizzlerTestHelpers/Public/GoogleUtilities/*.h",
       "GoogleUtilities/UserDefaults/Public/GoogleUtilities/*.h"
     ]
   ),
@@ -119,7 +127,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>7.11.5</string>
+	<string>7.12.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

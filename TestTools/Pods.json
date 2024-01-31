@@ -45,6 +45,7 @@
     "Folly": "2016.09.26.00",
     "GoogleDataTransport": "9.2.3",
     "GoogleMaps": "7.3.0",
+    "GoogleUtilities": "7.12.0",
     "GrowingAutoTrackKit": "2.9.14",
     "GrowingCoreKit": "2.9.14",
     "IQKeyboardManager": "6.5.10",
@@ -143,7 +144,8 @@
     "fishhook": "0.2",
     "glog": "0.3.4",
     "libwebp": "1.3.2",
-    "lottie-ios": "3.4.3"
+    "lottie-ios": "3.4.3",
+    "nanopb": "2.30909.1"
   },
   "osx": {}
 }
