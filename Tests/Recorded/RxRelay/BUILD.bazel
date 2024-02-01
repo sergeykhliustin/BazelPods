@@ -54,6 +54,12 @@ apple_framework(
       ]
     }
   ),
+  objc_copts = [
+    "-fapplication-extension"
+  ],
+  swift_copts = [
+    "-application-extension"
+  ],
   visibility = [
     "//visibility:public"
   ]
@@ -78,7 +84,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>6.5.0</string>
+	<string>6.6.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

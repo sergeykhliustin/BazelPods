@@ -1,0 +1,118 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "MyLayout",
+  module_name = "MyLayout",
+  bundle_id = "org.cocoapods.MyLayout",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":MyLayout_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "MyLayout/Lib/*.h",
+      "MyLayout/Lib/*.m"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "MyLayout/Lib/*.h"
+    ],
+    exclude = [
+      "MyLayout/Lib/*Inner.h",
+      "MyLayout/Lib/MyGridNode.h",
+      "MyLayout/Lib/MyLayoutDelegate.h",
+      "MyLayout/Lib/MyLayoutMath.h",
+      "MyLayout/Lib/MyLayoutSizeClass.h"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "MyLayout/Lib/*Inner.h",
+      "MyLayout/Lib/MyGridNode.h",
+      "MyLayout/Lib/MyLayoutDelegate.h",
+      "MyLayout/Lib/MyLayoutMath.h",
+      "MyLayout/Lib/MyLayoutSizeClass.h"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "MyLayout_InfoPlist",
+  srcs = [],
+  outs = [
+    "MyLayout_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.MyLayout</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>MyLayout</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.9.10</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

@@ -1,5 +1,6 @@
 load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
 # see the bazel user manual for more information
@@ -14,12 +15,6 @@ config_setting(
   name = "ios_arm64",
   values = {
     "cpu": "ios_arm64"
-  }
-)
-config_setting(
-  name = "ios_armv7",
-  values = {
-    "cpu": "ios_armv7"
   }
 )
 config_setting(
@@ -50,7 +45,7 @@ apple_framework(
     ":Realm_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0"
+    "ios": "11.0"
   },
   srcs = glob(
     [
@@ -77,6 +72,8 @@ apple_framework(
       "include/RLMArray.h",
       "include/RLMArray_Private.h",
       "include/RLMAsymmetricObject.h",
+      "include/RLMAsyncTask.h",
+      "include/RLMAsyncTask_Private.h",
       "include/RLMBSON.h",
       "include/RLMBSON_Private.h",
       "include/RLMCollection.h",
@@ -88,12 +85,16 @@ apple_framework(
       "include/RLMDictionary_Private.h",
       "include/RLMEmailPasswordAuth.h",
       "include/RLMEmbeddedObject.h",
+      "include/RLMError.h",
       "include/RLMEvent.h",
       "include/RLMFindOneAndModifyOptions.h",
       "include/RLMFindOptions.h",
+      "include/RLMLogger.h",
+      "include/RLMLogger_Private.h",
       "include/RLMMigration.h",
       "include/RLMMongoClient.h",
       "include/RLMMongoCollection.h",
+      "include/RLMMongoCollection_Private.h",
       "include/RLMMongoDatabase.h",
       "include/RLMNetworkTransport.h",
       "include/RLMObject.h",
@@ -106,7 +107,6 @@ apple_framework(
       "include/RLMObjectStore.h",
       "include/RLMObject_Private.h",
       "include/RLMOptionalBase.h",
-      "include/RLMPlatform.h",
       "include/RLMProperty.h",
       "include/RLMPropertyBase.h",
       "include/RLMProperty_Private.h",
@@ -121,12 +121,14 @@ apple_framework(
       "include/RLMRealm_Private.h",
       "include/RLMResults.h",
       "include/RLMResults_Private.h",
+      "include/RLMScheduler.h",
       "include/RLMSchema.h",
       "include/RLMSchema_Private.h",
       "include/RLMSectionedResults.h",
       "include/RLMSet.h",
       "include/RLMSet_Private.h",
       "include/RLMSwiftCollectionBase.h",
+      "include/RLMSwiftObject.h",
       "include/RLMSwiftProperty.h",
       "include/RLMSwiftValueStorage.h",
       "include/RLMSyncConfiguration.h",
@@ -135,8 +137,6 @@ apple_framework(
       "include/RLMSyncSession.h",
       "include/RLMSyncSubscription.h",
       "include/RLMSyncSubscription_Private.h",
-      "include/RLMSyncUtil.h",
-      "include/RLMSyncUtil_Private.h",
       "include/RLMThreadSafeReference.h",
       "include/RLMUpdateResult.h",
       "include/RLMUpdateResult_Private.h",
@@ -155,6 +155,7 @@ apple_framework(
       "include/RLMAppCredentials.h",
       "include/RLMArray.h",
       "include/RLMAsymmetricObject.h",
+      "include/RLMAsyncTask.h",
       "include/RLMBSON.h",
       "include/RLMCollection.h",
       "include/RLMConstants.h",
@@ -163,8 +164,10 @@ apple_framework(
       "include/RLMDictionary.h",
       "include/RLMEmailPasswordAuth.h",
       "include/RLMEmbeddedObject.h",
+      "include/RLMError.h",
       "include/RLMFindOneAndModifyOptions.h",
       "include/RLMFindOptions.h",
+      "include/RLMLogger.h",
       "include/RLMMigration.h",
       "include/RLMMongoClient.h",
       "include/RLMMongoCollection.h",
@@ -175,7 +178,6 @@ apple_framework(
       "include/RLMObjectBase_Dynamic.h",
       "include/RLMObjectId.h",
       "include/RLMObjectSchema.h",
-      "include/RLMPlatform.h",
       "include/RLMProperty.h",
       "include/RLMProviderClient.h",
       "include/RLMPushClient.h",
@@ -188,12 +190,12 @@ apple_framework(
       "include/RLMSectionedResults.h",
       "include/RLMSet.h",
       "include/RLMSwiftCollectionBase.h",
+      "include/RLMSwiftObject.h",
       "include/RLMSwiftValueStorage.h",
       "include/RLMSyncConfiguration.h",
       "include/RLMSyncManager.h",
       "include/RLMSyncSession.h",
       "include/RLMSyncSubscription.h",
-      "include/RLMSyncUtil.h",
       "include/RLMThreadSafeReference.h",
       "include/RLMUpdateResult.h",
       "include/RLMUser.h",
@@ -208,10 +210,13 @@ apple_framework(
       "include/RLMAccessor.h",
       "include/RLMApp_Private.h",
       "include/RLMArray_Private.h",
+      "include/RLMAsyncTask_Private.h",
       "include/RLMBSON_Private.h",
       "include/RLMCollection_Private.h",
       "include/RLMDictionary_Private.h",
       "include/RLMEvent.h",
+      "include/RLMLogger_Private.h",
+      "include/RLMMongoCollection_Private.h",
       "include/RLMObjectBase_Private.h",
       "include/RLMObjectSchema_Private.h",
       "include/RLMObjectStore.h",
@@ -223,12 +228,12 @@ apple_framework(
       "include/RLMRealmConfiguration_Private.h",
       "include/RLMRealm_Private.h",
       "include/RLMResults_Private.h",
+      "include/RLMScheduler.h",
       "include/RLMSchema_Private.h",
       "include/RLMSet_Private.h",
       "include/RLMSwiftProperty.h",
       "include/RLMSyncConfiguration_Private.h",
       "include/RLMSyncSubscription_Private.h",
-      "include/RLMSyncUtil_Private.h",
       "include/RLMUpdateResult_Private.h",
       "include/RLMUser_Private.h"
     ]
@@ -241,10 +246,13 @@ apple_framework(
       "include/RLMAccessor.h",
       "include/RLMApp_Private.h",
       "include/RLMArray_Private.h",
+      "include/RLMAsyncTask_Private.h",
       "include/RLMBSON_Private.h",
       "include/RLMCollection_Private.h",
       "include/RLMDictionary_Private.h",
       "include/RLMEvent.h",
+      "include/RLMLogger_Private.h",
+      "include/RLMMongoCollection_Private.h",
       "include/RLMObjectBase_Private.h",
       "include/RLMObjectSchema_Private.h",
       "include/RLMObjectStore.h",
@@ -256,23 +264,22 @@ apple_framework(
       "include/RLMRealmConfiguration_Private.h",
       "include/RLMRealm_Private.h",
       "include/RLMResults_Private.h",
+      "include/RLMScheduler.h",
       "include/RLMSchema_Private.h",
       "include/RLMSet_Private.h",
       "include/RLMSwiftProperty.h",
       "include/RLMSyncConfiguration_Private.h",
       "include/RLMSyncSubscription_Private.h",
-      "include/RLMSyncUtil_Private.h",
       "include/RLMUpdateResult_Private.h",
       "include/RLMUser_Private.h"
     ]
   ),
-  deps = select(
+  deps = [
+    ":Realm_realm_objc_privacy_Bundle"
+  ] + select(
     {
       "//conditions:default": [],
       ":ios_arm64": [
-        ":Realm_realm-monorepo_VendoredXCFramework"
-      ],
-      ":ios_armv7": [
         ":Realm_realm-monorepo_VendoredXCFramework"
       ],
       ":ios_i386": [
@@ -317,14 +324,21 @@ apple_framework(
     "Security",
     "AuthenticationServices"
   ],
+  weak_sdk_frameworks = [
+    "UIKit"
+  ],
   objc_copts = [
     "-fapplication-extension"
   ],
   swift_copts = [
     "-application-extension"
   ],
+  linkopts = [
+    "$(REALM_LD_CLASSIC)",
+    "-Wl,-unexported_symbols_list,Tests/Pods/Realm/Configuration/Realm/PrivateSymbols.txt"
+  ],
   xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "c++17",
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++20",
     "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "NO",
     "OTHER_CPLUSPLUSFLAGS": [
       "-isystem",
@@ -335,6 +349,19 @@ apple_framework(
   visibility = [
     "//visibility:public"
   ]
+)
+precompiled_apple_resource_bundle(
+  name = "Realm_realm_objc_privacy_Bundle",
+  bundle_id = "org.cocoapods.realm_objc_privacy",
+  bundle_name = "realm_objc_privacy",
+  infoplists = [
+    ":Realm_realm_objc_privacy_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Realm/PrivacyInfo.xcprivacy"
+    ]
+  )
 )
 apple_static_xcframework_import(
   name = "Realm_realm-monorepo_VendoredXCFramework",
@@ -367,7 +394,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>10.34.1</string>
+	<string>10.46.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -378,7 +405,49 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "Realm_realm_objc_privacy_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "Realm_realm_objc_privacy_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.realm_objc_privacy</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>realm_objc_privacy</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>10.46.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

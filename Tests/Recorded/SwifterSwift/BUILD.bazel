@@ -20,24 +20,28 @@ apple_framework(
     ":SwifterSwift_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0"
+    "ios": "12.0"
   },
   srcs = glob(
     [
       "Sources/SwifterSwift/**/*.swift",
       "Sources/SwifterSwift/AppKit/*.swift",
+      "Sources/SwifterSwift/Combine/*.swift",
       "Sources/SwifterSwift/CoreAnimation/*.swift",
       "Sources/SwifterSwift/CoreGraphics/*.swift",
       "Sources/SwifterSwift/CoreLocation/*.swift",
+      "Sources/SwifterSwift/CryptoKit/*.swift",
       "Sources/SwifterSwift/Dispatch/*.swift",
       "Sources/SwifterSwift/Foundation/*.swift",
+      "Sources/SwifterSwift/HealthKit/*.swift",
       "Sources/SwifterSwift/MapKit/*.swift",
       "Sources/SwifterSwift/SceneKit/*.swift",
       "Sources/SwifterSwift/Shared/*.swift",
       "Sources/SwifterSwift/SpriteKit/*.swift",
       "Sources/SwifterSwift/StoreKit/*.swift",
       "Sources/SwifterSwift/SwiftStdlib/*.swift",
-      "Sources/SwifterSwift/UIKit/*.swift"
+      "Sources/SwifterSwift/UIKit/*.swift",
+      "Sources/SwifterSwift/WebKit/*.swift"
     ]
   ),
   objc_defines = [
@@ -65,14 +69,18 @@ apple_framework(
   sdk_frameworks = [
     "AVFoundation",
     "AudioToolbox",
+    "Combine",
     "CoreGraphics",
     "CoreImage",
     "CoreLocation",
+    "CryptoKit",
+    "HealthKit",
     "MapKit",
     "QuartzCore",
     "SceneKit",
     "SpriteKit",
-    "StoreKit"
+    "StoreKit",
+    "WebKit"
   ],
   visibility = [
     "//visibility:public"
@@ -98,7 +106,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>5.2.0</string>
+	<string>6.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -109,7 +117,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>12.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

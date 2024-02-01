@@ -1,0 +1,128 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "KTVHTTPCache",
+  module_name = "KTVHTTPCache",
+  bundle_id = "org.cocoapods.KTVHTTPCache",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":KTVHTTPCache_InfoPlist"
+  ],
+  platforms = {
+    "ios": "12.0"
+  },
+  srcs = glob(
+    [
+      "KTVHTTPCache/**/*.S",
+      "KTVHTTPCache/**/*.c",
+      "KTVHTTPCache/**/*.cc",
+      "KTVHTTPCache/**/*.cpp",
+      "KTVHTTPCache/**/*.cxx",
+      "KTVHTTPCache/**/*.h",
+      "KTVHTTPCache/**/*.hpp",
+      "KTVHTTPCache/**/*.hxx",
+      "KTVHTTPCache/**/*.m",
+      "KTVHTTPCache/**/*.mm",
+      "KTVHTTPCache/**/*.s",
+      "KTVHTTPCache/**/*.swift"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "KTVHTTPCache/Classes/KTVHCCommon/KTVHCError.h",
+      "KTVHTTPCache/Classes/KTVHCCommon/KTVHCRange.h",
+      "KTVHTTPCache/Classes/KTVHCDataStorage/KTVHCDataCacheItem.h",
+      "KTVHTTPCache/Classes/KTVHCDataStorage/KTVHCDataCacheItemZone.h",
+      "KTVHTTPCache/Classes/KTVHCDataStorage/KTVHCDataLoader.h",
+      "KTVHTTPCache/Classes/KTVHCDataStorage/KTVHCDataReader.h",
+      "KTVHTTPCache/Classes/KTVHCDataStorage/KTVHCDataRequest.h",
+      "KTVHTTPCache/Classes/KTVHCDataStorage/KTVHCDataResponse.h",
+      "KTVHTTPCache/KTVHTTPCache.h"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/CocoaAsyncSocket:CocoaAsyncSocket"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Foundation",
+    "UIKit",
+    "CFNetwork"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "KTVHTTPCache_InfoPlist",
+  srcs = [],
+  outs = [
+    "KTVHTTPCache_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.KTVHTTPCache</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>KTVHTTPCache</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.0.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>12.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

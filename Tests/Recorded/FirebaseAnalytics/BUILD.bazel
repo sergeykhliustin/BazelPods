@@ -17,18 +17,6 @@ config_setting(
   }
 )
 config_setting(
-  name = "ios_armv7",
-  values = {
-    "cpu": "ios_armv7"
-  }
-)
-config_setting(
-  name = "ios_i386",
-  values = {
-    "cpu": "ios_i386"
-  }
-)
-config_setting(
   name = "ios_sim_arm64",
   values = {
     "cpu": "ios_sim_arm64"
@@ -60,12 +48,6 @@ apple_framework(
     {
       "//conditions:default": [],
       ":ios_arm64": [
-        ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
-      ],
-      ":ios_armv7": [
-        ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
-      ],
-      ":ios_i386": [
         ":FirebaseAnalytics_FirebaseAnalytics_VendoredXCFramework"
       ],
       ":ios_sim_arm64": [

@@ -41,8 +41,6 @@ apple_framework(
       "GoogleUtilities/Network/**/*.m",
       "GoogleUtilities/Reachability/**/*.h",
       "GoogleUtilities/Reachability/**/*.m",
-      "GoogleUtilities/SwizzlerTestHelpers/**/*.h",
-      "GoogleUtilities/SwizzlerTestHelpers/**/*.m",
       "GoogleUtilities/UserDefaults/**/*.h",
       "GoogleUtilities/UserDefaults/**/*.m",
       "third_party/IsAppEncrypted/**/*.h",
@@ -59,7 +57,6 @@ apple_framework(
       "GoogleUtilities/NSData+zlib/Public/GoogleUtilities/*.h",
       "GoogleUtilities/Network/Public/GoogleUtilities/*.h",
       "GoogleUtilities/Reachability/Public/GoogleUtilities/*.h",
-      "GoogleUtilities/SwizzlerTestHelpers/Public/GoogleUtilities/*.h",
       "GoogleUtilities/UserDefaults/Public/GoogleUtilities/*.h"
     ]
   ),

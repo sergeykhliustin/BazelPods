@@ -1,0 +1,131 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "Logan",
+  module_name = "Logan",
+  bundle_id = "org.cocoapods.Logan",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":Logan_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Logan/Clogan/*.c",
+      "Logan/Clogan/*.h",
+      "Logan/iOS/*.S",
+      "Logan/iOS/*.c",
+      "Logan/iOS/*.cc",
+      "Logan/iOS/*.cpp",
+      "Logan/iOS/*.cxx",
+      "Logan/iOS/*.h",
+      "Logan/iOS/*.hpp",
+      "Logan/iOS/*.hxx",
+      "Logan/iOS/*.m",
+      "Logan/iOS/*.mm",
+      "Logan/iOS/*.s",
+      "Logan/iOS/*.swift",
+      "Logan/mbedtls/**/*.c",
+      "Logan/mbedtls/**/*.h"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "Logan/iOS/*.h"
+    ],
+    exclude = [
+      "Logan/mbedtls/**/*.h"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "Logan/mbedtls/**/*.h"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  objc_copts = [
+    "-ITests/Pods/Logan/Logan/**"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/Logan/Logan/**"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "Logan_InfoPlist",
+  srcs = [],
+  outs = [
+    "Logan_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.Logan</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Logan</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.2.9</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

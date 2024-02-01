@@ -1,0 +1,113 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "FSPopoverView",
+  module_name = "FSPopoverView",
+  bundle_id = "org.cocoapods.FSPopoverView",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":FSPopoverView_InfoPlist"
+  ],
+  platforms = {
+    "ios": "11.0"
+  },
+  srcs = glob(
+    [
+      "FSPopoverView/Classes/**/*.S",
+      "FSPopoverView/Classes/**/*.c",
+      "FSPopoverView/Classes/**/*.cc",
+      "FSPopoverView/Classes/**/*.cpp",
+      "FSPopoverView/Classes/**/*.cxx",
+      "FSPopoverView/Classes/**/*.h",
+      "FSPopoverView/Classes/**/*.hpp",
+      "FSPopoverView/Classes/**/*.hxx",
+      "FSPopoverView/Classes/**/*.m",
+      "FSPopoverView/Classes/**/*.mm",
+      "FSPopoverView/Classes/**/*.s",
+      "FSPopoverView/Classes/**/*.swift"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "CoreGraphics",
+    "Foundation",
+    "UIKit"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "FSPopoverView_InfoPlist",
+  srcs = [],
+  outs = [
+    "FSPopoverView_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.FSPopoverView</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>FSPopoverView</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.0.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

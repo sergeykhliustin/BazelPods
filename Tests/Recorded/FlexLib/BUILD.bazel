@@ -1,0 +1,202 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "FlexLib",
+  module_name = "FlexLib",
+  bundle_id = "org.cocoapods.FlexLib",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":FlexLib_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "FlexLib/Classes/FlexLib/**/*.S",
+      "FlexLib/Classes/FlexLib/**/*.c",
+      "FlexLib/Classes/FlexLib/**/*.cc",
+      "FlexLib/Classes/FlexLib/**/*.cpp",
+      "FlexLib/Classes/FlexLib/**/*.cxx",
+      "FlexLib/Classes/FlexLib/**/*.h",
+      "FlexLib/Classes/FlexLib/**/*.hpp",
+      "FlexLib/Classes/FlexLib/**/*.hxx",
+      "FlexLib/Classes/FlexLib/**/*.m",
+      "FlexLib/Classes/FlexLib/**/*.mm",
+      "FlexLib/Classes/FlexLib/**/*.s",
+      "FlexLib/Classes/FlexLib/**/*.swift",
+      "FlexLib/Classes/YogaKit/**/*.S",
+      "FlexLib/Classes/YogaKit/**/*.c",
+      "FlexLib/Classes/YogaKit/**/*.cc",
+      "FlexLib/Classes/YogaKit/**/*.cpp",
+      "FlexLib/Classes/YogaKit/**/*.cxx",
+      "FlexLib/Classes/YogaKit/**/*.h",
+      "FlexLib/Classes/YogaKit/**/*.hpp",
+      "FlexLib/Classes/YogaKit/**/*.hxx",
+      "FlexLib/Classes/YogaKit/**/*.m",
+      "FlexLib/Classes/YogaKit/**/*.mm",
+      "FlexLib/Classes/YogaKit/**/*.s",
+      "FlexLib/Classes/YogaKit/**/*.swift",
+      "FlexLib/Classes/yoga/**/*.c",
+      "FlexLib/Classes/yoga/**/*.cpp",
+      "FlexLib/Classes/yoga/**/*.h"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "FlexLib/Classes/yoga/YGEnums.h",
+      "FlexLib/Classes/yoga/YGMacros.h",
+      "FlexLib/Classes/yoga/YGNode.h",
+      "FlexLib/Classes/yoga/YGStyle.h",
+      "FlexLib/Classes/yoga/YGValue.h",
+      "FlexLib/Classes/yoga/Yoga.h"
+    ]
+  ),
+  deps = [
+    ":FlexLib_FlexLib_Bundle"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++",
+    "xml2"
+  ],
+  objc_copts = [
+    "-I/usr/include/libxml2"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-I/usr/include/libxml2"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "FlexLib_FlexLib_Bundle",
+  bundle_id = "org.cocoapods.FlexLib",
+  bundle_name = "FlexLib",
+  infoplists = [
+    ":FlexLib_FlexLib_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "FlexLib/Assets/**"
+    ]
+  )
+)
+genrule(
+  name = "FlexLib_InfoPlist",
+  srcs = [],
+  outs = [
+    "FlexLib_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.FlexLib</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>FlexLib</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.2.2</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "FlexLib_FlexLib_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "FlexLib_FlexLib_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.FlexLib</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>FlexLib</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.2.2</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

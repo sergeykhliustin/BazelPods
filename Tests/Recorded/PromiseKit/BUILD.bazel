@@ -49,6 +49,7 @@ apple_framework(
       "Sources/Async.swift",
       "Sources/Box.swift",
       "Sources/Catchable.swift",
+      "Sources/Combine.swift",
       "Sources/Configuration.swift",
       "Sources/CustomStringConvertible.swift",
       "Sources/Deprecations.swift",
@@ -107,6 +108,7 @@ apple_framework(
   sdk_frameworks = [
     "Foundation",
     "UIKit",
+    "Combine",
     "CoreFoundation"
   ],
   xcconfig = {
@@ -138,7 +140,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>6.18.1</string>
+	<string>8.1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

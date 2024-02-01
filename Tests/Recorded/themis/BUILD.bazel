@@ -1,0 +1,73 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "themis",
+  module_name = "themis",
+  bundle_id = "org.cocoapods.themis",
+  link_dynamic = False,
+  testonly = False,
+  platforms = {
+    "ios": "11.0"
+  },
+  deps = [
+    "//Tests/Pods/CLOpenSSL-XCF:CLOpenSSL-XCF"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Foundation",
+    "UIKit"
+  ],
+  objc_copts = [
+    "-ITests/Pods/themis/include",
+    "-ITests/Pods/themis/src",
+    "-ITests/Pods/themis/src/wrappers/themis/Obj-C"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/themis/include",
+    "-Xcc",
+    "-ITests/Pods/themis/src",
+    "-Xcc",
+    "-ITests/Pods/themis/src/wrappers/themis/Obj-C"
+  ],
+  xcconfig = {
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
+    "OTHER_CFLAGS": [
+      "-DLIBRESSL"
+    ],
+    "USE_HEADERMAP": "NO"
+  },
+  visibility = [
+    "//visibility:public"
+  ]
+)

@@ -1,4 +1,5 @@
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
 # see the bazel user manual for more information
@@ -38,6 +39,9 @@ apple_framework(
       "Sources/**/*.swift"
     ]
   ),
+  deps = [
+    ":Lottie_Lottie_Privacy_Bundle"
+  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -64,11 +68,29 @@ apple_framework(
     "CoreGraphics",
     "QuartzCore",
     "UIKit",
+    "CoreFoundation",
     "CoreText"
+  ],
+  weak_sdk_frameworks = [
+    "Combine",
+    "SwiftUI"
   ],
   visibility = [
     "//visibility:public"
   ]
+)
+precompiled_apple_resource_bundle(
+  name = "Lottie_Lottie_Privacy_Bundle",
+  bundle_id = "org.cocoapods.Lottie_Privacy",
+  bundle_name = "Lottie_Privacy",
+  infoplists = [
+    ":Lottie_Lottie_Privacy_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Sources/PrivacyInfo.xcprivacy"
+    ]
+  )
 )
 genrule(
   name = "lottie-ios_InfoPlist",
@@ -90,7 +112,49 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.4.3</string>
+	<string>4.4.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "Lottie_Lottie_Privacy_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "Lottie_Lottie_Privacy_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.Lottie_Privacy</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Lottie_Privacy</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.4.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

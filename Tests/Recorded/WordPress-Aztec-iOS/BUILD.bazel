@@ -1,0 +1,183 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "WordPress-Aztec-iOS",
+  module_name = "Aztec",
+  bundle_id = "org.cocoapods.WordPress-Aztec-iOS",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":WordPress-Aztec-iOS_InfoPlist"
+  ],
+  platforms = {
+    "ios": "11.0"
+  },
+  srcs = glob(
+    [
+      "Aztec/Classes/**/*.S",
+      "Aztec/Classes/**/*.c",
+      "Aztec/Classes/**/*.cc",
+      "Aztec/Classes/**/*.cpp",
+      "Aztec/Classes/**/*.cxx",
+      "Aztec/Classes/**/*.h",
+      "Aztec/Classes/**/*.hpp",
+      "Aztec/Classes/**/*.hxx",
+      "Aztec/Classes/**/*.m",
+      "Aztec/Classes/**/*.mm",
+      "Aztec/Classes/**/*.s",
+      "Aztec/Classes/**/*.swift"
+    ]
+  ),
+  deps = [
+    ":Aztec_WordPress-Aztec-iOS_Bundle"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "CoreGraphics",
+    "CoreServices",
+    "MobileCoreServices",
+    "QuartzCore"
+  ],
+  objc_copts = [
+    "-I/usr/include/libxml2"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-I/usr/include/libxml2"
+  ],
+  linkopts = [
+    "-lxml2"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "Aztec_WordPress-Aztec-iOS_Bundle",
+  bundle_id = "org.cocoapods.WordPress-Aztec-iOS",
+  bundle_name = "WordPress-Aztec-iOS",
+  infoplists = [
+    ":Aztec_WordPress-Aztec-iOS_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Aztec/Assets/**/**"
+    ]
+  )
+)
+genrule(
+  name = "WordPress-Aztec-iOS_InfoPlist",
+  srcs = [],
+  outs = [
+    "WordPress-Aztec-iOS_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.WordPress-Aztec-iOS</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>WordPress-Aztec-iOS</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.19.9</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "Aztec_WordPress-Aztec-iOS_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "Aztec_WordPress-Aztec-iOS_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.WordPress-Aztec-iOS</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>WordPress-Aztec-iOS</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.19.9</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

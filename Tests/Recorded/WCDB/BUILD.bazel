@@ -1,0 +1,284 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "WCDB",
+  module_name = "WCDB",
+  bundle_id = "org.cocoapods.WCDB",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":WCDB_InfoPlist"
+  ],
+  platforms = {
+    "ios": "11.0"
+  },
+  srcs = glob(
+    [
+      "src/WCDB.h",
+      "src/bridge/**/*.c",
+      "src/bridge/**/*.cpp",
+      "src/bridge/**/*.h",
+      "src/bridge/**/*.hpp",
+      "src/bridge/**/*.m",
+      "src/bridge/**/*.mm",
+      "src/bridge/**/*.swift",
+      "src/common/**/*.c",
+      "src/common/**/*.cpp",
+      "src/common/**/*.h",
+      "src/common/**/*.hpp",
+      "src/common/**/*.m",
+      "src/common/**/*.mm",
+      "src/common/**/*.swift",
+      "src/common/core/operate/OperationQueueForMemory.cpp",
+      "src/common/core/operate/OperationQueueForMemory.hpp",
+      "src/cpp/**/*.c",
+      "src/cpp/**/*.cpp",
+      "src/cpp/**/*.h",
+      "src/cpp/**/*.hpp",
+      "src/cpp/**/*.m",
+      "src/cpp/**/*.mm",
+      "src/cpp/**/*.swift",
+      "src/objc/**/*.c",
+      "src/objc/**/*.cpp",
+      "src/objc/**/*.h",
+      "src/objc/**/*.hpp",
+      "src/objc/**/*.m",
+      "src/objc/**/*.mm",
+      "src/objc/**/*.swift",
+      "src/objc/core/WCTOperationQueue.mm",
+      "src/swift/**/*.c",
+      "src/swift/**/*.cpp",
+      "src/swift/**/*.h",
+      "src/swift/**/*.hpp",
+      "src/swift/**/*.m",
+      "src/swift/**/*.mm",
+      "src/swift/**/*.swift"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "src/WCDB.h",
+      "src/bridge/objcbridge/WCTBridgeMacro.h",
+      "src/bridge/objcbridge/WCTBridgeProperty+CPP.h",
+      "src/bridge/objcbridge/WCTBridgeProperty.h",
+      "src/common/base/Data.hpp",
+      "src/common/base/Recyclable.hpp",
+      "src/common/base/SharedThreadedErrorProne.hpp",
+      "src/common/base/StringView.hpp",
+      "src/common/base/UnsafeData.hpp",
+      "src/common/base/WCDBError.hpp",
+      "src/common/base/WCDBOptional.hpp",
+      "src/common/core/RecyclableHandle.hpp",
+      "src/common/core/Tag.hpp",
+      "src/common/core/fts/FTSConst.h",
+      "src/common/core/fts/FTSError.hpp",
+      "src/common/core/fts/auxfunction/AuxiliaryFunctionModule.hpp",
+      "src/common/core/fts/auxfunction/FTS5AuxiliaryFunctionTemplate.hpp",
+      "src/common/core/fts/auxfunction/SubstringMatchInfo.hpp",
+      "src/common/core/fts/tokenizer/BaseTokenizerUtil.hpp",
+      "src/common/core/fts/tokenizer/OneOrBinaryTokenizer.hpp",
+      "src/common/core/fts/tokenizer/PinyinTokenizer.hpp",
+      "src/common/core/fts/tokenizer/TokenizerModule.hpp",
+      "src/common/core/fts/tokenizer/TokenizerModuleTemplate.hpp",
+      "src/common/platform/SysTypes.h",
+      "src/common/utility/CaseInsensitiveList.hpp",
+      "src/common/utility/Macro.h",
+      "src/common/utility/Shadow.hpp",
+      "src/common/winq/**/*.h",
+      "src/common/winq/**/*.hpp",
+      "src/common/winq/*.h",
+      "src/common/winq/*.hpp",
+      "src/cpp/**/*.h",
+      "src/cpp/**/*.hpp",
+      "src/cpp/WCDBCpp.h",
+      "src/objc/Interface.h",
+      "src/objc/WCDBObjc.h",
+      "src/objc/builtin/*.h",
+      "src/objc/builtin/*.hpp",
+      "src/objc/chaincall/WCTChainCall.h",
+      "src/objc/chaincall/WCTDatabase+ChainCall.h",
+      "src/objc/chaincall/WCTDelete.h",
+      "src/objc/chaincall/WCTError.h",
+      "src/objc/chaincall/WCTHandle+ChainCall.h",
+      "src/objc/chaincall/WCTInsert.h",
+      "src/objc/chaincall/WCTMultiSelect.h",
+      "src/objc/chaincall/WCTSelect.h",
+      "src/objc/chaincall/WCTSelectable.h",
+      "src/objc/chaincall/WCTTable+ChainCall.h",
+      "src/objc/chaincall/WCTTryDisposeGuard.h",
+      "src/objc/chaincall/WCTUpdate.h",
+      "src/objc/convenient/*.h",
+      "src/objc/convenient/*.hpp",
+      "src/objc/core/*.h",
+      "src/objc/core/*.hpp",
+      "src/objc/database/WCTDatabase+Config.h",
+      "src/objc/database/WCTDatabase+File.h",
+      "src/objc/database/WCTDatabase+Memory.h",
+      "src/objc/database/WCTDatabase+Repair.h",
+      "src/objc/database/WCTDatabase.h",
+      "src/objc/database/WCTTryDisposeGuard.h",
+      "src/objc/fts/*.h",
+      "src/objc/fts/*.hpp",
+      "src/objc/handle/WCTCancellationSignal.h",
+      "src/objc/handle/WCTDatabase+Handle.h",
+      "src/objc/handle/WCTHandle.h",
+      "src/objc/migration/WCTDatabase+Migration.h",
+      "src/objc/migration/WCTMigrationInfo.h",
+      "src/objc/monitor/WCTDatabase+Monitor.h",
+      "src/objc/monitor/WCTError.h",
+      "src/objc/orm/**/*.h",
+      "src/objc/orm/**/*.hpp",
+      "src/objc/orm/*.h",
+      "src/objc/orm/*.hpp",
+      "src/objc/statement/WCTPreparedStatement.h",
+      "src/objc/table/WCTDatabase+Table.h",
+      "src/objc/table/WCTHandle+Table.h",
+      "src/objc/table/WCTTable+Table.h",
+      "src/objc/table/WCTTable.h",
+      "src/objc/table/WCTTableProtocol.h",
+      "src/objc/transaction/*.h",
+      "src/objc/transaction/*.hpp"
+    ],
+    exclude = [
+      "src/bridge/WCDBBridging.h",
+      "src/bridge/base/**/*.h",
+      "src/bridge/cppbridge/**/*.h",
+      "src/bridge/objcbridge/WCTAPIBridge.h",
+      "src/bridge/winqbridge/**/*.h"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "src/bridge/WCDBBridging.h",
+      "src/bridge/base/**/*.h",
+      "src/bridge/cppbridge/**/*.h",
+      "src/bridge/objcbridge/WCTAPIBridge.h",
+      "src/bridge/winqbridge/**/*.h"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/WCDBOptimizedSQLCipher:WCDBOptimizedSQLCipher"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++",
+    "z"
+  ],
+  sdk_frameworks = [
+    "CoreFoundation",
+    "Foundation",
+    "Security",
+    "UIKit"
+  ],
+  objc_copts = [
+    "-ITests/Pods/WCDB"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/WCDB"
+  ],
+  xcconfig = {
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++14",
+    "CLANG_CXX_LIBRARY": "libc++",
+    "GCC_PREPROCESSOR_DEFINITIONS": [
+      "SQLITE_WCDB=1",
+      "SQLITE_WCDB_LOCK_HOOK=1",
+      "SQLITE_WCDB_CHECKPOINT_HANDLER=1",
+      "SQLITE_WCDB_SUSPEND=1",
+      "SQLITE_WCDB_IMPROVED_CHECKPOINT=1",
+      "SQLITE_HAS_CODEC",
+      "SQLITE_DEFAULT_PAGE_SIZE=4096",
+      "SQLITE_MAX_VARIABLE_NUMBER=99",
+      "SQLITE_DEFAULT_SYNCHRONOUS=1",
+      "SQLITE_DEFAULT_WAL_SYNCHRONOUS=1",
+      "SQLITE_DEFAULT_LOCKING_MODE=0",
+      "SQLITE_DEFAULT_WAL_AUTOCHECKPOINT=0",
+      "WCDB_SWIFT_BRIDGE_OBJC=1"
+    ],
+    "OTHER_CFLAGS": [
+      "-fvisibility-inlines-hidden"
+    ],
+    "OTHER_CPLUSPLUSFLAGS": [
+      "-fvisibility-inlines-hidden"
+    ],
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS": [
+      "WCDB_SWIFT_BRIDGE_OBJC"
+    ]
+  },
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "WCDB_InfoPlist",
+  srcs = [],
+  outs = [
+    "WCDB_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.WCDB</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>WCDB</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0.4</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

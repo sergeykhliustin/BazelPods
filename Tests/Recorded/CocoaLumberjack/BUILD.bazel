@@ -20,7 +20,7 @@ apple_framework(
     ":CocoaLumberjack_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0"
+    "ios": "11.0"
   },
   srcs = glob(
     [
@@ -82,7 +82,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.7.4</string>
+	<string>3.8.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -93,7 +93,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>11.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

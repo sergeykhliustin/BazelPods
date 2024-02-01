@@ -1,0 +1,154 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "GKPhotoBrowser",
+  module_name = "GKPhotoBrowser",
+  bundle_id = "org.cocoapods.GKPhotoBrowser",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":GKPhotoBrowser_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "GKPhotoBrowser/AVPlayer/**/*.S",
+      "GKPhotoBrowser/AVPlayer/**/*.c",
+      "GKPhotoBrowser/AVPlayer/**/*.cc",
+      "GKPhotoBrowser/AVPlayer/**/*.cpp",
+      "GKPhotoBrowser/AVPlayer/**/*.cxx",
+      "GKPhotoBrowser/AVPlayer/**/*.h",
+      "GKPhotoBrowser/AVPlayer/**/*.hpp",
+      "GKPhotoBrowser/AVPlayer/**/*.hxx",
+      "GKPhotoBrowser/AVPlayer/**/*.m",
+      "GKPhotoBrowser/AVPlayer/**/*.mm",
+      "GKPhotoBrowser/AVPlayer/**/*.s",
+      "GKPhotoBrowser/AVPlayer/**/*.swift",
+      "GKPhotoBrowser/Core/**/*.S",
+      "GKPhotoBrowser/Core/**/*.c",
+      "GKPhotoBrowser/Core/**/*.cc",
+      "GKPhotoBrowser/Core/**/*.cpp",
+      "GKPhotoBrowser/Core/**/*.cxx",
+      "GKPhotoBrowser/Core/**/*.h",
+      "GKPhotoBrowser/Core/**/*.hpp",
+      "GKPhotoBrowser/Core/**/*.hxx",
+      "GKPhotoBrowser/Core/**/*.m",
+      "GKPhotoBrowser/Core/**/*.mm",
+      "GKPhotoBrowser/Core/**/*.s",
+      "GKPhotoBrowser/Core/**/*.swift",
+      "GKPhotoBrowser/Progress/**/*.S",
+      "GKPhotoBrowser/Progress/**/*.c",
+      "GKPhotoBrowser/Progress/**/*.cc",
+      "GKPhotoBrowser/Progress/**/*.cpp",
+      "GKPhotoBrowser/Progress/**/*.cxx",
+      "GKPhotoBrowser/Progress/**/*.h",
+      "GKPhotoBrowser/Progress/**/*.hpp",
+      "GKPhotoBrowser/Progress/**/*.hxx",
+      "GKPhotoBrowser/Progress/**/*.m",
+      "GKPhotoBrowser/Progress/**/*.mm",
+      "GKPhotoBrowser/Progress/**/*.s",
+      "GKPhotoBrowser/Progress/**/*.swift",
+      "GKPhotoBrowser/SDWebImage/**/*.S",
+      "GKPhotoBrowser/SDWebImage/**/*.c",
+      "GKPhotoBrowser/SDWebImage/**/*.cc",
+      "GKPhotoBrowser/SDWebImage/**/*.cpp",
+      "GKPhotoBrowser/SDWebImage/**/*.cxx",
+      "GKPhotoBrowser/SDWebImage/**/*.h",
+      "GKPhotoBrowser/SDWebImage/**/*.hpp",
+      "GKPhotoBrowser/SDWebImage/**/*.hxx",
+      "GKPhotoBrowser/SDWebImage/**/*.m",
+      "GKPhotoBrowser/SDWebImage/**/*.mm",
+      "GKPhotoBrowser/SDWebImage/**/*.s",
+      "GKPhotoBrowser/SDWebImage/**/*.swift"
+    ]
+  ),
+  data = [
+    "GKPhotoBrowser/GKPhotoBrowser.bundle"
+  ],
+  deps = [
+    "//Tests/Pods/GKSliderView:GKSliderView",
+    "//Tests/Pods/SDWebImage:SDWebImage"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "AVFoundation",
+    "Photos"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "GKPhotoBrowser_InfoPlist",
+  srcs = [],
+  outs = [
+    "GKPhotoBrowser_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.GKPhotoBrowser</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GKPhotoBrowser</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.7.3</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

@@ -1,0 +1,102 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "onnxruntime-mobile-objc",
+  module_name = "onnxruntime_mobile_objc",
+  bundle_id = "org.cocoapods.onnxruntime-mobile-objc",
+  link_dynamic = False,
+  testonly = False,
+  platforms = {
+    "ios": "12.0"
+  },
+  srcs = glob(
+    [
+      "objectivec/assert_arc_enabled.mm",
+      "objectivec/cxx_api.h",
+      "objectivec/cxx_utils.h",
+      "objectivec/cxx_utils.mm",
+      "objectivec/error_utils.h",
+      "objectivec/error_utils.mm",
+      "objectivec/include/onnxruntime.h",
+      "objectivec/include/ort_coreml_execution_provider.h",
+      "objectivec/include/ort_custom_op_registration.h",
+      "objectivec/include/ort_enums.h",
+      "objectivec/include/ort_env.h",
+      "objectivec/include/ort_session.h",
+      "objectivec/include/ort_value.h",
+      "objectivec/include/ort_xnnpack_execution_provider.h",
+      "objectivec/ort_coreml_execution_provider.mm",
+      "objectivec/ort_enums.mm",
+      "objectivec/ort_enums_internal.h",
+      "objectivec/ort_env.mm",
+      "objectivec/ort_env_internal.h",
+      "objectivec/ort_session.mm",
+      "objectivec/ort_session_internal.h",
+      "objectivec/ort_value.mm",
+      "objectivec/ort_value_internal.h",
+      "objectivec/ort_xnnpack_execution_provider.mm"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "objectivec/include/onnxruntime.h",
+      "objectivec/include/ort_coreml_execution_provider.h",
+      "objectivec/include/ort_custom_op_registration.h",
+      "objectivec/include/ort_enums.h",
+      "objectivec/include/ort_env.h",
+      "objectivec/include/ort_session.h",
+      "objectivec/include/ort_value.h",
+      "objectivec/include/ort_xnnpack_execution_provider.h"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/onnxruntime-mobile-c:onnxruntime-mobile-c"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  objc_copts = [
+    "-ITests/Pods/onnxruntime-mobile-objc/objectivec"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/onnxruntime-mobile-objc/objectivec"
+  ],
+  xcconfig = {
+    "OTHER_CPLUSPLUSFLAGS": [
+      "-fvisibility=hidden",
+      "-fvisibility-inlines-hidden"
+    ]
+  },
+  visibility = [
+    "//visibility:public"
+  ]
+)

@@ -1,0 +1,226 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "SensorsAnalyticsSDK",
+  module_name = "SensorsAnalyticsSDK",
+  bundle_id = "org.cocoapods.SensorsAnalyticsSDK",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":SensorsAnalyticsSDK_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "SensorsAnalyticsSDK/AutoTrack/**/*.h",
+      "SensorsAnalyticsSDK/AutoTrack/**/*.m",
+      "SensorsAnalyticsSDK/ChannelMatch/**/*.h",
+      "SensorsAnalyticsSDK/ChannelMatch/**/*.m",
+      "SensorsAnalyticsSDK/Core/**/*.h",
+      "SensorsAnalyticsSDK/Core/**/*.m",
+      "SensorsAnalyticsSDK/Core/HookDelegate/**/*.h",
+      "SensorsAnalyticsSDK/Core/HookDelegate/**/*.m",
+      "SensorsAnalyticsSDK/Core/SAAlertController.h",
+      "SensorsAnalyticsSDK/Core/SAAlertController.m",
+      "SensorsAnalyticsSDK/DebugMode/**/*.h",
+      "SensorsAnalyticsSDK/DebugMode/**/*.m",
+      "SensorsAnalyticsSDK/Deeplink/**/*.h",
+      "SensorsAnalyticsSDK/Deeplink/**/*.m",
+      "SensorsAnalyticsSDK/Encrypt/**/*.h",
+      "SensorsAnalyticsSDK/Encrypt/**/*.m",
+      "SensorsAnalyticsSDK/JSBridge/**/*.h",
+      "SensorsAnalyticsSDK/JSBridge/**/*.m",
+      "SensorsAnalyticsSDK/RemoteConfig/**/*.h",
+      "SensorsAnalyticsSDK/RemoteConfig/**/*.m",
+      "SensorsAnalyticsSDK/Store/*.h",
+      "SensorsAnalyticsSDK/Store/*.m",
+      "SensorsAnalyticsSDK/UIRelated/**/*.h",
+      "SensorsAnalyticsSDK/UIRelated/**/*.m",
+      "SensorsAnalyticsSDK/Visualized/**/*.h",
+      "SensorsAnalyticsSDK/Visualized/**/*.m"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "SensorsAnalyticsSDK/AutoTrack/SAConfigOptions+AutoTrack.h",
+      "SensorsAnalyticsSDK/AutoTrack/SensorsAnalyticsSDK+SAAutoTrack.h",
+      "SensorsAnalyticsSDK/ChannelMatch/SAConfigOptions+*.h",
+      "SensorsAnalyticsSDK/ChannelMatch/SensorsAnalyticsSDK+*.h",
+      "SensorsAnalyticsSDK/Core/PropertyPlugin/SAPropertyPlugin.h",
+      "SensorsAnalyticsSDK/Core/SAConfigOptions.h",
+      "SensorsAnalyticsSDK/Core/SAConstants.h",
+      "SensorsAnalyticsSDK/Core/SASecurityPolicy.h",
+      "SensorsAnalyticsSDK/Core/SensorsAnalyticsExtension.h",
+      "SensorsAnalyticsSDK/Core/SensorsAnalyticsSDK+Public.h",
+      "SensorsAnalyticsSDK/Core/SensorsAnalyticsSDK.h",
+      "SensorsAnalyticsSDK/DebugMode/SAConfigOptions+*.h",
+      "SensorsAnalyticsSDK/DebugMode/SensorsAnalyticsSDK+*.h",
+      "SensorsAnalyticsSDK/Deeplink/SAAdvertisingConfig.h",
+      "SensorsAnalyticsSDK/Deeplink/SAConfigOptions+*.h",
+      "SensorsAnalyticsSDK/Deeplink/SASlinkCreator.h",
+      "SensorsAnalyticsSDK/Deeplink/SensorsAnalyticsSDK+*.h",
+      "SensorsAnalyticsSDK/Encrypt/SAConfigOptions+*.h",
+      "SensorsAnalyticsSDK/Encrypt/SAEncryptProtocol.h",
+      "SensorsAnalyticsSDK/Encrypt/SASecretKey.h",
+      "SensorsAnalyticsSDK/Encrypt/SensorsAnalyticsSDK+*.h",
+      "SensorsAnalyticsSDK/JSBridge/SensorsAnalyticsSDK+JavaScriptBridge.h",
+      "SensorsAnalyticsSDK/RemoteConfig/SAConfigOptions+*.h",
+      "SensorsAnalyticsSDK/RemoteConfig/SensorsAnalyticsSDK+*.h",
+      "SensorsAnalyticsSDK/Store/SAAESStorePlugin.h",
+      "SensorsAnalyticsSDK/Store/SABaseStoreManager.h",
+      "SensorsAnalyticsSDK/Store/SAStorePlugin.h",
+      "SensorsAnalyticsSDK/UIRelated/UIView+SensorsAnalytics.h",
+      "SensorsAnalyticsSDK/Visualized/SAConfigOptions+Visualized.h",
+      "SensorsAnalyticsSDK/Visualized/SensorsAnalyticsSDK+Visualized.h"
+    ]
+  ),
+  deps = [
+    ":SensorsAnalyticsSDK_SensorsAnalyticsSDK_Bundle"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "icucore",
+    "z"
+  ],
+  sdk_frameworks = [
+    "CoreTelephony",
+    "Foundation",
+    "SystemConfiguration",
+    "UIKit",
+    "WebKit",
+    "Security"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "SensorsAnalyticsSDK_SensorsAnalyticsSDK_Bundle",
+  bundle_id = "org.cocoapods.SensorsAnalyticsSDK",
+  bundle_name = "SensorsAnalyticsSDK",
+  infoplists = [
+    ":SensorsAnalyticsSDK_SensorsAnalyticsSDK_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "SensorsAnalyticsSDK/Resources/PrivacyInfo.xcprivacy"
+    ]
+  )
+)
+genrule(
+  name = "SensorsAnalyticsSDK_InfoPlist",
+  srcs = [],
+  outs = [
+    "SensorsAnalyticsSDK_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.SensorsAnalyticsSDK</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>SensorsAnalyticsSDK</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.6.2</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "SensorsAnalyticsSDK_SensorsAnalyticsSDK_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "SensorsAnalyticsSDK_SensorsAnalyticsSDK_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.SensorsAnalyticsSDK</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>SensorsAnalyticsSDK</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.6.2</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

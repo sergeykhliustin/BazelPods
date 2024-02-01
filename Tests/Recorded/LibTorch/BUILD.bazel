@@ -1,0 +1,81 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "LibTorch",
+  module_name = "LibTorch",
+  bundle_id = "org.cocoapods.LibTorch",
+  link_dynamic = False,
+  testonly = False,
+  platforms = {
+    "ios": "12.0"
+  },
+  public_headers = glob(
+    [
+      "src/*.c",
+      "src/*.cc",
+      "src/*.cpp",
+      "src/*.h",
+      "src/LibTorch.h"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++",
+    "stdc++"
+  ],
+  sdk_frameworks = [
+    "Accelerate",
+    "CoreML",
+    "MetalPerformanceShaders"
+  ],
+  objc_copts = [
+    "-ITests/Pods/LibTorch/install/include/"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/LibTorch/install/include/"
+  ],
+  linkopts = [
+    "-force_load",
+    "Tests/Pods/LibTorch/install/lib/libtorch.a",
+    "-force_load",
+    "Tests/Pods/LibTorch/install/lib/libtorch_cpu.a"
+  ],
+  xcconfig = {
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++14",
+    "CLANG_CXX_LIBRARY": "libc++"
+  },
+  visibility = [
+    "//visibility:public"
+  ]
+)

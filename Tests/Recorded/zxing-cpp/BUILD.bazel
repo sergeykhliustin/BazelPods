@@ -1,0 +1,134 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "zxing-cpp",
+  module_name = "ZXingCpp",
+  bundle_id = "org.cocoapods.zxing-cpp",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":zxing-cpp_InfoPlist"
+  ],
+  platforms = {
+    "ios": "11.0"
+  },
+  srcs = glob(
+    [
+      "core/src/**/*.c",
+      "core/src/**/*.cpp",
+      "core/src/**/*.h",
+      "wrappers/ios/Sources/Wrapper/**/*.h",
+      "wrappers/ios/Sources/Wrapper/**/*.m",
+      "wrappers/ios/Sources/Wrapper/**/*.mm"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "wrappers/ios/Sources/Wrapper/Reader/ZXIBarcodeReader.h",
+      "wrappers/ios/Sources/Wrapper/Reader/ZXIGTIN.h",
+      "wrappers/ios/Sources/Wrapper/Reader/ZXIPoint.h",
+      "wrappers/ios/Sources/Wrapper/Reader/ZXIPosition.h",
+      "wrappers/ios/Sources/Wrapper/Reader/ZXIReaderOptions.h",
+      "wrappers/ios/Sources/Wrapper/Reader/ZXIResult.h",
+      "wrappers/ios/Sources/Wrapper/Writer/ZXIBarcodeWriter.h",
+      "wrappers/ios/Sources/Wrapper/Writer/ZXIWriterOptions.h",
+      "wrappers/ios/Sources/Wrapper/ZXIErrors.h",
+      "wrappers/ios/Sources/Wrapper/ZXIFormat.h"
+    ],
+    exclude = [
+      "core/src/**/*.h"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "core/src/**/*.h"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++"
+  ],
+  sdk_frameworks = [
+    "CoreGraphics",
+    "CoreImage",
+    "CoreVideo"
+  ],
+  xcconfig = {
+    "CLANG_CXX_LANGUAGE_STANDARD": "c++20"
+  },
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "zxing-cpp_InfoPlist",
+  srcs = [],
+  outs = [
+    "zxing-cpp_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.zxing-cpp</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>zxing-cpp</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.2.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

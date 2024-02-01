@@ -54,6 +54,7 @@ apple_framework(
     "Combine",
     "CoreServices",
     "MobileCoreServices",
+    "Security",
     "SystemConfiguration",
     "UniformTypeIdentifiers"
   ],
@@ -81,7 +82,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>5.6.2</string>
+	<string>5.8.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

@@ -1,0 +1,139 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "PocketSVG",
+  module_name = "PocketSVG",
+  bundle_id = "org.cocoapods.PocketSVG",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":PocketSVG_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Sources/**/*.S",
+      "Sources/**/*.c",
+      "Sources/**/*.cc",
+      "Sources/**/*.cpp",
+      "Sources/**/*.cxx",
+      "Sources/**/*.h",
+      "Sources/**/*.hpp",
+      "Sources/**/*.hxx",
+      "Sources/**/*.m",
+      "Sources/**/*.mm",
+      "Sources/**/*.s",
+      "Sources/**/*.swift",
+      "Sources/include/**/*.S",
+      "Sources/include/**/*.c",
+      "Sources/include/**/*.cc",
+      "Sources/include/**/*.cpp",
+      "Sources/include/**/*.cxx",
+      "Sources/include/**/*.h",
+      "Sources/include/**/*.hpp",
+      "Sources/include/**/*.hxx",
+      "Sources/include/**/*.m",
+      "Sources/include/**/*.mm",
+      "Sources/include/**/*.s",
+      "Sources/include/**/*.swift"
+    ]
+  ),
+  data = glob(
+    [
+      "Sources/Resources/SVGColors.plist"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "stdc++",
+    "xml2"
+  ],
+  sdk_frameworks = [
+    "QuartzCore",
+    "CoreGraphics"
+  ],
+  objc_copts = [
+    "-I$(SDKROOT)/usr/include/libxml2"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-I$(SDKROOT)/usr/include/libxml2"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "PocketSVG_InfoPlist",
+  srcs = [],
+  outs = [
+    "PocketSVG_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.PocketSVG</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>PocketSVG</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.7.3</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
