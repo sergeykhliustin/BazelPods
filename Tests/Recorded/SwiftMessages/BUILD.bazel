@@ -21,7 +21,7 @@ apple_framework(
     ":SwiftMessages_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0"
+    "ios": "12.0"
   },
   srcs = glob(
     [
@@ -55,7 +55,8 @@ apple_framework(
   ),
   sdk_frameworks = [
     "UIKit",
-    "QuartzCore"
+    "QuartzCore",
+    "SwiftUI"
   ],
   visibility = [
     "//visibility:public"
@@ -94,7 +95,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>9.0.6</string>
+	<string>9.0.9</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -105,7 +106,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>12.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -136,7 +137,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>9.0.6</string>
+	<string>9.0.9</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -147,7 +148,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>12.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

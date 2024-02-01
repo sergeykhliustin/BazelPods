@@ -1,0 +1,137 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "KSCrash",
+  module_name = "KSCrash",
+  bundle_id = "org.cocoapods.KSCrash",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":KSCrash_InfoPlist"
+  ],
+  platforms = {
+    "ios": "11.0"
+  },
+  srcs = glob(
+    [
+      "Source/KSCrash/Installations/**/*.c",
+      "Source/KSCrash/Installations/**/*.cpp",
+      "Source/KSCrash/Installations/**/*.h",
+      "Source/KSCrash/Installations/**/*.m",
+      "Source/KSCrash/Installations/**/*.mm",
+      "Source/KSCrash/Recording/**/*.c",
+      "Source/KSCrash/Recording/**/*.cpp",
+      "Source/KSCrash/Recording/**/*.h",
+      "Source/KSCrash/Recording/**/*.m",
+      "Source/KSCrash/Recording/**/*.mm",
+      "Source/KSCrash/Reporting/Filters/KSCrashReportFilter.h",
+      "Source/KSCrash/llvm/**/*.c",
+      "Source/KSCrash/llvm/**/*.cpp",
+      "Source/KSCrash/llvm/**/*.h",
+      "Source/KSCrash/llvm/**/*.m",
+      "Source/KSCrash/llvm/**/*.mm",
+      "Source/KSCrash/swift/**/*.c",
+      "Source/KSCrash/swift/**/*.cpp",
+      "Source/KSCrash/swift/**/*.h",
+      "Source/KSCrash/swift/**/*.m",
+      "Source/KSCrash/swift/**/*.mm"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "Source/KSCrash/Recording/KSCrash.h",
+      "Source/KSCrash/Recording/KSCrashC.h",
+      "Source/KSCrash/Recording/KSCrashReportFields.h",
+      "Source/KSCrash/Recording/KSCrashReportWriter.h",
+      "Source/KSCrash/Recording/Monitors/KSCrashMonitorType.h",
+      "Source/KSCrash/Reporting/Filters/KSCrashReportFilter.h"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++",
+    "z"
+  ],
+  sdk_frameworks = [
+    "Foundation",
+    "CoreFoundation"
+  ],
+  xcconfig = {
+    "GCC_ENABLE_CPP_EXCEPTIONS": "YES"
+  },
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "KSCrash_InfoPlist",
+  srcs = [],
+  outs = [
+    "KSCrash_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.KSCrash</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>KSCrash</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.16.2</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

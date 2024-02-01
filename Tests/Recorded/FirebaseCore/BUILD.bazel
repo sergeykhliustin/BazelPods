@@ -26,8 +26,7 @@ apple_framework(
     [
       "FirebaseCore/Extension/*.h",
       "FirebaseCore/Sources/**/*.h",
-      "FirebaseCore/Sources/**/*.m",
-      "Interop/CoreDiagnostics/Public/*.h"
+      "FirebaseCore/Sources/**/*.m"
     ]
   ),
   public_headers = glob(
@@ -36,7 +35,6 @@ apple_framework(
     ]
   ),
   deps = [
-    "//Tests/Pods/FirebaseCoreDiagnostics:FirebaseCoreDiagnostics",
     "//Tests/Pods/FirebaseCoreInternal:FirebaseCoreInternal",
     "//Tests/Pods/GoogleUtilities:GoogleUtilities"
   ],
@@ -75,7 +73,7 @@ apple_framework(
   ],
   xcconfig = {
     "GCC_PREPROCESSOR_DEFINITIONS": [
-      "Firebase_VERSION=9.5.0"
+      "Firebase_VERSION=10.20.0"
     ],
     "OTHER_CFLAGS": [
       "-fno-autolink"
@@ -105,7 +103,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>9.5.0</string>
+	<string>10.20.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

@@ -1,0 +1,246 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "GoogleToolboxForMac",
+  module_name = "GoogleToolboxForMac",
+  bundle_id = "org.cocoapods.GoogleToolboxForMac",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":GoogleToolboxForMac_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "DebugUtils/GTMDebugSelectorValidation.h",
+      "DebugUtils/GTMDebugSelectorValidation.m",
+      "DebugUtils/GTMDebugThreadValidation.h",
+      "DebugUtils/GTMMethodCheck.h",
+      "DebugUtils/GTMTypeCasting.h",
+      "Foundation/GTMGeometryUtils.h",
+      "Foundation/GTMGeometryUtils.m",
+      "Foundation/GTMLocalizedString.h",
+      "Foundation/GTMLogger.h",
+      "Foundation/GTMLogger.m",
+      "Foundation/GTMNSData+zlib.h",
+      "Foundation/GTMNSData+zlib.m",
+      "Foundation/GTMNSFileHandle+UniqueName.h",
+      "Foundation/GTMNSFileHandle+UniqueName.m",
+      "Foundation/GTMNSObject+KeyValueObserving.h",
+      "Foundation/GTMNSObject+KeyValueObserving.m",
+      "Foundation/GTMNSString+HTML.h",
+      "Foundation/GTMNSString+HTML.m",
+      "Foundation/GTMNSString+XML.h",
+      "Foundation/GTMNSString+XML.m",
+      "Foundation/GTMNSThread+Blocks.h",
+      "Foundation/GTMNSThread+Blocks.m",
+      "Foundation/GTMStringEncoding.h",
+      "Foundation/GTMStringEncoding.m",
+      "GTMDefines.h"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "GTMDefines.h"
+    ]
+  ),
+  deps = [
+    ":GoogleToolboxForMac_GoogleToolboxForMac_Logger_Privacy_Bundle",
+    ":GoogleToolboxForMac_GoogleToolboxForMac_Privacy_Bundle"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "z"
+  ],
+  sdk_frameworks = [
+    "CoreGraphics"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "GoogleToolboxForMac_GoogleToolboxForMac_Logger_Privacy_Bundle",
+  bundle_id = "org.cocoapods.GoogleToolboxForMac_Logger_Privacy",
+  bundle_name = "GoogleToolboxForMac_Logger_Privacy",
+  infoplists = [
+    ":GoogleToolboxForMac_GoogleToolboxForMac_Logger_Privacy_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Resources/Logger/PrivacyInfo.xcprivacy"
+    ]
+  )
+)
+precompiled_apple_resource_bundle(
+  name = "GoogleToolboxForMac_GoogleToolboxForMac_Privacy_Bundle",
+  bundle_id = "org.cocoapods.GoogleToolboxForMac_Privacy",
+  bundle_name = "GoogleToolboxForMac_Privacy",
+  infoplists = [
+    ":GoogleToolboxForMac_GoogleToolboxForMac_Privacy_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Resources/Base/PrivacyInfo.xcprivacy"
+    ]
+  )
+)
+genrule(
+  name = "GoogleToolboxForMac_InfoPlist",
+  srcs = [],
+  outs = [
+    "GoogleToolboxForMac_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.GoogleToolboxForMac</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GoogleToolboxForMac</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.2.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "GoogleToolboxForMac_GoogleToolboxForMac_Logger_Privacy_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "GoogleToolboxForMac_GoogleToolboxForMac_Logger_Privacy_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.GoogleToolboxForMac_Logger_Privacy</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GoogleToolboxForMac_Logger_Privacy</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.2.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "GoogleToolboxForMac_GoogleToolboxForMac_Privacy_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "GoogleToolboxForMac_GoogleToolboxForMac_Privacy_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.GoogleToolboxForMac_Privacy</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GoogleToolboxForMac_Privacy</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>4.2.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

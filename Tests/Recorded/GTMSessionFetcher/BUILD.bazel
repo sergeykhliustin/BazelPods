@@ -1,0 +1,223 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "GTMSessionFetcher",
+  module_name = "GTMSessionFetcher",
+  bundle_id = "org.cocoapods.GTMSessionFetcher",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":GTMSessionFetcher_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "Sources/Core/**/*.h",
+      "Sources/Core/**/*.m",
+      "Sources/Full/**/*.h",
+      "Sources/Full/**/*.m"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "Sources/Core/Public/GTMSessionFetcher/*.h",
+      "Sources/Full/Public/GTMSessionFetcher/*.h"
+    ]
+  ),
+  deps = [
+    ":GTMSessionFetcher_GTMSessionFetcher_Core_Privacy_Bundle",
+    ":GTMSessionFetcher_GTMSessionFetcher_Full_Privacy_Bundle"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Security"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "GTMSessionFetcher_GTMSessionFetcher_Core_Privacy_Bundle",
+  bundle_id = "org.cocoapods.GTMSessionFetcher_Core_Privacy",
+  bundle_name = "GTMSessionFetcher_Core_Privacy",
+  infoplists = [
+    ":GTMSessionFetcher_GTMSessionFetcher_Core_Privacy_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Sources/Core/Resources/PrivacyInfo.xcprivacy"
+    ]
+  )
+)
+precompiled_apple_resource_bundle(
+  name = "GTMSessionFetcher_GTMSessionFetcher_Full_Privacy_Bundle",
+  bundle_id = "org.cocoapods.GTMSessionFetcher_Full_Privacy",
+  bundle_name = "GTMSessionFetcher_Full_Privacy",
+  infoplists = [
+    ":GTMSessionFetcher_GTMSessionFetcher_Full_Privacy_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "Sources/Full/Resources/PrivacyInfo.xcprivacy"
+    ]
+  )
+)
+genrule(
+  name = "GTMSessionFetcher_InfoPlist",
+  srcs = [],
+  outs = [
+    "GTMSessionFetcher_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.GTMSessionFetcher</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GTMSessionFetcher</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.3.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "GTMSessionFetcher_GTMSessionFetcher_Core_Privacy_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "GTMSessionFetcher_GTMSessionFetcher_Core_Privacy_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.GTMSessionFetcher_Core_Privacy</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GTMSessionFetcher_Core_Privacy</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.3.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "GTMSessionFetcher_GTMSessionFetcher_Full_Privacy_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "GTMSessionFetcher_GTMSessionFetcher_Full_Privacy_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.GTMSessionFetcher_Full_Privacy</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GTMSessionFetcher_Full_Privacy</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.3.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

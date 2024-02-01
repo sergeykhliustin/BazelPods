@@ -1,0 +1,163 @@
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_dynamic_xcframework_import')
+load('@build_bazel_rules_apple//apple:apple.bzl', 'apple_static_xcframework_import')
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+config_setting(
+  name = "ios_arm64",
+  values = {
+    "cpu": "ios_arm64"
+  }
+)
+config_setting(
+  name = "ios_armv7",
+  values = {
+    "cpu": "ios_armv7"
+  }
+)
+config_setting(
+  name = "ios_sim_arm64",
+  values = {
+    "cpu": "ios_sim_arm64"
+  }
+)
+config_setting(
+  name = "ios_x86_64",
+  values = {
+    "cpu": "ios_x86_64"
+  }
+)
+apple_framework(
+  name = "TXLiteAVSDK_Player",
+  module_name = "TXLiteAVSDK_Player",
+  bundle_id = "org.cocoapods.TXLiteAVSDK_Player",
+  link_dynamic = False,
+  testonly = False,
+  platforms = {
+    "ios": "10.0"
+  },
+  public_headers = glob(
+    [
+      "TXLiteAVSDK_Player/TXLiteAVSDK_Player.xcframework/ios-arm64_armv7/TXLiteAVSDK_Player.framework/Headers/*.h",
+      "TXLiteAVSDK_Player/TXLiteAVSDK_Player.xcframework/ios-arm64_armv7/TXLiteAVSDK_Player.framework/Headers/*.h"
+    ]
+  ),
+  deps = select(
+    {
+      "//conditions:default": [],
+      ":ios_arm64": [
+        ":TXLiteAVSDK_Player_TXFFmpeg_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXLiteAVSDK_Player_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXSoundTouch_VendoredXCFramework"
+      ],
+      ":ios_armv7": [
+        ":TXLiteAVSDK_Player_TXFFmpeg_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXLiteAVSDK_Player_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXSoundTouch_VendoredXCFramework"
+      ],
+      ":ios_sim_arm64": [
+        ":TXLiteAVSDK_Player_TXFFmpeg_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXLiteAVSDK_Player_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXSoundTouch_VendoredXCFramework"
+      ],
+      ":ios_x86_64": [
+        ":TXLiteAVSDK_Player_TXFFmpeg_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXLiteAVSDK_Player_VendoredXCFramework",
+        ":TXLiteAVSDK_Player_TXSoundTouch_VendoredXCFramework"
+      ]
+    }
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_dylibs = [
+    "c++",
+    "iconv",
+    "resolv",
+    "sqlite3",
+    "stdc++",
+    "z"
+  ],
+  sdk_frameworks = [
+    "AVFoundation",
+    "Accelerate",
+    "AudioToolbox",
+    "CoreGraphics",
+    "CoreServices",
+    "CoreTelephony",
+    "MetalKit",
+    "ReplayKit",
+    "SystemConfiguration",
+    "VideoToolbox"
+  ],
+  objc_copts = [
+    "-ITests/Pods/TXLiteAVSDK_Player/TXLiteAVSDK_Player/TXLiteAVSDK_Player.xcframework/ios-arm64_armv7/TXLiteAVSDK_Player.framework/Headers/"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/TXLiteAVSDK_Player/TXLiteAVSDK_Player/TXLiteAVSDK_Player.xcframework/ios-arm64_armv7/TXLiteAVSDK_Player.framework/Headers/"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "TXLiteAVSDK_Player_TXFFmpeg_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "TXLiteAVSDK_Player/TXFFmpeg.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_static_xcframework_import(
+  name = "TXLiteAVSDK_Player_TXLiteAVSDK_Player_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "TXLiteAVSDK_Player/TXLiteAVSDK_Player.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)
+apple_dynamic_xcframework_import(
+  name = "TXLiteAVSDK_Player_TXSoundTouch_VendoredXCFramework",
+  xcframework_imports = glob(
+    [
+      "TXLiteAVSDK_Player/TXSoundTouch.xcframework/**"
+    ]
+  ),
+  visibility = [
+    "//visibility:public"
+  ]
+)

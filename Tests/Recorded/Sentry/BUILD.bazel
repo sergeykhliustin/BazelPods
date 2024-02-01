@@ -44,6 +44,11 @@ apple_framework(
       "Sources/Sentry/Public/*.h"
     ]
   ),
+  data = glob(
+    [
+      "Sources/Resources/PrivacyInfo.xcprivacy"
+    ]
+  ),
   deps = [
     "//Tests/Pods/SentryPrivate:SentryPrivate"
   ],
@@ -69,10 +74,6 @@ apple_framework(
       ]
     }
   ),
-  sdk_dylibs = [
-    "c++",
-    "z"
-  ],
   sdk_frameworks = [
     "Foundation",
     "CoreData"
@@ -106,7 +107,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>8.0.0</string>
+	<string>8.19.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>

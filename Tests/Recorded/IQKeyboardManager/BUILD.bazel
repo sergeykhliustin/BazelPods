@@ -1,4 +1,5 @@
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
 # see the bazel user manual for more information
@@ -19,7 +20,7 @@ apple_framework(
     ":IQKeyboardManager_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0"
+    "ios": "11.0"
   },
   srcs = glob(
     [
@@ -44,6 +45,9 @@ apple_framework(
       "IQKeyboardManager/IQToolbar/IQUIView+IQKeyboardToolbar.h"
     ]
   ),
+  deps = [
+    ":IQKeyboardManager_IQKeyboardManager_Bundle"
+  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -76,6 +80,19 @@ apple_framework(
     "//visibility:public"
   ]
 )
+precompiled_apple_resource_bundle(
+  name = "IQKeyboardManager_IQKeyboardManager_Bundle",
+  bundle_id = "org.cocoapods.IQKeyboardManager",
+  bundle_name = "IQKeyboardManager",
+  infoplists = [
+    ":IQKeyboardManager_IQKeyboardManager_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "IQKeyboardManager/PrivacyInfo.xcprivacy"
+    ]
+  )
+)
 genrule(
   name = "IQKeyboardManager_InfoPlist",
   srcs = [],
@@ -96,7 +113,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>6.5.10</string>
+	<string>6.5.17</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -107,7 +124,49 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "IQKeyboardManager_IQKeyboardManager_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "IQKeyboardManager_IQKeyboardManager_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.IQKeyboardManager</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>IQKeyboardManager</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>6.5.17</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

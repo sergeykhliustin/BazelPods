@@ -1,0 +1,114 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "TZImagePickerController",
+  module_name = "TZImagePickerController",
+  bundle_id = "org.cocoapods.TZImagePickerController",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":TZImagePickerController_InfoPlist"
+  ],
+  platforms = {
+    "ios": "10.0"
+  },
+  srcs = glob(
+    [
+      "TZImagePickerController/Location/*.h",
+      "TZImagePickerController/Location/*.m",
+      "TZImagePickerController/TZImagePickerController/*.h",
+      "TZImagePickerController/TZImagePickerController/*.m"
+    ]
+  ),
+  data = glob(
+    [
+      "TZImagePickerController/TZImagePickerController/*.bundle",
+      "TZImagePickerController/TZImagePickerController/*.png"
+    ]
+  ),
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "Photos",
+    "PhotosUI",
+    "AVFoundation",
+    "CoreLocation",
+    "ImageIO",
+    "MediaPlayer",
+    "MobileCoreServices"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "TZImagePickerController_InfoPlist",
+  srcs = [],
+  outs = [
+    "TZImagePickerController_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.TZImagePickerController</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>TZImagePickerController</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.8.4</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)

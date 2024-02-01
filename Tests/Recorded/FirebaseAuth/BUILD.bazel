@@ -1,0 +1,125 @@
+load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+# Add a config setting release for compilation mode
+# Assume that people are using `opt` for release mode
+# see the bazel user manual for more information
+# https://docs.bazel.build/versions/master/be/general.html#config_setting
+config_setting(
+  name = "release",
+  values = {
+    "compilation_mode": "opt"
+  }
+)
+apple_framework(
+  name = "FirebaseAuth",
+  module_name = "FirebaseAuth",
+  bundle_id = "org.cocoapods.FirebaseAuth",
+  swift_version = "5",
+  link_dynamic = True,
+  testonly = False,
+  infoplists = [
+    ":FirebaseAuth_InfoPlist"
+  ],
+  platforms = {
+    "ios": "11.0"
+  },
+  srcs = glob(
+    [
+      "FirebaseAuth/Interop/*.h",
+      "FirebaseAuth/Sources/**/*.h",
+      "FirebaseAuth/Sources/**/*.m",
+      "FirebaseCore/Extension/*.h"
+    ]
+  ),
+  public_headers = glob(
+    [
+      "FirebaseAuth/Sources/Public/FirebaseAuth/*.h"
+    ]
+  ),
+  deps = [
+    "//Tests/Pods/FirebaseAppCheckInterop:FirebaseAppCheckInterop",
+    "//Tests/Pods/FirebaseCore:FirebaseCore",
+    "//Tests/Pods/GTMSessionFetcher:GTMSessionFetcher",
+    "//Tests/Pods/GoogleUtilities:GoogleUtilities",
+    "//Tests/Pods/RecaptchaInterop:RecaptchaInterop"
+  ],
+  objc_defines = [
+    "COCOAPODS=1"
+  ] + select(
+    {
+      "//conditions:default": [
+        "POD_CONFIGURATION_DEBUG=1",
+        "DEBUG=1"
+      ],
+      ":release": [
+        "POD_CONFIGURATION_RELEASE=1"
+      ]
+    }
+  ),
+  swift_defines = [
+    "COCOAPODS"
+  ] + select(
+    {
+      "//conditions:default": [
+        "DEBUG"
+      ]
+    }
+  ),
+  sdk_frameworks = [
+    "SafariServices",
+    "Security",
+    "GameKit",
+    "WebKit"
+  ],
+  objc_copts = [
+    "-ITests/Pods/FirebaseAuth"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/FirebaseAuth"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "FirebaseAuth_InfoPlist",
+  srcs = [],
+  outs = [
+    "FirebaseAuth_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.FirebaseAuth</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>FirebaseAuth</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>10.20.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
