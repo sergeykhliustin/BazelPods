@@ -1,11 +1,13 @@
 install! 'cocoapods',
          :integrate_targets => false,
-         :parallel_pod_downloads => true
+         :parallel_pod_downloads => true,
+         :parallel_pod_download_thread_pool_size => 4
 
 target 'TestApp_iOS' do
-  platform :ios, '13.4'
+  platform :ios, '14.0'
   inhibit_all_warnings!
   use_modular_headers!
+  use_frameworks!
 [[IOS_PODS]]
 end
 
