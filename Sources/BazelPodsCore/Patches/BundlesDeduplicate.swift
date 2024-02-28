@@ -10,13 +10,15 @@ import Foundation
 /// Fixes issue when podspec includes bundle and static vendored framework where framework contains bundle with same name
 /// See `GoogleMaps` `~ 7.3.0` as example
 struct BundlesDeduplicate: Patch {
-    func run(base: inout BaseAnalyzer.Result,
-             sources: inout SourcesAnalyzer.Result,
-             resources: inout ResourcesAnalyzer.Result,
-             sdkDeps: inout SdkDependenciesAnalyzer.Result,
-             vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
-             podDeps: inout PodDependenciesAnalyzer.Result,
-             buildSettings: inout BuildSettingsAnalyzer.Result) {
+    func run<S>(
+        base: inout BaseAnalyzer<S>.Result,
+        sources: inout SourcesAnalyzer<S>.Result,
+        resources: inout ResourcesAnalyzer<S>.Result,
+        sdkDeps: inout SdkDependenciesAnalyzer<S>.Result,
+        vendoredDeps: inout VendoredDependenciesAnalyzer<S>.Result,
+        podDeps: inout PodDependenciesAnalyzer<S>.Result,
+        buildSettings: inout BuildSettingsAnalyzer<S>.Result
+    ) {
 
         var frameworksPaths = [String]()
         frameworksPaths = (vendoredDeps.frameworks + vendoredDeps.xcFrameworks)

@@ -17,7 +17,7 @@ private let AnyFileTypes = ObjcLikeFileTypes
     .union(SwiftLikeFileTypes)
     .union(HeaderFileTypes)
 
-public struct SourcesAnalyzer {
+struct SourcesAnalyzer<S: SourceFilesRepresentable> {
     public struct Result {
         enum SourcesType {
             case empty
@@ -39,13 +39,13 @@ public struct SourcesAnalyzer {
     }
 
     private let platform: Platform
-    private let spec: PodSpec
-    private let subspecs: [PodSpec]
+    private let spec: S
+    private let subspecs: [S]
     private let options: BuildOptions
 
     public init(platform: Platform,
-                spec: PodSpec,
-                subspecs: [PodSpec],
+                spec: S,
+                subspecs: [S],
                 options: BuildOptions) {
         self.platform = platform
         self.spec = spec
@@ -137,12 +137,14 @@ public struct SourcesAnalyzer {
         )
     }
 
-    func getFilesNodes(spec: PodSpec,
-                       subspecs: [PodSpec] = [],
-                       includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
-                       excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
-                       fileTypes: Set<String>,
-                       options: BuildOptions) -> AttrSet<GlobNodeV2> {
+    func getFilesNodes(
+        spec: S,
+        subspecs: [S] = [],
+        includesKeyPath: KeyPath<S, [String]>,
+        excludesKeyPath: KeyPath<S, [String]>? = nil,
+        fileTypes: Set<String>,
+        options: BuildOptions)
+    -> AttrSet<GlobNodeV2> {
         let (implFiles, implExcludes) = getFiles(spec: spec,
                                                  subspecs: subspecs,
                                                  includesKeyPath: includesKeyPath,
@@ -155,12 +157,14 @@ public struct SourcesAnalyzer {
         }
     }
 
-    func getFiles(spec: PodSpec,
-                  subspecs: [PodSpec] = [],
-                  includesKeyPath: KeyPath<PodSpecRepresentable, [String]>,
-                  excludesKeyPath: KeyPath<PodSpecRepresentable, [String]>? = nil,
-                  fileTypes: Set<String>,
-                  options: BuildOptions) -> (includes: AttrSet<Set<String>>, excludes: AttrSet<Set<String>>) {
+    func getFiles(
+        spec: S,
+        subspecs: [S] = [],
+        includesKeyPath: KeyPath<S, [String]>,
+        excludesKeyPath: KeyPath<S, [String]>? = nil,
+        fileTypes: Set<String>,
+        options: BuildOptions)
+    -> (includes: AttrSet<Set<String>>, excludes: AttrSet<Set<String>>) {
         let includePattern = spec.collectAttribute(with: subspecs, keyPath: includesKeyPath)
         let depsIncludes = extractFiles(fromPattern: includePattern, includingFileTypes: fileTypes)
             .map({ Set($0) })

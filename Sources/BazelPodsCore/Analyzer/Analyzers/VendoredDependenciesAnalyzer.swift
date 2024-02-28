@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct VendoredDependenciesAnalyzer {
-    public struct Result {
+struct VendoredDependenciesAnalyzer<S: VendoredDependenciesRepresentable> {
+    struct Result {
         struct Vendored {
             let name: String
             let path: String
@@ -20,21 +20,21 @@ public struct VendoredDependenciesAnalyzer {
         var xcFrameworks: [Vendored]
     }
     private let platform: Platform
-    private let spec: PodSpec
-    private let subspecs: [PodSpec]
+    private let spec: S
+    private let subspecs: [S]
     private let options: BuildOptions
 
-    public init(platform: Platform,
-                spec: PodSpec,
-                subspecs: [PodSpec],
-                options: BuildOptions) {
+    init(platform: Platform,
+         spec: S,
+         subspecs: [S],
+         options: BuildOptions) {
         self.platform = platform
         self.spec = spec
         self.subspecs = subspecs
         self.options = options
     }
 
-    public var result: Result {
+    var result: Result {
         return run()
     }
 

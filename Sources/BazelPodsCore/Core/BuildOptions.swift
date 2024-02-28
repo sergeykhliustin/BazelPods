@@ -7,6 +7,13 @@
 
 import Foundation
 
+public enum TestsTimeout: String, CaseIterable {
+    case short
+    case moderate
+    case long
+    case eternal
+}
+
 public enum Platform: String {
     case ios
     case osx
@@ -64,6 +71,7 @@ public protocol BuildOptions {
     var useFrameworks: Bool { get }
     var noConcurrency: Bool { get }
     var hostArm64: Bool { get }
+    var testsTimeout: TestsTimeout? { get }
 
     var podTargetSrcRoot: String { get }
     var podTargetAbsoluteRoot: String { get }
@@ -120,6 +128,7 @@ public struct BasicBuildOptions: BuildOptions {
     public let useFrameworks: Bool
     public let noConcurrency: Bool
     public let hostArm64: Bool
+    public let testsTimeout: TestsTimeout?
 
     public init(podName: String,
                 subspecs: [String],
@@ -132,7 +141,8 @@ public struct BasicBuildOptions: BuildOptions {
                 podsRoot: String,
                 useFrameworks: Bool,
                 noConcurrency: Bool,
-                hostArm64: Bool) {
+                hostArm64: Bool,
+                testsTimeout: TestsTimeout?) {
         self.podName = podName
         self.subspecs = subspecs
         self.sourcePath = sourcePath
@@ -145,6 +155,7 @@ public struct BasicBuildOptions: BuildOptions {
         self.useFrameworks = useFrameworks
         self.noConcurrency = noConcurrency
         self.hostArm64 = hostArm64
+        self.testsTimeout = testsTimeout
     }
 
     public var podTargetSrcRoot: String {

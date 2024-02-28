@@ -7,24 +7,25 @@
 
 import Foundation
 
-public struct BaseAnalyzer {
-    public struct Result {
+struct BaseAnalyzer<S: BaseInfoRepresentable> {
+    struct Result {
         let name: String
         let version: String
         let moduleName: String
         let platforms: [String: String]
+        let minimumOsVersion: String
         let swiftVersion: String?
     }
 
     private let platform: Platform
-    private let spec: PodSpec
-    private let subspecs: [PodSpec]
+    private let spec: S
+    private let subspecs: [S]
     private let options: BuildOptions
 
-    public init(platform: Platform,
-                spec: PodSpec,
-                subspecs: [PodSpec],
-                options: BuildOptions) {
+    init(platform: Platform,
+         spec: S,
+         subspecs: [S],
+         options: BuildOptions) {
         self.platform = platform
         self.spec = spec
         self.subspecs = subspecs
@@ -33,14 +34,9 @@ public struct BaseAnalyzer {
 
     public func run() throws -> Result {
         let name = spec.name
-        let version = spec.version ?? "1.0"
+        let version = spec.version
         let platformVersion = try resolvePlatformVersion(platform)
-        let moduleName: String
-        if let specModuleName = spec.moduleName ?? spec.platformRepresentable(platform)?.moduleName {
-            moduleName = specModuleName
-        } else {
-            moduleName = name.replacingOccurrences(of: "-", with: "_")
-        }
+        let moduleName: String = spec.resolveModuleName(platform)
         let platforms = [platform.bazelKey: platformVersion]
         let swiftVersion: String?
         if let versions = spec.attr(\.swiftVersions).platform(platform)??.compactMap({ Double($0) }) {
@@ -60,6 +56,7 @@ public struct BaseAnalyzer {
                       version: version,
                       moduleName: moduleName,
                       platforms: platforms,
+                      minimumOsVersion: platformVersion,
                       swiftVersion: swiftVersion)
     }
 

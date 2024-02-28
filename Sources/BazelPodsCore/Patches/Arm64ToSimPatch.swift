@@ -7,7 +7,7 @@
 
 import Foundation
 
-private typealias Vendored = VendoredDependenciesAnalyzer.Result.Vendored
+private typealias Vendored<S: VendoredDependenciesRepresentable> = VendoredDependenciesAnalyzer<S>.Result.Vendored
 
 public struct Arm64ToSimPatch: Patch {
     private let options: BuildOptions
@@ -25,19 +25,21 @@ public struct Arm64ToSimPatch: Patch {
         self.outputPath = outputPath
     }
 
-    public func run(base: inout BaseAnalyzer.Result,
-                    sources: inout SourcesAnalyzer.Result,
-                    resources: inout ResourcesAnalyzer.Result,
-                    sdkDeps: inout SdkDependenciesAnalyzer.Result,
-                    vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
-                    podDeps: inout PodDependenciesAnalyzer.Result,
-                    buildSettings: inout BuildSettingsAnalyzer.Result) {
+    func run<S>(
+        base: inout BaseAnalyzer<S>.Result,
+        sources: inout SourcesAnalyzer<S>.Result,
+        resources: inout ResourcesAnalyzer<S>.Result,
+        sdkDeps: inout SdkDependenciesAnalyzer<S>.Result,
+        vendoredDeps: inout VendoredDependenciesAnalyzer<S>.Result,
+        podDeps: inout PodDependenciesAnalyzer<S>.Result,
+        buildSettings: inout BuildSettingsAnalyzer<S>.Result
+    ) {
         guard platform == .ios else { return }
         vendoredDeps.frameworks += vendoredDeps.frameworks.compactMap({ processFramework($0) })
         vendoredDeps.libraries += vendoredDeps.libraries.compactMap({ processLibrary($0) })
     }
 
-    private func processLibrary(_ library: Vendored) -> Vendored? {
+    private func processLibrary<S>(_ library: Vendored<S>) -> Vendored<S>? {
         guard !library.archs.contains(.ios_sim_arm64) else { return nil }
         log_info("Patching \(library.path.lastPath) to support ios_sim_arm64 ...")
         let path = options.absolutePath(from: library.path)
@@ -82,7 +84,7 @@ public struct Arm64ToSimPatch: Patch {
                         dynamic: library.dynamic)
     }
 
-    private func processFramework(_ framework: Vendored) -> Vendored? {
+    private func processFramework<S>(_ framework: Vendored<S>) -> Vendored<S>? {
         guard !framework.archs.contains(.ios_sim_arm64) else { return nil }
         log_info("Patching \(framework.path.lastPath) to support ios_sim_arm64 ...")
         let name = framework.path.deletingPathExtension.lastPath

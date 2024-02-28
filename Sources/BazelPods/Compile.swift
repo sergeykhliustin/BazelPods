@@ -53,7 +53,8 @@ extension BazelPods {
                                             podsRoot: options.podsRoot,
                                             useFrameworks: options.frameworks,
                                             noConcurrency: options.noConcurrency,
-                                            hostArm64: isHostArm64)
+                                            hostArm64: isHostArm64,
+                                            testsTimeout: options.testsTimeout)
 
             let result = PodBuildFile.with(podSpec: podSpec, buildOptions: options).compile()
             print(result)

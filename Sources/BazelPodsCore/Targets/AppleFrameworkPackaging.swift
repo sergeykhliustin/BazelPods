@@ -11,12 +11,12 @@ struct AppleFrameworkPackaging: BazelTarget {
     let loadNode = "load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework_packaging')"
 
     let name: String
-    let info: BaseAnalyzer.Result
+    let info: BaseAnalyzer<PodSpec>.Result
     let frameworkName: String
     let deps: [String]
 
     init(name: String,
-         info: BaseAnalyzer.Result,
+         info: BaseAnalyzer<PodSpec>.Result,
          frameworkName: String,
          deps: [String]) {
         self.name = name

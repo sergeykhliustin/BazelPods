@@ -7,29 +7,29 @@
 
 import Foundation
 
-public struct BuildSettingsAnalyzer {
-    public struct Result {
+struct BuildSettingsAnalyzer<S: XCConfigRepresentable> {
+    struct Result {
         let swiftCopts: [String]
         let objcCopts: [String]
         let linkOpts: [String]
         let xcconfig: [String: StarlarkNode]
     }
     private let platform: Platform
-    private let spec: PodSpec
-    private let subspecs: [PodSpec]
+    private let spec: S
+    private let subspecs: [S]
     private let options: BuildOptions
 
-    public init(platform: Platform,
-                spec: PodSpec,
-                subspecs: [PodSpec],
-                options: BuildOptions) {
+    init(platform: Platform,
+         spec: S,
+         subspecs: [S],
+         options: BuildOptions) {
         self.platform = platform
         self.spec = spec
         self.subspecs = subspecs
         self.options = options
     }
 
-    public var result: Result {
+    var result: Result {
         return run()
     }
 

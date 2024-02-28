@@ -127,7 +127,8 @@ extension BazelPods {
                                                  podsRoot: options.podsRoot,
                                                  useFrameworks: options.frameworks,
                                                  noConcurrency: options.noConcurrency,
-                                                 hostArm64: isHostArm64)
+                                                 hostArm64: isHostArm64,
+                                                 testsTimeout: options.testsTimeout)
             let starlarkString = PodBuildFile
                 .with(podSpec: podSpec, buildOptions: buildOptions)
                 .compile()

@@ -10,9 +10,9 @@ struct AppleFramework: BazelTarget {
 
     let name: String
 
-    let info: BaseAnalyzer.Result
-    let sources: SourcesAnalyzer.Result
-    let resources: ResourcesAnalyzer.Result
+    let info: BaseAnalyzer<PodSpec>.Result
+    let sources: SourcesAnalyzer<PodSpec>.Result
+    let resources: ResourcesAnalyzer<PodSpec>.Result
     let infoplists: [String]
 
     let deps: [String]
@@ -35,12 +35,12 @@ struct AppleFramework: BazelTarget {
     let xcconfig: [String: StarlarkNode]
 
     init(name: String,
-         info: BaseAnalyzer.Result,
-         sources: SourcesAnalyzer.Result,
-         resources: ResourcesAnalyzer.Result,
-         sdkDeps: SdkDependenciesAnalyzer.Result,
-         vendoredDeps: VendoredDependenciesAnalyzer.Result,
-         buildSettings: BuildSettingsAnalyzer.Result,
+         info: BaseAnalyzer<PodSpec>.Result,
+         sources: SourcesAnalyzer<PodSpec>.Result,
+         resources: ResourcesAnalyzer<PodSpec>.Result,
+         sdkDeps: SdkDependenciesAnalyzer<PodSpec>.Result,
+         vendoredDeps: VendoredDependenciesAnalyzer<PodSpec>.Result,
+         buildSettings: BuildSettingsAnalyzer<PodSpec>.Result,
          infoplists: [String],
          deps: [String],
          conditionalDeps: [String: [Arch]] = [:]) {
@@ -99,36 +99,7 @@ struct AppleFramework: BazelTarget {
         let swiftDefines = self.swiftDefines.toStarlark() .+. basicSwiftDefines
         let objcDefines = self.objcDefines.toStarlark() .+. basicObjcDefines
 
-        let baseDeps = deps.map({ !$0.hasPrefix("/") ? ":" + $0 : $0 })
-
-        var conditionalDepsMap = self.conditionalDeps.reduce([String: [String]]()) { partialResult, element in
-            var result = partialResult
-            element.value.forEach({
-                let conditon = ":" + $0.rawValue
-                let name = ":" + element.key
-                var arr = result[conditon] ?? []
-                arr.append(name)
-                result[conditon] = arr
-            })
-            return result
-        }.mapValues({ $0.sorted(by: <) })
-
-        let deps: StarlarkNode
-        if conditionalDepsMap.isEmpty {
-            deps = baseDeps.toStarlark()
-        } else {
-            conditionalDepsMap["//conditions:default"] = []
-            let conditionalDeps: StarlarkNode =
-                .functionCall(name: "select",
-                              arguments: [
-                                .basic(conditionalDepsMap.toStarlark())
-                              ])
-            if baseDeps.isEmpty {
-                deps = conditionalDeps
-            } else {
-                deps = .expr(lhs: baseDeps.toStarlark(), op: "+", rhs: conditionalDeps)
-            }
-        }
+        let deps = makeDeps(deps: deps, conditionalDeps: conditionalDeps)
 
         let bundleId = "org.cocoapods.\(info.name)"
 
@@ -145,7 +116,7 @@ struct AppleFramework: BazelTarget {
             .named(name: "non_arc_srcs", value: sources.nonArcSourceFiles.toStarlark()),
             .named(name: "public_headers", value: sources.publicHeaders.toStarlark()),
             .named(name: "private_headers", value: sources.privateHeaders.toStarlark()),
-            .named(name: "data", value: packData()),
+            .named(name: "data", value: resources.packedToDataNode),
             .named(name: "deps", value: deps.toStarlark()),
             .named(name: "objc_defines", value: objcDefines),
             .named(name: "swift_defines", value: swiftDefines),
@@ -171,25 +142,5 @@ struct AppleFramework: BazelTarget {
             name: "apple_framework",
             arguments: lines
         )
-    }
-
-    private func packData() -> StarlarkNode {
-        let data: StarlarkNode
-        let resources = self.resources.resources
-        let bundles = self.resources.precompiledBundles
-        let resourcesNode = GlobNodeV2(include: resources).toStarlark()
-        let bundlesNode = bundles.toStarlark()
-
-        switch (!resources.isEmpty, !bundles.isEmpty) {
-        case (false, false):
-            data = .empty
-        case (true, false):
-            data = resourcesNode
-        case (false, true):
-            data = bundlesNode
-        case (true, true):
-            data = StarlarkNode.expr(lhs: resourcesNode, op: "+", rhs: bundlesNode)
-        }
-        return data
     }
 }

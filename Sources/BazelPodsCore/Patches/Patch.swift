@@ -15,14 +15,28 @@ public enum PatchType: String, CaseIterable {
     case user_options
 }
 
-public protocol Patch {
-    func run(
-        base: inout BaseAnalyzer.Result,
-        sources: inout SourcesAnalyzer.Result,
-        resources: inout ResourcesAnalyzer.Result,
-        sdkDeps: inout SdkDependenciesAnalyzer.Result,
-        vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
-        podDeps: inout PodDependenciesAnalyzer.Result,
-        buildSettings: inout BuildSettingsAnalyzer.Result
+protocol Patch {
+    func run<S>(
+        base: inout BaseAnalyzer<S>.Result,
+        sources: inout SourcesAnalyzer<S>.Result,
+        resources: inout ResourcesAnalyzer<S>.Result,
+        sdkDeps: inout SdkDependenciesAnalyzer<S>.Result,
+        vendoredDeps: inout VendoredDependenciesAnalyzer<S>.Result,
+        podDeps: inout PodDependenciesAnalyzer<S>.Result,
+        buildSettings: inout BuildSettingsAnalyzer<S>.Result
+    )
+}
+
+protocol TestSpecSpecificPatch {
+    func run<S>(
+        base: inout BaseAnalyzer<S>.Result,
+        sources: inout SourcesAnalyzer<S>.Result,
+        resources: inout ResourcesAnalyzer<S>.Result,
+        sdkDeps: inout SdkDependenciesAnalyzer<S>.Result,
+        vendoredDeps: inout VendoredDependenciesAnalyzer<S>.Result,
+        podDeps: inout PodDependenciesAnalyzer<S>.Result,
+        buildSettings: inout BuildSettingsAnalyzer<S>.Result,
+        environment: inout EnvironmentAnalyzer<S>.Result,
+        runnerInfo: inout RunnerAnalyzer<S>.Result
     )
 }

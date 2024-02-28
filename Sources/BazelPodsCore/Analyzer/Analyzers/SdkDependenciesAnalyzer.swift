@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct SdkDependenciesAnalyzer {
-    public struct Result {
+struct SdkDependenciesAnalyzer<S: SdkDependenciesRepresentable> {
+    struct Result {
         var sdkDylibs: [String]
         var sdkFrameworks: [String]
         var weakSdkFrameworks: [String]
@@ -16,21 +16,21 @@ public struct SdkDependenciesAnalyzer {
     }
 
     private let platform: Platform
-    private let spec: PodSpec
-    private let subspecs: [PodSpec]
+    private let spec: S
+    private let subspecs: [S]
     private let options: BuildOptions
 
-    public init(platform: Platform,
-                spec: PodSpec,
-                subspecs: [PodSpec],
-                options: BuildOptions) {
+    init(platform: Platform,
+         spec: S,
+         subspecs: [S],
+         options: BuildOptions) {
         self.platform = platform
         self.spec = spec
         self.subspecs = subspecs
         self.options = options
     }
 
-    public var result: Result {
+    var result: Result {
         return run()
     }
 
