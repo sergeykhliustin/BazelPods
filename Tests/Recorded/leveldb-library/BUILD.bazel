@@ -65,14 +65,11 @@ apple_framework(
     "c++"
   ],
   objc_copts = [
-    "-ITests/Pods/leveldb-library",
-    "-ITests/Pods/leveldb-library/include"
+    "-ITests/Pods/leveldb-library"
   ],
   swift_copts = [
     "-Xcc",
-    "-ITests/Pods/leveldb-library",
-    "-Xcc",
-    "-ITests/Pods/leveldb-library/include"
+    "-ITests/Pods/leveldb-library"
   ],
   xcconfig = {
     "GCC_PREPROCESSOR_DEFINITIONS": [
@@ -113,7 +110,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.22.2</string>
+	<string>1.22.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
