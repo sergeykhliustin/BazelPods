@@ -20,16 +20,13 @@ apple_framework(
     ":AlgoliaSearchClient_InfoPlist"
   ],
   platforms = {
-    "ios": "10.0"
+    "ios": "14.0"
   },
   srcs = glob(
     [
       "Sources/AlgoliaSearchClient/**/*.swift"
     ]
   ),
-  deps = [
-    "//Tests/Pods/Logging:Logging"
-  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -52,6 +49,9 @@ apple_framework(
       ]
     }
   ),
+  sdk_frameworks = [
+    "OSLog"
+  ],
   visibility = [
     "//visibility:public"
   ]
@@ -76,7 +76,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>8.18.2</string>
+	<string>8.20.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -87,7 +87,7 @@ genrule(
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>MinimumOSVersion</key>
-	<string>10.0</string>
+	<string>14.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
