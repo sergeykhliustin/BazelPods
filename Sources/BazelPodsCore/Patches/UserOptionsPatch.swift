@@ -88,6 +88,9 @@ struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
             case .test_host:
                 // test spec specific option
                 break
+            case .timeout:
+                // test spec specific option
+                break
             }
         }
     }
@@ -117,6 +120,8 @@ struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
                 runnerInfo.runnerName = string
             case .test_host(let string):
                 runnerInfo.testHost = string
+            case .timeout(let timeout):
+                runnerInfo.timeout = timeout
             default:
                 break
             }

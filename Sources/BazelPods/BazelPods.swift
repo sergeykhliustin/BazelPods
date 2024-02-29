@@ -141,6 +141,7 @@ Platform specific:
 For test specs:
 'SomePod/UnitTests.runner := //:SomeTestsRunner'
 'SomePod/UnitTests.test_host := //:SomeTestHostApp'
+'SomePod/UnitTests.timeout := eternal'
 """
         )
         var userOptions: [String] = []

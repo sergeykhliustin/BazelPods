@@ -55,6 +55,7 @@ public struct UserOption {
         case link_dynamic(Bool)
         case runner(String)
         case test_host(String)
+        case timeout(TestsTimeout)
     }
     public enum KeyPath: String, CaseIterable {
         case sdk_frameworks
@@ -67,6 +68,7 @@ public struct UserOption {
         case link_dynamic
         case runner
         case test_host
+        case timeout
     }
 
     public init?(_ string: String) {
@@ -195,6 +197,22 @@ public struct UserOption {
                 return nil
             }
             attribute = .test_host(last)
+        case .timeout:
+            guard opt == .replace else {
+                log_error("Incorrect option for \(string). '\(keyPath)' supports only \(Opt.replace.rawValue) operator. Skipping...")
+                return nil
+            }
+            guard
+                value.count == 1,
+                let last = value.last?.trim,
+                let timeout = TestsTimeout(rawValue: last)
+            else {
+                log_error(
+                    "Incorrect value for \(string). Should be one of \(TestsTimeout.allCases.map({ $0.rawValue }).joined(separator: ", "))). Skipping..."
+                )
+                return nil
+            }
+            attribute = .timeout(timeout)
         }
         self.name = name
         self.opt = opt

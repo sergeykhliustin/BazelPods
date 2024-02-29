@@ -11,6 +11,7 @@ struct RunnerAnalyzer<S: SchemeRepresentable> {
     struct Result {
         var runnerName: String?
         var testHost: String?
+        var timeout: TestsTimeout?
     }
 
     private let spec: S
@@ -29,7 +30,8 @@ struct RunnerAnalyzer<S: SchemeRepresentable> {
     private func run() -> Result {
         return Result(
             runnerName: nil,
-            testHost: nil
+            testHost: nil,
+            timeout: nil
         )
     }
 }
