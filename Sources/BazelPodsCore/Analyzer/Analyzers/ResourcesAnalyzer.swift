@@ -19,18 +19,20 @@ struct ResourcesAnalyzer<S: ResourcesRepresentable> {
 
         var packedToDataNode: StarlarkNode {
             let data: StarlarkNode
-            let resourcesNode = GlobNodeV2(include: resources).toStarlark()
-            let bundlesNode = precompiledBundles.toStarlark()
+            let globResources = resources.filter({ $0.contains("*") })
+            let nonGlobResources = resources.filter({ !$0.contains("*") }) + precompiledBundles
+            let resourcesNode = GlobNodeV2(include: globResources).toStarlark()
+            let nonGlobResourcesNode = nonGlobResources.toStarlark()
 
-            switch (!resources.isEmpty, !precompiledBundles.isEmpty) {
+            switch (!globResources.isEmpty, !nonGlobResources.isEmpty) {
             case (false, false):
                 data = .empty
             case (true, false):
                 data = resourcesNode
             case (false, true):
-                data = bundlesNode
+                data = nonGlobResourcesNode
             case (true, true):
-                data = StarlarkNode.expr(lhs: resourcesNode, op: "+", rhs: bundlesNode)
+                data = StarlarkNode.expr(lhs: resourcesNode, op: "+", rhs: nonGlobResourcesNode)
             }
             return data
         }

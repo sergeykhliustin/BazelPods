@@ -82,6 +82,15 @@ struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
                 if option.opt == .replace {
                     sources.linkDynamic = value
                 }
+            case .data(let value):
+                switch option.opt {
+                case .append:
+                    resources.resources += value.filter({ !resources.resources.contains($0) })
+                case .delete:
+                    resources.resources.removeAll(where: { value.contains($0) })
+                case .replace:
+                    resources.resources = value
+                }
             case .runner:
                 // test spec specific option
                 break

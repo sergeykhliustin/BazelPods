@@ -44,11 +44,9 @@ apple_framework(
       "Sources/Sentry/Public/*.h"
     ]
   ),
-  data = glob(
-    [
-      "Sources/Resources/PrivacyInfo.xcprivacy"
-    ]
-  ),
+  data = [
+    "Sources/Resources/PrivacyInfo.xcprivacy"
+  ],
   deps = [
     "//Tests/Pods/SentryPrivate:SentryPrivate"
   ],

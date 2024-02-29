@@ -167,12 +167,10 @@ ios_unit_test(
       "SharedTestUtilities/FIROptionsMock.m"
     ]
   ),
-  data = glob(
-    [
-      "FirebaseDatabase/Tests/Resources/GoogleService-Info.plist",
-      "FirebaseDatabase/Tests/Resources/syncPointSpec.json"
-    ]
-  ),
+  data = [
+    "FirebaseDatabase/Tests/Resources/GoogleService-Info.plist",
+    "FirebaseDatabase/Tests/Resources/syncPointSpec.json"
+  ],
   deps = [
     "//Tests/Pods/FirebaseAppCheckInterop:FirebaseAppCheckInterop",
     "//Tests/Pods/OCMock:OCMock",
@@ -232,11 +230,9 @@ ios_unit_test(
       "SharedTestUtilities/FIROptionsMock.m"
     ]
   ),
-  data = glob(
-    [
-      "FirebaseDatabase/Tests/Resources/GoogleService-Info.plist"
-    ]
-  ),
+  data = [
+    "FirebaseDatabase/Tests/Resources/GoogleService-Info.plist"
+  ],
   deps = [
     "//Tests/Pods/OCMock:OCMock",
     ":FirebaseDatabase"

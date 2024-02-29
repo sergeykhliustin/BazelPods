@@ -27,11 +27,9 @@ apple_framework(
       "Source/Device.generated.swift"
     ]
   ),
-  data = glob(
-    [
-      "Source/PrivacyInfo.xcprivacy"
-    ]
-  ),
+  data = [
+    "Source/PrivacyInfo.xcprivacy"
+  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(

@@ -148,13 +148,11 @@ ios_unit_test(
       "FirebaseRemoteConfig/Tests/Unit/RCNUserDefaultsManagerTests.m"
     ]
   ),
-  data = glob(
-    [
-      "FirebaseRemoteConfig/Tests/Unit/Defaults-testInfo.plist",
-      "FirebaseRemoteConfig/Tests/Unit/SecondApp-GoogleService-Info.plist",
-      "FirebaseRemoteConfig/Tests/Unit/TestABTPayload.txt"
-    ]
-  ),
+  data = [
+    "FirebaseRemoteConfig/Tests/Unit/Defaults-testInfo.plist",
+    "FirebaseRemoteConfig/Tests/Unit/SecondApp-GoogleService-Info.plist",
+    "FirebaseRemoteConfig/Tests/Unit/TestABTPayload.txt"
+  ],
   deps = [
     "//Tests/Pods/OCMock:OCMock",
     ":FirebaseRemoteConfig"
