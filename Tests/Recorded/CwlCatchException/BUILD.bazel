@@ -101,7 +101,8 @@ EOF"""
 )
 ios_unit_test(
   name = "CwlCatchException_Tests_Tests",
-  module_name = "Tests",
+  bundle_name = "CwlCatchException_Unit_Tests",
+  module_name = "CwlCatchException_Unit_Tests",
   minimum_os_version = "10.0",
   infoplists = [
     ":CwlCatchException_Tests_Tests_InfoPlist"

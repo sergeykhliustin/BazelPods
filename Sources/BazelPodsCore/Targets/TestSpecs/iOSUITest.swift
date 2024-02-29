@@ -43,6 +43,7 @@ struct iOSUITest: BazelTarget {
 
         let lines: [StarlarkFunctionArgument] = [
             .named(name: "name", value: name.toStarlark()),
+            .named(name: "bundle_name", value: info.moduleName.toStarlark()),
             .named(name: "module_name", value: info.moduleName.toStarlark()),
             .named(name: "minimum_os_version", value: info.minimumOsVersion.toStarlark()),
             .named(name: "test_host", value: test_host.toStarlark()),

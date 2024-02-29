@@ -117,7 +117,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseABTesting_unit_Tests",
-  module_name = "unit",
+  bundle_name = "FirebaseABTesting_Unit_unit",
+  module_name = "FirebaseABTesting_Unit_unit",
   minimum_os_version = "11.0",
   test_host = ":FirebaseABTesting_unit_AppHost",
   infoplists = [

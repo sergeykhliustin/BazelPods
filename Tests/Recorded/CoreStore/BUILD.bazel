@@ -129,7 +129,8 @@ EOF"""
 )
 ios_unit_test(
   name = "CoreStore_CoreStoreTests_Tests",
-  module_name = "CoreStoreTests",
+  bundle_name = "CoreStore_Unit_CoreStoreTests",
+  module_name = "CoreStore_Unit_CoreStoreTests",
   minimum_os_version = "13.0",
   infoplists = [
     ":CoreStore_CoreStoreTests_Tests_InfoPlist"
@@ -158,18 +159,18 @@ ios_unit_test(
   ),
   deps = [
     ":CoreStore",
-    ":CoreStoreTests_CoreStoreTests_Bundle"
+    ":CoreStore_Unit_CoreStoreTests_CoreStoreTests_Bundle"
   ],
   visibility = [
     "//visibility:public"
   ]
 )
 precompiled_apple_resource_bundle(
-  name = "CoreStoreTests_CoreStoreTests_Bundle",
+  name = "CoreStore_Unit_CoreStoreTests_CoreStoreTests_Bundle",
   bundle_id = "org.cocoapods.CoreStoreTests",
   bundle_name = "CoreStoreTests",
   infoplists = [
-    ":CoreStoreTests_CoreStoreTests_Bundle_InfoPlist"
+    ":CoreStore_Unit_CoreStoreTests_CoreStoreTests_Bundle_InfoPlist"
   ],
   resources = glob(
     [
@@ -178,10 +179,10 @@ precompiled_apple_resource_bundle(
   )
 )
 genrule(
-  name = "CoreStoreTests_CoreStoreTests_Bundle_InfoPlist",
+  name = "CoreStore_Unit_CoreStoreTests_CoreStoreTests_Bundle_InfoPlist",
   srcs = [],
   outs = [
-    "CoreStoreTests_CoreStoreTests_Bundle_InfoPlist.plist"
+    "CoreStore_Unit_CoreStoreTests_CoreStoreTests_Bundle_InfoPlist.plist"
   ],
   cmd = """cat <<EOF > $@
 <?xml version="1.0" encoding="UTF-8"?>

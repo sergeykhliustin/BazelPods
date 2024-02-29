@@ -98,7 +98,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseSharedSwift_unit_Tests",
-  module_name = "unit",
+  bundle_name = "FirebaseSharedSwift_Unit_unit",
+  module_name = "FirebaseSharedSwift_Unit_unit",
   minimum_os_version = "11.0",
   infoplists = [
     ":FirebaseSharedSwift_unit_Tests_InfoPlist"

@@ -134,7 +134,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseDatabase_unit_Tests",
-  module_name = "unit",
+  bundle_name = "FirebaseDatabase_Unit_unit",
+  module_name = "FirebaseDatabase_Unit_unit",
   minimum_os_version = "11.0",
   infoplists = [
     ":FirebaseDatabase_unit_Tests_InfoPlist"
@@ -208,7 +209,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseDatabase_integration_Tests",
-  module_name = "integration",
+  bundle_name = "FirebaseDatabase_Unit_integration",
+  module_name = "FirebaseDatabase_Unit_integration",
   minimum_os_version = "11.0",
   test_host = ":FirebaseDatabase_integration_AppHost",
   infoplists = [

@@ -98,7 +98,8 @@ EOF"""
 )
 ios_unit_test(
   name = "Wire_Tests_Tests",
-  module_name = "Tests",
+  bundle_name = "Wire_Unit_Tests",
+  module_name = "Wire_Unit_Tests",
   minimum_os_version = "11.0",
   infoplists = [
     ":Wire_Tests_Tests_InfoPlist"

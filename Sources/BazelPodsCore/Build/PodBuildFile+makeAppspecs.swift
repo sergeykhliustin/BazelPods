@@ -26,10 +26,6 @@ extension PodBuildFile {
                     continue
                 }
 
-                for patch in options.patches {
-
-                }
-
                 let (resourceTargets, resourceInfoplists) = makeResourceBundles(
                     targetName: targetName,
                     baseInfo: analyzer.baseInfo,

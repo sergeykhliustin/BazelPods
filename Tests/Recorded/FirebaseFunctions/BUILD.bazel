@@ -108,7 +108,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseFunctions_objc_Tests",
-  module_name = "objc",
+  bundle_name = "FirebaseFunctions_Unit_objc",
+  module_name = "FirebaseFunctions_Unit_objc",
   minimum_os_version = "11.0",
   test_host = ":FirebaseFunctions_objc_AppHost",
   infoplists = [
@@ -307,7 +308,8 @@ ios_application_native(
 )
 ios_unit_test(
   name = "FirebaseFunctions_integration_Tests",
-  module_name = "integration",
+  bundle_name = "FirebaseFunctions_Unit_integration",
+  module_name = "FirebaseFunctions_Unit_integration",
   minimum_os_version = "11.0",
   test_host = ":FirebaseFunctions_integration_AppHost",
   infoplists = [

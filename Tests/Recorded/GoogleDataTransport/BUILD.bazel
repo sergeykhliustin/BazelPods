@@ -152,7 +152,8 @@ EOF"""
 )
 ios_unit_test(
   name = "GoogleDataTransport_Tests-Unit_Tests",
-  module_name = "Tests_Unit",
+  bundle_name = "GoogleDataTransport_Unit_Tests-Unit",
+  module_name = "GoogleDataTransport_Unit_Tests-Unit",
   minimum_os_version = "10.0",
   infoplists = [
     ":GoogleDataTransport_Tests-Unit_Tests_InfoPlist"
