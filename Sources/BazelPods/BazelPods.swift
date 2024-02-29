@@ -140,6 +140,7 @@ Platform specific:
 'SomePod.platform_ios.sdk_dylibs += something,something'
 For test specs:
 'SomePod/UnitTests.runner := //:SomeTestsRunner'
+'SomePod/UnitTests.test_host := //:SomeTestHostApp'
 """
         )
         var userOptions: [String] = []

@@ -10,6 +10,7 @@ import Foundation
 struct RunnerAnalyzer<S: SchemeRepresentable> {
     struct Result {
         var runnerName: String?
+        var testHost: String?
     }
 
     private let spec: S
@@ -27,7 +28,8 @@ struct RunnerAnalyzer<S: SchemeRepresentable> {
 
     private func run() -> Result {
         return Result(
-            runnerName: nil
+            runnerName: nil,
+            testHost: nil
         )
     }
 }

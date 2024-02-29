@@ -23,8 +23,8 @@ struct iOSUnitTest: BazelTarget {
     let runner: String?
 
     func toStarlark() -> StarlarkNode {
-        var test_host = ""
-        if let testHost, !testHost.isEmpty {
+        var test_host = self.testHost
+        if let testHost, !testHost.isEmpty, !testHost.hasPrefix("/") {
             test_host = ":" + testHost
         }
         var runnerName = self.runner

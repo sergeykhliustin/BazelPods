@@ -43,7 +43,9 @@ extension PodBuildFile {
                 var testHost: String?
                 var appHostTargets: [BazelTarget] = []
 
-                if testspec.requiresAppHost {
+                if let runnerInfoTestHost = analyzer.runnerInfo.testHost {
+                    testHost = runnerInfoTestHost
+                } else if testspec.requiresAppHost {
                     if let appHostName = testspec.appHostName {
                         testHost = targetName.app(spec.name, appName: appHostName)
                     } else {

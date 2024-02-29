@@ -94,7 +94,7 @@ OPTIONS:
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'runner'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'runner', 'test_host'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
@@ -103,6 +103,7 @@ OPTIONS:
                           'SomePod.platform_ios.sdk_dylibs += something,something'
                           For test specs:
                           'SomePod/UnitTests.runner := //:SomeTestsRunner'
+                          'SomePod/UnitTests.test_host := //:SomeTestHostApp'
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
@@ -137,7 +138,7 @@ OPTIONS:
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'runner'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'runner', 'test_host'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
@@ -146,6 +147,7 @@ OPTIONS:
                           'SomePod.platform_ios.sdk_dylibs += something,something'
                           For test specs:
                           'SomePod/UnitTests.runner := //:SomeTestsRunner'
+                          'SomePod/UnitTests.test_host := //:SomeTestHostApp'
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
