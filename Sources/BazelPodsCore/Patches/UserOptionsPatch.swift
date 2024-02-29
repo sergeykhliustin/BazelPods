@@ -85,6 +85,9 @@ struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
             case .runner:
                 // test spec specific option
                 break
+            case .test_host:
+                // test spec specific option
+                break
             }
         }
     }
@@ -112,6 +115,8 @@ struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
             switch option.attribute {
             case .runner(let string):
                 runnerInfo.runnerName = string
+            case .test_host(let string):
+                runnerInfo.testHost = string
             default:
                 break
             }
