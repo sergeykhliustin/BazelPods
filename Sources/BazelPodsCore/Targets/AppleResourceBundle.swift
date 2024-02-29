@@ -9,7 +9,7 @@ import Foundation
 
 // https://github.com/bazel-ios/rules_ios/blob/master/rules/precompiled_apple_resource_bundle.bzl
 // Using this rule since apple_framework.resource_bundles conflicts when bundle_name == apple_framework.name and dynamic linking
-struct AppleResourceBundle: BazelTarget {
+struct AppleResourceBundle<S: ResourcesRepresentable>: BazelTarget {
 //    let loadNode = "load('@build_bazel_rules_apple//apple:resources.bzl', 'apple_resource_bundle')"
     let loadNode = "load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')"
     let name: String
@@ -18,7 +18,7 @@ struct AppleResourceBundle: BazelTarget {
     let resources: [String]
     var infoplists: [String] = []
 
-    init(name: String, bundle: ResourcesAnalyzer.Result.Bundle, infoplists: [String]) {
+    init(name: String, bundle: ResourcesAnalyzer<S>.Result.Bundle, infoplists: [String]) {
         self.name = name
         self.bundleName = bundle.name
         self.bundleId = "org.cocoapods.\(bundleName)"

@@ -95,104 +95,64 @@ import Foundation
  */
 
 enum PodSpecField: String {
-    case name
-    case version
-    case swiftVersion = "swift_version"
-    case swiftVersions = "swift_versions"
-    case platforms
-    case staticFramework = "static_framework"
-    case frameworks
-    case weakFrameworks = "weak_frameworks"
-    case excludeFiles = "exclude_files"
-    case sourceFiles = "source_files"
-    case publicHeaders = "public_header_files"
-    case privateHeaders = "private_header_files"
     case prefixHeaderFile = "prefix_header_file"
     case prefixHeaderContents = "prefix_header_contents"
     case preservePaths = "preserve_paths"
     case compilerFlags = "compiler_flags"
-    case libraries
-    case dependencies
-    case resourceBundles = "resource_bundles"
-    case resources = "resources"
     case subspecs
     case source
     case license
     case podTargetXcconfig = "pod_target_xcconfig"
     case userTargetXcconfig = "user_target_xcconfig"
     case xcconfig // Legacy
-    case ios
-    case osx
-    case tvos
-    case watchos
-    case vendoredFrameworks = "vendored_frameworks"
-    case vendoredLibraries = "vendored_libraries"
-    case moduleName = "module_name"
     case headerDirectory = "header_dir"
-    case requiresArc = "requires_arc"
     case defaultSubspecs = "default_subspecs"
+    case testspecs
+    case appspecs
 }
 
-protocol PodSpecRepresentable {
-    var name: String { get }
-    var version: String? { get }
-    var swiftVersions: [String]? { get }
-    var staticFramework: Bool { get }
-    var platforms: [String: String] { get }
-    var podTargetXcconfig: [String: String] { get }
-    var userTargetXcconfig: [String: String] { get }
-    var sourceFiles: [String] { get }
-    var excludeFiles: [String] { get }
-    var frameworks: [String] { get }
-    var weakFrameworks: [String] { get }
-    var subspecs: [PodSpec] { get }
-    var dependencies: [String] { get }
-    var compilerFlags: [String] { get }
-    var source: PodSpecSource? { get }
-    var libraries: [String] { get }
-    var resourceBundles: [String: [String]] { get }
-    var resources: [String] { get }
-    var vendoredFrameworks: [String] { get }
-    var vendoredLibraries: [String] { get }
-    var headerDirectory: String? { get }
-    var xcconfig: [String: String] { get }
-    var moduleName: String? { get }
-    var requiresArc: Either<Bool, [String]>? { get }
-    var publicHeaders: [String] { get }
-    var privateHeaders: [String] { get }
-    var prefixHeaderContents: String? { get }
-    var prefixHeaderFile: Either<Bool, String>? { get }
-    var preservePaths: [String] { get }
-    var defaultSubspecs: [String] { get }
-}
-
-public struct PodSpec: PodSpecRepresentable {
+public final class PodSpec: PodSpecRepresentable {
     let name: String
-    let version: String?
-    let swiftVersions: [String]?
-    let staticFramework: Bool
+    let ios: PodSpec?
+    let osx: PodSpec?
+    let tvos: PodSpec?
+    let watchos: PodSpec?
+
+    let version: String
+    let moduleName: String?
     let platforms: [String: String]
+    let swiftVersions: [String]?
+
     let sourceFiles: [String]
     let excludeFiles: [String]
-    let frameworks: [String]
-    let weakFrameworks: [String]
-    let subspecs: [PodSpec]
-    let dependencies: [String]
-    let compilerFlags: [String]
-    let source: PodSpecSource?
-    let license: PodSpecLicense
-    let libraries: [String]
-    let defaultSubspecs: [String]
-
-    let headerDirectory: String?
-    let moduleName: String?
+    let publicHeaders: [String]
+    let privateHeaders: [String]
     // requiresArc can be a bool
     // or it could be a list of pattern
     // or it could be omitted (in which case we need to fallback)
     let requiresArc: Either<Bool, [String]>?
+    let staticFramework: Bool
 
-    let publicHeaders: [String]
-    let privateHeaders: [String]
+    let libraries: [String]
+    let frameworks: [String]
+    let weakFrameworks: [String]
+
+    let resourceBundles: [String: [String]]
+    let resources: [String]
+
+    let dependencies: [String]
+
+    let podTargetXcconfig: [String: String]
+    let userTargetXcconfig: [String: String]
+    let xcconfig: [String: String]
+
+    let subspecs: [PodSpec]
+    let compilerFlags: [String]
+    let source: PodSpecSource?
+    let license: PodSpecLicense
+    let defaultSubspecs: [String]
+
+    let headerDirectory: String?
 
     // lib/cocoapods/installer/xcode/pods_project_generator/pod_target_installer.rb:170
     let prefixHeaderFile: Either<Bool, String>?
@@ -203,46 +163,71 @@ public struct PodSpec: PodSpecRepresentable {
     let vendoredFrameworks: [String]
     let vendoredLibraries: [String]
 
-    // TODO: Support resource / resources properties as well
-    let resourceBundles: [String: [String]]
-    let resources: [String]
-
-    let podTargetXcconfig: [String: String]
-    let userTargetXcconfig: [String: String]
-    let xcconfig: [String: String]
-
-    let ios: PodSpecRepresentable?
-    let osx: PodSpecRepresentable?
-    let tvos: PodSpecRepresentable?
-    let watchos: PodSpecRepresentable?
+    let infoPlist: [String: Any]?
 
     let prepareCommand = ""
 
-    public init(JSONPodspec: JSONDict) throws {
+    let testspecs: [TestSpec]
+    let appspecs: [AppSpec]
 
-        let fieldMap: [PodSpecField: Any] = Dictionary(tuples: JSONPodspec.compactMap { k, v in
+    public convenience init(JSONPodspec json: JSONDict) throws {
+        let version = (json["version"] as? String) ?? "1.0"
+        try self.init(JSONPodspec: json, version: version)
+    }
+
+    public init(JSONPodspec json: JSONDict, version: String) throws {
+        self.version = version
+
+        let fieldMap: [PodSpecField: Any] = Dictionary(tuples: json.compactMap { k, v in
             guard let field = PodSpecField.init(rawValue: k) else {
                 return nil
             }
             return .some((field, v))
         })
 
-        if let name = try? extractValue(fromJSON: fieldMap[.name]) as String {
-            self.name = name
-        } else {
-            // This is for "ios", "macos", etc
-            name = ""
-        }
-        staticFramework = (try? extractValue(fromJSON: fieldMap[.staticFramework]) as Bool) ?? false
-        version = try extractValue(fromJSON: fieldMap[.version]) as String?
-        frameworks = strings(fromJSON: fieldMap[.frameworks])
-        weakFrameworks = strings(fromJSON: fieldMap[.weakFrameworks])
-        excludeFiles = strings(fromJSON: fieldMap[.excludeFiles])
-        sourceFiles = strings(fromJSON: fieldMap[.sourceFiles]).map({
-            $0.hasSuffix("/") ? String($0.dropLast()) : $0
-        })
-        publicHeaders = strings(fromJSON: fieldMap[.publicHeaders])
-        privateHeaders = strings(fromJSON: fieldMap[.privateHeaders])
+        // BaseRepresentable
+        name = Self.name(json: json)
+        ios = Self.ios(json: json, version: version)
+        osx = Self.osx(json: json, version: version)
+        tvos = Self.tvos(json: json, version: version)
+        watchos = Self.watchos(json: json, version: version)
+
+        // BaseInfoRepresentable
+        moduleName = Self.moduleName(json: json)
+        platforms = Self.platforms(json: json)
+        swiftVersions = Self.swiftVersions(json: json)
+
+        // SourceFilesRepresentable
+        sourceFiles = Self.sourceFiles(json: json)
+        excludeFiles = Self.excludeFiles(json: json)
+        publicHeaders = Self.publicHeaders(json: json)
+        privateHeaders = Self.privateHeaders(json: json)
+        requiresArc = Self.requiresArc(json: json)
+        staticFramework = Self.staticFramework(json: json)
+
+        // ResourceRepresentable
+        resourceBundles = Self.resourceBundles(json: json)
+        resources = Self.resources(json: json)
+
+        // SdkDependenciesRepresentable
+        libraries = Self.libraries(json: json)
+        frameworks = Self.frameworks(json: json)
+        weakFrameworks = Self.weakFrameworks(json: json)
+
+        // PodDependencyRepresentable
+        dependencies = Self.dependencies(json: json)
+
+        // XCConfigRepresentable
+        xcconfig = Self.xcconfig(json: json)
+        podTargetXcconfig = Self.podTargetXcconfig(json: json)
+        userTargetXcconfig = Self.userTargetXcconfig(json: json)
+
+        // VendoredDependenciesRepresentable
+        vendoredLibraries = Self.vendoredLibraries(json: json)
+        vendoredFrameworks = Self.vendoredFrameworks(json: json)
+
+        // InfoPlistRepresentable
+        infoPlist = Self.infoPlist(json: json)
 
         prefixHeaderFile  = (fieldMap[.prefixHeaderFile] as? Bool).map { .left($0) } ?? // try a bool
 	        (fieldMap[.prefixHeaderFile] as? String).map { .right($0) } // try a string
@@ -251,33 +236,10 @@ public struct PodSpec: PodSpecRepresentable {
 
         preservePaths = strings(fromJSON: fieldMap[.preservePaths])
         compilerFlags = strings(fromJSON: fieldMap[.compilerFlags])
-        libraries = strings(fromJSON: fieldMap[.libraries])
 
         defaultSubspecs = strings(fromJSON: fieldMap[.defaultSubspecs])
 
-        vendoredFrameworks = strings(fromJSON: fieldMap[.vendoredFrameworks])
-        vendoredLibraries = strings(fromJSON: fieldMap[.vendoredLibraries])
-
         headerDirectory = fieldMap[.headerDirectory] as? String
-        moduleName = fieldMap[.moduleName] as? String
-        requiresArc = (fieldMap[.requiresArc] as? Bool).map { .left($0) } ?? // try a bool
-	        stringsStrict(fromJSON: fieldMap[.requiresArc]).map { .right($0) } // try a string
-
-        if let podSubspecDependencies = fieldMap[.dependencies] as? JSONDict {
-            dependencies = Array(podSubspecDependencies.keys)
-        } else {
-            dependencies = []
-        }
-
-        if let resourceBundleMap = fieldMap[.resourceBundles] as? JSONDict {
-            resourceBundles = Dictionary(tuples: resourceBundleMap.map { key, val in
-                (key, strings(fromJSON: val))
-            })
-        } else {
-            resourceBundles = [:]
-        }
-
-        resources = strings(fromJSON: fieldMap[.resources])
 
         if let JSONPodSubspecs = fieldMap[.subspecs] as? [JSONDict] {
             subspecs = try JSONPodSubspecs.map { try PodSpec(JSONPodspec: $0) }
@@ -293,27 +255,22 @@ public struct PodSpec: PodSpecRepresentable {
 
         license = PodSpecLicense.license(fromJSON: fieldMap[.license])
 
-        platforms = extractValue(fromJSON: fieldMap[.platforms], default: [:])
-        xcconfig = extractValue(fromJSON: fieldMap[.xcconfig], default: [:])
-        podTargetXcconfig = extractValue(fromJSON: fieldMap[.podTargetXcconfig], default: [:])
-        userTargetXcconfig = extractValue(fromJSON: fieldMap[.userTargetXcconfig], default: [:])
-
-        ios = (fieldMap[.ios] as? JSONDict).flatMap { try? PodSpec(JSONPodspec: $0) }
-        osx = (fieldMap[.osx] as? JSONDict).flatMap { try? PodSpec(JSONPodspec: $0) }
-        tvos = (fieldMap[.tvos] as? JSONDict).flatMap { try? PodSpec(JSONPodspec: $0) }
-        watchos = (fieldMap[.watchos] as? JSONDict).flatMap { try? PodSpec(JSONPodspec: $0) }
-        var resultSwiftVersions = Set<String>()
-        if let swiftVersions = fieldMap[.swiftVersions] as? String {
-            resultSwiftVersions.insert(swiftVersions)
-        } else if let swiftVersions = fieldMap[.swiftVersions] as? [String] {
-            swiftVersions.forEach {
-                resultSwiftVersions.insert($0)
+        self.testspecs = (fieldMap[.testspecs] as? [JSONDict])?.compactMap({
+            do {
+                return try TestSpec(JSONPodspec: $0, version: version)
+            } catch {
+                log_debug(error)
             }
-        }
-        if let swiftVersion = fieldMap[.swiftVersion] as? String {
-            resultSwiftVersions.insert(swiftVersion)
-        }
-        self.swiftVersions = !resultSwiftVersions.isEmpty ? Array(resultSwiftVersions) : nil
+            return nil
+        }) ?? []
+        self.appspecs = (fieldMap[.appspecs] as? [JSONDict])?.compactMap({
+            do {
+                return try AppSpec(JSONPodspec: $0, version: version)
+            } catch {
+                log_debug(error)
+            }
+            return nil
+        }) ?? []
     }
 
     func allSubspecs(_ isSubspec: Bool = false) -> [PodSpec] {
@@ -324,38 +281,26 @@ public struct PodSpec: PodSpecRepresentable {
 
     public func selectedSubspecs(subspecs: [String]) -> [PodSpec] {
         let defaultSubspecs = Set(subspecs.isEmpty ? self.defaultSubspecs : subspecs)
-        let subspecs = allSubspecs()
+        let allSubspecs = allSubspecs()
         guard !defaultSubspecs.isEmpty else {
-            return subspecs
+            return allSubspecs
         }
-        return subspecs.filter { defaultSubspecs.contains($0.name) }
+        return allSubspecs.filter { defaultSubspecs.contains($0.name) }
     }
 
-    func platformRepresentable(_ platform: Platform) -> PodSpecRepresentable? {
-        switch platform {
-        case .ios:
-            return ios
-        case .osx:
-            return osx
-        case .tvos:
-            return tvos
-        case .watchos:
-            return watchos
-        }
+    public func selectedTestspecs(subspecs: [String]) -> [TestSpec] {
+        return testspecs.filter { subspecs.contains($0.name) }
     }
-}
 
-struct FallbackSpec {
-    let specs: [PodSpec]
-    // Takes the first non empty value
-    func attr<T>(_ keyPath: KeyPath<PodSpecRepresentable, T>) -> AttrSet<T> {
-        for spec in specs {
-            let value = spec.attr(keyPath)
-            if !value.isEmpty {
-                return value
+    public func selectedAppspecs(subspecs: [String]) -> [AppSpec] {
+        var requiredAppspecs: Set<String> = []
+        selectedTestspecs(subspecs: subspecs).forEach({
+            if let appHostName = $0.appHostName, $0.requiresAppHost {
+                requiredAppspecs.insert(appHostName)
             }
-        }
-        return AttrSet.empty
+        })
+        subspecs.forEach({ requiredAppspecs.insert($0) })
+        return appspecs.filter { requiredAppspecs.contains($0.name) }
     }
 }
 
@@ -446,7 +391,7 @@ func strings(fromJSON JSONValue: Any? = nil) -> [String] {
     return [String]()
 }
 
-private func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
+func stringsStrict(fromJSON JSONValue: Any? = nil) -> [String]? {
     if let str = JSONValue as? String {
         return [str]
     }

@@ -7,19 +7,19 @@
 
 import Foundation
 
-public struct PodDependenciesAnalyzer {
-    public struct Result {
+struct PodDependenciesAnalyzer<S: PodDependenciesRepresentable> {
+    struct Result {
         let dependencies: [String]
     }
     private let platform: Platform
-    private let spec: PodSpec
-    private let subspecs: [PodSpec]
+    private let spec: S
+    private let subspecs: [S]
     private let options: BuildOptions
     private let targetName: TargetName
 
     init(platform: Platform,
-         spec: PodSpec,
-         subspecs: [PodSpec],
+         spec: S,
+         subspecs: [S],
          options: BuildOptions,
          targetName: TargetName) {
         self.platform = platform
@@ -38,8 +38,12 @@ public struct PodDependenciesAnalyzer {
             .collectAttribute(with: subspecs, keyPath: \.dependencies)
             .platform(platform) ?? []
         dependencies = dependencies
-            .compactMap({ getDependencyName(podDepName: $0, podName: spec.name) })
-        dependencies = Set(dependencies).sorted()
+            .compactMap({ getDependencyName(podDepName: $0, podName: options.podName) })
+        dependencies = Set(dependencies)
+            .sorted()
+            .map({
+                targetName.podDependency($0, options: options)
+            })
 
         return Result(dependencies: dependencies)
     }

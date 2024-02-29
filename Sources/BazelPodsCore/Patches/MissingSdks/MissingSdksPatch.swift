@@ -20,13 +20,15 @@ struct MissingSdksPatch: Patch {
         self.platform = platform
     }
 
-    func run(base: inout BaseAnalyzer.Result,
-             sources: inout SourcesAnalyzer.Result,
-             resources: inout ResourcesAnalyzer.Result,
-             sdkDeps: inout SdkDependenciesAnalyzer.Result,
-             vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
-             podDeps: inout PodDependenciesAnalyzer.Result,
-             buildSettings: inout BuildSettingsAnalyzer.Result) {
+    func run<S>(
+        base: inout BaseAnalyzer<S>.Result,
+        sources: inout SourcesAnalyzer<S>.Result,
+        resources: inout ResourcesAnalyzer<S>.Result,
+        sdkDeps: inout SdkDependenciesAnalyzer<S>.Result,
+        vendoredDeps: inout VendoredDependenciesAnalyzer<S>.Result,
+        podDeps: inout PodDependenciesAnalyzer<S>.Result,
+        buildSettings: inout BuildSettingsAnalyzer<S>.Result
+    ) {
         guard platform == .ios else {
             log_debug("Wrong platform \(platform). Only ios currently supported")
             return

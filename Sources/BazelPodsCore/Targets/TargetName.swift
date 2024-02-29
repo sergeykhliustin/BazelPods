@@ -74,6 +74,53 @@ struct TargetName {
         ])
     }
 
+    func tests(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "Tests",
+            platformString
+        ])
+    }
+
+    func testsRunner(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "TestsRunner",
+            platformString
+        ])
+    }
+
+    func testsInfoplist(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "Tests",
+            "InfoPlist",
+            platformString
+        ])
+    }
+
+    func app(_ baseName: String, appName: String) -> String {
+        return joined([
+            baseName,
+            appName,
+            "App",
+            platformString
+        ])
+    }
+
+    func appInfoplist(_ baseName: String, appName: String) -> String {
+        return joined([
+            baseName,
+            appName,
+            "App",
+            "InfoPlist",
+            platformString
+        ])
+    }
+
     func podDependency(_ dep: String, options: BuildOptions) -> String {
         return "\(options.depsPrefix)/\(dep):\(base(dep))"
     }
@@ -86,5 +133,54 @@ struct TargetName {
         return strings
             .filter({ !$0.isEmpty })
             .joined(separator: SEPARATOR)
+    }
+
+    func appHostName(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "AppHost",
+            platformString
+        ])
+    }
+
+    func appHostMainM(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "AppHost",
+            "MainM",
+            platformString
+        ])
+    }
+
+    func appHostLib(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "AppHost",
+            "Lib",
+            platformString
+        ])
+    }
+
+    func appHostLaunchScreen(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "AppHost",
+            "LaunchScreen",
+            platformString
+        ])
+    }
+
+    func appHostInfoplist(_ baseName: String, testspec: String) -> String {
+        return joined([
+            baseName,
+            testspec,
+            "AppHost",
+            "InfoPlist",
+            platformString
+        ])
     }
 }

@@ -53,6 +53,7 @@ public struct UserOption {
         case vendored_xcframeworks([String])
         case testonly(Bool)
         case link_dynamic(Bool)
+        case runner(String)
     }
     public enum KeyPath: String, CaseIterable {
         case sdk_frameworks
@@ -63,6 +64,7 @@ public struct UserOption {
         case vendored_xcframeworks
         case testonly
         case link_dynamic
+        case runner
     }
 
     public init?(_ string: String) {
@@ -165,6 +167,19 @@ public struct UserOption {
                 return nil
             }
             attribute = .link_dynamic(bool)
+        case .runner:
+            guard opt == .replace else {
+                log_error("Incorrect option for \(string). '\(keyPath)' supports only \(Opt.replace.rawValue) operator. Skipping...")
+                return nil
+            }
+            guard
+                value.count == 1,
+                let last = value.last?.trim
+            else {
+                log_error("Incorrect value for \(string). Should be correct Bazel target label. Skipping...")
+                return nil
+            }
+            attribute = .runner(last)
         }
         self.name = name
         self.opt = opt

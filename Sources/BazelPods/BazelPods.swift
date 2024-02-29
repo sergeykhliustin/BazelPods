@@ -13,6 +13,7 @@ import Logger
 extension Platform: ExpressibleByArgument {}
 extension LogLevel: ExpressibleByArgument {}
 extension PatchType: ExpressibleByArgument {}
+extension TestsTimeout: ExpressibleByArgument {}
 
 func absolutePath(_ path: String, base: String) -> String {
     guard !path.starts(with: "/") else { return path }
@@ -101,7 +102,7 @@ struct BazelPods: ParsableCommand {
     static var configuration = CommandConfiguration(
         commandName: "bazelpods",
         abstract: "One more way to convert CocoaPods into Bazel.",
-        subcommands: [Generate.self, Compile.self, Arm64sim.self],
+        subcommands: [Generate.self, Compile.self],
         defaultSubcommand: Generate.self)
 
     struct Options: ParsableArguments {
@@ -137,6 +138,8 @@ Example:
 'SomePod.testonly := true'
 Platform specific:
 'SomePod.platform_ios.sdk_dylibs += something,something'
+For test specs:
+'SomePod/UnitTests.runner := //:SomeTestsRunner'
 """
         )
         var userOptions: [String] = []
@@ -158,5 +161,8 @@ Platform specific:
 
         @Flag(help: "Option to use `bundle exec` for `pod` calls")
         var useBundler: Bool = false
+
+        @Option(help: "(Optional) Default timeout for test targets (\(TestsTimeout.allCases.map({ $0.rawValue }).joined(separator: "|")))")
+        var testsTimeout: TestsTimeout?
     }
 }

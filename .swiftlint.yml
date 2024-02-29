@@ -9,6 +9,7 @@ disabled_rules:
 - operator_whitespace
 - nesting
 - file_length
+- type_name
 
 line_length:
   ignores_comments: true
@@ -19,5 +20,5 @@ force_cast:
 force_try:
   severity: warning
 function_parameter_count:
-  warning: 8
-  error: 10
+  warning: 10
+  error: 12

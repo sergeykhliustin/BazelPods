@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct ResourcesAnalyzer {
-    public struct Result {
+struct ResourcesAnalyzer<S: ResourcesRepresentable> {
+    struct Result {
         struct Bundle {
             let name: String
             let resources: [String]
@@ -16,17 +16,35 @@ public struct ResourcesAnalyzer {
         var resources: [String]
         var precompiledBundles: [String]
         var resourceBundles: [Bundle]
+
+        var packedToDataNode: StarlarkNode {
+            let data: StarlarkNode
+            let resourcesNode = GlobNodeV2(include: resources).toStarlark()
+            let bundlesNode = precompiledBundles.toStarlark()
+
+            switch (!resources.isEmpty, !precompiledBundles.isEmpty) {
+            case (false, false):
+                data = .empty
+            case (true, false):
+                data = resourcesNode
+            case (false, true):
+                data = bundlesNode
+            case (true, true):
+                data = StarlarkNode.expr(lhs: resourcesNode, op: "+", rhs: bundlesNode)
+            }
+            return data
+        }
     }
 
     private let platform: Platform
-    private let spec: PodSpec
-    private let subspecs: [PodSpec]
+    private let spec: S
+    private let subspecs: [S]
     private let options: BuildOptions
 
-    public init(platform: Platform,
-                spec: PodSpec,
-                subspecs: [PodSpec],
-                options: BuildOptions) {
+    init(platform: Platform,
+         spec: S,
+         subspecs: [S],
+         options: BuildOptions) {
         self.platform = platform
         self.spec = spec
         self.subspecs = subspecs

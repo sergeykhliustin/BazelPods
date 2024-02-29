@@ -7,29 +7,33 @@
 
 import Foundation
 
-struct UserOptionsPatch: Patch {
-    private let options: [UserOption]
+struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
+    private let options: BuildOptions
     private let platform: Platform
 
-    init(_ options: [UserOption], platform: Platform) {
+    init(_ options: BuildOptions, platform: Platform) {
         self.options = options
         self.platform = platform
     }
 
-    func run(base: inout BaseAnalyzer.Result,
-             sources: inout SourcesAnalyzer.Result,
-             resources: inout ResourcesAnalyzer.Result,
-             sdkDeps: inout SdkDependenciesAnalyzer.Result,
-             vendoredDeps: inout VendoredDependenciesAnalyzer.Result,
-             podDeps: inout PodDependenciesAnalyzer.Result,
-             buildSettings: inout BuildSettingsAnalyzer.Result) {
-        let options = options
-            .filter({ $0.name == base.name })
+    func run<S>(
+        base: inout BaseAnalyzer<S>.Result,
+        sources: inout SourcesAnalyzer<S>.Result,
+        resources: inout ResourcesAnalyzer<S>.Result,
+        sdkDeps: inout SdkDependenciesAnalyzer<S>.Result,
+        vendoredDeps: inout VendoredDependenciesAnalyzer<S>.Result,
+        podDeps: inout PodDependenciesAnalyzer<S>.Result,
+        buildSettings: inout BuildSettingsAnalyzer<S>.Result
+    ) {
+        let userOptions = options.userOptions
+            .filter({
+                $0.name == base.name || $0.name == options.podName.appendingPath(base.name)
+            })
             .filter({
                 guard let platform = $0.platform else { return true }
                 return platform == self.platform
             })
-        for option in options {
+        for option in userOptions {
             switch option.attribute {
             case .sdk_frameworks(let value):
                 switch option.opt {
@@ -78,6 +82,38 @@ struct UserOptionsPatch: Patch {
                 if option.opt == .replace {
                     sources.linkDynamic = value
                 }
+            case .runner:
+                // test spec specific option
+                break
+            }
+        }
+    }
+
+    func run<S>(
+        base: inout BaseAnalyzer<S>.Result,
+        sources: inout SourcesAnalyzer<S>.Result,
+        resources: inout ResourcesAnalyzer<S>.Result,
+        sdkDeps: inout SdkDependenciesAnalyzer<S>.Result,
+        vendoredDeps: inout VendoredDependenciesAnalyzer<S>.Result,
+        podDeps: inout PodDependenciesAnalyzer<S>.Result,
+        buildSettings: inout BuildSettingsAnalyzer<S>.Result,
+        environment: inout EnvironmentAnalyzer<S>.Result,
+        runnerInfo: inout RunnerAnalyzer<S>.Result
+    ) {
+        let userOptions = options.userOptions
+            .filter({
+                $0.name == base.name || $0.name == options.podName.appendingPath(base.name)
+            })
+            .filter({
+                guard let platform = $0.platform else { return true }
+                return platform == self.platform
+            })
+        for option in userOptions {
+            switch option.attribute {
+            case .runner(let string):
+                runnerInfo.runnerName = string
+            default:
+                break
             }
         }
     }

@@ -11,7 +11,7 @@ let templateFile = args[2]
 let dep_prefix = args[3]
 
 let data = try NSData(contentsOfFile: podsJsonFile) as Data
-let object = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: [String: String]]
+let object = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: [String: Any]]
 
 var buildfile = try String(contentsOf: URL(fileURLWithPath: templateFile), encoding: .utf8)
 

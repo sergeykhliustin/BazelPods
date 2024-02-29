@@ -1,227 +1,711 @@
 {
   "ios": {
-    "AAInfographics": "9.0.0",
-    "AEXML": "4.7.0",
-    "AMPopTip": "4.12.0",
-    "APNGKit": "2.2.5",
-    "AWSAPIGateway": "2.33.8",
-    "AWSAppleSignIn": "2.33.8",
-    "AWSAuthCore": "2.33.8",
-    "AWSAutoScaling": "2.33.8",
-    "AWSChimeSDKIdentity": "2.33.8",
-    "AWSCore": "2.33.8",
-    "AWSDynamoDB": "2.33.8",
-    "AcknowList": "3.1.0",
-    "Adjust": "4.37.0",
-    "Agrume": "5.8.10",
-    "Alamofire": "5.8.1",
-    "AlamofireImage": "4.3.0",
-    "AlgoliaSearchClient": "8.20.0",
-    "Antlr4": "4.13.1",
-    "AnyImageKit": "0.17.2",
-    "Appboy-iOS-SDK": "4.5.0",
-    "Apollo": "1.8.0",
-    "ApolloTestSupport": "1.8.0",
-    "AtributikaViews": "5.0.3",
-    "Bluepill": "5.12.5",
-    "BranchSDK": "3.0.1",
-    "Capacitor": "5.6.0",
-    "CapacitorCordova": "5.6.0",
-    "ChatLayout": "2.0.3",
-    "Cheetah-iOS": "2.0.0",
-    "CocoaLumberjack": "3.8.2",
-    "CocoaMQTT": "2.1.6",
-    "Connectivity": "6.1.1",
-    "Cordova": "7.0.1",
-    "CoreStore": "9.2.0",
-    "Countly": "24.1.0",
-    "CryptoSwift": "1.8.1",
-    "Cuckoo": "1.10.4",
-    "DSSwiftUIKit": "3.9.0",
-    "Device": "3.6.0",
-    "DeviceKit": "5.2.1",
-    "DeviceUtil": "6.2.0",
-    "EachNavigationBar": "2.0.0",
-    "FSPopoverView": "3.0.0",
-    "FTLinearActivityIndicator": "1.7",
-    "FTPopOverMenu": "2.1.4",
-    "Factory": "2.3.1",
-    "Firebase": "10.20.0",
-    "FirebaseABTesting": "10.20.0",
-    "FirebaseAppCheckInterop": "10.20.0",
-    "FirebaseAuthInterop": "10.20.0",
-    "FirebaseAuth": "10.20.0",
-    "FirebaseCore": "10.20.0",
-    "FirebaseCoreExtension": "10.20.0",
-    "FirebaseCoreInternal": "10.20.0",
-    "FirebaseCrashlytics": "10.20.0",
-    "FirebaseDatabase": "10.20.0",
-    "FirebaseFunctions": "10.20.0",
-    "FirebaseInstallations": "10.20.0",
-    "FirebaseMessagingInterop": "10.20.0",
-    "FirebasePerformance": "10.20.0",
-    "FirebaseRemoteConfig": "10.20.0",
-    "FirebaseSessions": "10.20.0",
-    "FirebaseSharedSwift": "10.20.0",
-    "FirebaseStorage": "10.20.0",
-    "FittedSheets": "2.6.1",
-    "FlexLib": "3.2.2",
-    "FloatingPanel": "2.8.1",
-    "FlowStacks": "0.3.6",
-    "GKPageScrollView": "1.9.3",
-    "GKPageSmoothView": "1.9.3",
-    "GKPhotoBrowser": "2.7.3",
-    "GMStepper": "2.3",
-    "GZIP": "1.3.1",
-    "GoogleAPIClientForREST": "3.5.1",
-    "GoogleToolboxForMac": "4.2.1",
-    "HHTransition": "3.1.2",
-    "HWPanModal": "0.9.8",
-    "HXPhotoPicker": "4.1.5",
-    "HXPhotoPicker-Lite": "4.1.5",
-    "HaishinKit": "1.7.3",
-    "HighlightedTextEditor": "2.1.2",
-    "HorizonCalendar": "2.0.0",
-    "IOSSecuritySuite": "1.9.11",
-    "IQKeyboardManager": "6.5.17",
-    "IQKeyboardManagerSwift": "7.0.1",
-    "InAppSettingsKit": "3.5.1",
-    "InstantSearch": "7.26.1",
-    "Instructions": "2.3.0",
-    "InstructionsAppExtensions": "2.3.0",
-    "Introspect": "0.12.0",
-    "JDStatusBarNotification": "2.2.1",
-    "JKSwiftExtension": "2.6.2",
-    "JPImageresizerView": "1.11.0",
-    "JXPhotoBrowser": "3.1.4",
-    "KMNavigationBarTransition": "1.1.11",
-    "KMPNativeCoroutinesAsync": "1.0.0-ALPHA-24",
-    "KMPNativeCoroutinesCombine": "1.0.0-ALPHA-24",
-    "KMPNativeCoroutinesCore": "1.0.0-ALPHA-24",
-    "KMPNativeCoroutinesRxSwift": "1.0.0-ALPHA-24",
-    "KSCrash": "1.16.2",
-    "KTVHTTPCache": "3.0.0",
-    "KTVVideoProcess": "1.2.0",
-    "KeychainSwift": "21.0.0",
-    "Kingfisher": "7.10.2",
-    "LEEAlert": "1.6.6",
-    "LTScrollView": "0.4.5",
-    "Lantern": "1.1.5",
-    "LayoutTest": "6.0.3",
-    "LayoutTestBase": "6.0.3",
-    "LibTorch": "2.1.0",
-    "LicensePlist": "3.25.1",
-    "LineSDKSwift": "5.11.0",
-    "Logan": "1.2.9",
-    "LookinServer": "1.2.6",
-    "MJRefresh": "3.7.6",
-    "MMKV": "1.3.3",
-    "MMKVAppExtension": "1.3.3",
-    "MMKVCore": "1.3.3",
-    "MTHawkeye": "0.12.8",
-    "MagazineLayout": "1.7.0",
-    "MangoFix": "1.5.5",
-    "Mantis": "2.18.0",
-    "MarqueeLabel": "4.4.0",
-    "MatrixSDKCrypto": "0.3.13",
-    "MyLayout": "1.9.10",
-    "Nimble": "13.1.2",
-    "OCHamcrest": "9.0.3",
-    "OCMock": "3.9.3",
-    "OCMockito": "7.0.2",
-    "PLMediaStreamingKit": "3.1.0",
-    "PSPDFTextView": "1.2.0",
-    "PhoneNumberKit": "3.7.6",
-    "PinLayout": "1.10.5",
-    "PocketSVG": "2.7.3",
-    "Porcupine-iOS": "3.0.1",
-    "ProgressHUD": "14.1.1",
-    "PromiseKit": "8.1.1",
-    "PromisesObjC": "2.3.1",
-    "PromisesSwift": "2.3.1",
-    "Protobuf": "3.26.0-rc1",
-    "Protobuf-C++": "5.26.0-rc1",
-    "Purchases": "3.14.4",
-    "PurchasesCoreSwift": "3.14.4",
-    "QMUIKit": "4.7.0",
-    "Quick": "7.4.0",
-    "RSKGrowingTextView": "8.0.0",
-    "RTRootNavigationController": "0.8.1",
-    "Realm": "10.46.0",
-    "RealmSwift": "10.46.0",
-    "ResearchKit": "2.2.15",
-    "RevenueCat": "4.33.0",
-    "RevenueCatUI": "4.33.0",
-    "Rhino-iOS": "3.0.1",
-    "RouteComposer": "2.10.5",
-    "RxBlocking": "6.6.0",
-    "RxCocoa": "6.6.0",
-    "RxRelay": "6.6.0",
-    "RxSwift": "6.6.0",
-    "RxTest": "6.6.0",
-    "SCLAlertView-Objective-C": "1.3.0",
-    "SDWebImage": "5.18.10",
-    "SDWebImageSwiftUI": "2.2.6",
-    "SPAlert": "5.1.8",
-    "SVProgressHUD": "2.3.1",
-    "SensorsAnalyticsSDK": "4.6.2",
-    "Sentry": "8.19.0",
-    "SideMenuSwift": "2.1.0",
-    "SkeletonUI": "2.0.1",
-    "SnapKit": "5.7.1",
-    "Sourcery": "2.1.7",
-    "Starscream": "4.0.6",
-    "StreamChat": "4.47.1",
-    "StreamChatUI": "4.47.1",
-    "Stripe": "23.21.1",
-    "SuperPlayer": "3.7.7",
-    "SwiftCSV": "0.9.1",
-    "SwiftFormat": "0.53.1",
-    "SwiftLint": "0.54.0",
-    "SwiftMessages": "9.0.9",
-    "SwiftNIOConcurrencyHelpers": "2.39.1",
-    "SwiftProtobuf": "1.25.2",
-    "SwiftSoup": "2.7.0",
-    "SwiftUIIntrospect": "1.1.1",
-    "SwifterSwift": "6.0.0",
-    "SwiftyAttributes": "5.4.0",
-    "SwiftyDropbox": "10.0.1",
-    "SwiftyDropboxObjC": "10.0.1",
-    "TABAnimated": "2.6.5",
-    "TSStarscream": "3.1.1",
-    "TZImagePickerController": "3.8.4",
-    "TableViewDragger": "2.0.0",
-    "Tabman": "3.0.2",
-    "Toast": "4.1.0",
-    "Toast-Swift": "5.1.0",
-    "TrustKit": "3.0.3",
-    "TrustWalletCore": "4.0.21",
-    "URLNavigator": "2.5.1",
-    "ViewInspector": "0.9.10",
-    "VisualEffectView": "4.1.5",
-    "WCDB": "2.0.4",
-    "Willow": "6.1.0",
-    "Wire": "4.9.4",
-    "WordPress-Aztec-iOS": "1.19.9",
-    "Wormholy": "1.7.0",
-    "XLPagerTabStrip": "9.1.0",
-    "YoutubeKit": "0.9.0",
-    "ZLPhotoBrowser": "4.4.8.2",
-    "ZXingObjC": "3.6.9",
-    "_NIODataStructures": "2.39.1",
-    "atlantis-proxyman": "1.23.0",
-    "ffmpeg-kit-ios-full": "6.0",
-    "hippy": "2.14.11",
-    "leveldb-library": "1.22.3",
-    "libheif": "1.16.2",
-    "librav1e": "0.6.0",
-    "libwebp": "1.3.2",
-    "libzstd": "1.5.5",
-    "lottie-ios": "4.4.0",
-    "nanopb": "2.30909.1",
-    "onnxruntime-mobile-objc": "1.17.0-dev+20231211010.8f2b5a6",
-    "themis": "0.15.1",
-    "zxing-cpp": "2.2.0"
+    "AAInfographics": {
+      "version": "9.0.0"
+    },
+    "AEXML": {
+      "version": "4.7.0"
+    },
+    "AMPopTip": {
+      "version": "4.12.0"
+    },
+    "APNGKit": {
+      "version": "2.2.5"
+    },
+    "AWSAPIGateway": {
+      "version": "2.33.8"
+    },
+    "AWSAppleSignIn": {
+      "version": "2.33.8"
+    },
+    "AWSAuthCore": {
+      "version": "2.33.8"
+    },
+    "AWSAutoScaling": {
+      "version": "2.33.8"
+    },
+    "AWSChimeSDKIdentity": {
+      "version": "2.33.8"
+    },
+    "AWSCore": {
+      "version": "2.33.8"
+    },
+    "AWSDynamoDB": {
+      "version": "2.33.8"
+    },
+    "AcknowList": {
+      "version": "3.1.0"
+    },
+    "Adjust": {
+      "version": "4.37.0"
+    },
+    "Agrume": {
+      "version": "5.8.10"
+    },
+    "Alamofire": {
+      "version": "5.8.1"
+    },
+    "AlamofireImage": {
+      "version": "4.3.0"
+    },
+    "AlgoliaSearchClient": {
+      "version": "8.20.0"
+    },
+    "Antlr4": {
+      "version": "4.13.1"
+    },
+    "AnyImageKit": {
+      "version": "0.17.2"
+    },
+    "Apollo": {
+      "version": "1.8.0"
+    },
+    "ApolloTestSupport": {
+      "version": "1.8.0"
+    },
+    "Appboy-iOS-SDK": {
+      "version": "4.5.0"
+    },
+    "AtributikaViews": {
+      "version": "5.0.3"
+    },
+    "Bluepill": {
+      "version": "5.12.5"
+    },
+    "BranchSDK": {
+      "version": "3.0.1"
+    },
+    "Capacitor": {
+      "version": "5.6.0"
+    },
+    "CapacitorCordova": {
+      "version": "5.6.0"
+    },
+    "ChatLayout": {
+      "version": "2.0.3"
+    },
+    "Cheetah-iOS": {
+      "version": "2.0.0"
+    },
+    "CocoaLumberjack": {
+      "version": "3.8.2"
+    },
+    "CocoaMQTT": {
+      "version": "2.1.6"
+    },
+    "Connectivity": {
+      "version": "6.1.1"
+    },
+    "Cordova": {
+      "version": "7.0.1"
+    },
+    "CoreStore": {
+      "version": "9.2.0",
+      "testspecs": ["CoreStoreTests"]
+    },
+    "Countly": {
+      "version": "24.1.0"
+    },
+    "CryptoSwift": {
+      "version": "1.8.1"
+    },
+    "Cuckoo": {
+      "version": "1.10.4"
+    },
+    "CwlCatchException": {
+      "version": "2.1.2",
+      "testspecs": ["Tests"]
+    },
+    "CwlPreconditionTesting": {
+      "version": "2.1.2",
+      "testspecs": ["Tests"]
+    },
+    "DSSwiftUIKit": {
+      "version": "3.9.0"
+    },
+    "Device": {
+      "version": "3.6.0"
+    },
+    "DeviceKit": {
+      "version": "5.2.1"
+    },
+    "DeviceUtil": {
+      "version": "6.2.0"
+    },
+    "EachNavigationBar": {
+      "version": "2.0.0"
+    },
+    "FSPopoverView": {
+      "version": "3.0.0"
+    },
+    "FTLinearActivityIndicator": {
+      "version": "1.7"
+    },
+    "FTPopOverMenu": {
+      "version": "2.1.4"
+    },
+    "Factory": {
+      "version": "2.3.1"
+    },
+    "Firebase": {
+      "version": "10.20.0"
+    },
+    "FirebaseABTesting": {
+      "version": "10.20.0",
+      "testspecs": ["unit"]
+    },
+    "FirebaseAppCheckInterop": {
+      "version": "10.20.0"
+    },
+    "FirebaseAuth": {
+      "version": "10.20.0",
+      "testspecs": ["unit"]
+    },
+    "FirebaseAuthInterop": {
+      "version": "10.20.0"
+    },
+    "FirebaseCore": {
+      "version": "10.20.0",
+      "testspecs": ["swift-unit"]
+    },
+    "FirebaseCoreExtension": {
+      "version": "10.20.0"
+    },
+    "FirebaseCoreInternal": {
+      "version": "10.20.0",
+      "testspecs": ["Unit", "Integration"]
+    },
+    "FirebaseCrashlytics": {
+      "version": "10.20.0",
+      "testspecs": ["unit"]
+    },
+    "FirebaseDatabase": {
+      "version": "10.20.0",
+      "testspecs": ["unit", "integration"]
+    },
+    "FirebaseFunctions": {
+      "version": "10.20.0",
+      "testspecs": ["objc", "integration"]
+    },
+    "FirebaseInstallations": {
+      "version": "10.20.0",
+      "testspecs": ["unit", "integration"]
+    },
+    "FirebaseMessagingInterop": {
+      "version": "10.20.0"
+    },
+    "FirebasePerformance": {
+      "version": "10.20.0",
+      "testspecs": ["unit"],
+      "appspecs": ["TestApp"]
+    },
+    "FirebaseRemoteConfig": {
+      "version": "10.20.0",
+      "testspecs": ["unit"]
+    },
+    "FirebaseSessions": {
+      "version": "10.20.0",
+      "testspecs": ["unit"]
+    },
+    "FirebaseSharedSwift": {
+      "version": "10.20.0",
+      "testspecs": ["unit"]
+    },
+    "FirebaseStorage": {
+      "version": "10.20.0",
+      "testspecs": ["ObjCIntegration"]
+    },
+    "FittedSheets": {
+      "version": "2.6.1"
+    },
+    "FlexLib": {
+      "version": "3.2.2"
+    },
+    "FloatingPanel": {
+      "version": "2.8.1"
+    },
+    "FlowStacks": {
+      "version": "0.3.6"
+    },
+    "GKPageScrollView": {
+      "version": "1.9.3"
+    },
+    "GKPageSmoothView": {
+      "version": "1.9.3"
+    },
+    "GKPhotoBrowser": {
+      "version": "2.7.3"
+    },
+    "GMStepper": {
+      "version": "2.3"
+    },
+    "GZIP": {
+      "version": "1.3.1"
+    },
+    "GoogleAPIClientForREST": {
+      "version": "3.5.1",
+      "testspecs": ["Tests"]
+    },
+    "GoogleDataTransport": {
+      "version": "9.3.0",
+      "testspecs": ["Tests-Unit"]
+    },
+    "GoogleToolboxForMac": {
+      "version": "4.2.1"
+    },
+    "GoogleUtilities": {
+      "version": "7.12.0",
+      "testspecs": ["unit", "unit-swift"]
+    },
+    "GTMSessionFetcher": {
+      "version": "3.3.1",
+      "testspecs": ["Tests"]
+    },
+    "HHTransition": {
+      "version": "3.1.2"
+    },
+    "HWPanModal": {
+      "version": "0.9.8"
+    },
+    "HXPhotoPicker": {
+      "version": "4.1.5"
+    },
+    "HXPhotoPicker-Lite": {
+      "version": "4.1.5"
+    },
+    "HaishinKit": {
+      "version": "1.7.3"
+    },
+    "HighlightedTextEditor": {
+      "version": "2.1.2"
+    },
+    "HorizonCalendar": {
+      "version": "2.0.0"
+    },
+    "IOSSecuritySuite": {
+      "version": "1.9.11"
+    },
+    "IQKeyboardManager": {
+      "version": "6.5.17"
+    },
+    "IQKeyboardManagerSwift": {
+      "version": "7.0.1"
+    },
+    "InAppSettingsKit": {
+      "version": "3.5.1"
+    },
+    "InstantSearch": {
+      "version": "7.26.1"
+    },
+    "Instructions": {
+      "version": "2.3.0"
+    },
+    "InstructionsAppExtensions": {
+      "version": "2.3.0"
+    },
+    "Introspect": {
+      "version": "0.12.0"
+    },
+    "JDStatusBarNotification": {
+      "version": "2.2.1"
+    },
+    "JKSwiftExtension": {
+      "version": "2.6.2"
+    },
+    "JPImageresizerView": {
+      "version": "1.11.0"
+    },
+    "JXPhotoBrowser": {
+      "version": "3.1.4"
+    },
+    "KMNavigationBarTransition": {
+      "version": "1.1.11"
+    },
+    "KMPNativeCoroutinesAsync": {
+      "version": "1.0.0-ALPHA-24"
+    },
+    "KMPNativeCoroutinesCombine": {
+      "version": "1.0.0-ALPHA-24"
+    },
+    "KMPNativeCoroutinesCore": {
+      "version": "1.0.0-ALPHA-24"
+    },
+    "KMPNativeCoroutinesRxSwift": {
+      "version": "1.0.0-ALPHA-24"
+    },
+    "KSCrash": {
+      "version": "1.16.2"
+    },
+    "KTVHTTPCache": {
+      "version": "3.0.0"
+    },
+    "KTVVideoProcess": {
+      "version": "1.2.0"
+    },
+    "KeychainSwift": {
+      "version": "21.0.0"
+    },
+    "Kingfisher": {
+      "version": "7.10.2"
+    },
+    "LEEAlert": {
+      "version": "1.6.6"
+    },
+    "LTScrollView": {
+      "version": "0.4.5"
+    },
+    "Lantern": {
+      "version": "1.1.5"
+    },
+    "LayoutTest": {
+      "version": "6.0.3"
+    },
+    "LayoutTestBase": {
+      "version": "6.0.3"
+    },
+    "LibTorch": {
+      "version": "2.1.0"
+    },
+    "LicensePlist": {
+      "version": "3.25.1"
+    },
+    "LineSDKSwift": {
+      "version": "5.11.0"
+    },
+    "Logan": {
+      "version": "1.2.9"
+    },
+    "LookinServer": {
+      "version": "1.2.6"
+    },
+    "MJRefresh": {
+      "version": "3.7.6"
+    },
+    "MMKV": {
+      "version": "1.3.3"
+    },
+    "MMKVAppExtension": {
+      "version": "1.3.3"
+    },
+    "MMKVCore": {
+      "version": "1.3.3"
+    },
+    "MTHawkeye": {
+      "version": "0.12.8"
+    },
+    "MagazineLayout": {
+      "version": "1.7.0"
+    },
+    "MangoFix": {
+      "version": "1.5.5"
+    },
+    "Mantis": {
+      "version": "2.18.0"
+    },
+    "MarqueeLabel": {
+      "version": "4.4.0"
+    },
+    "MatrixSDKCrypto": {
+      "version": "0.3.13"
+    },
+    "MyLayout": {
+      "version": "1.9.10"
+    },
+    "Nimble": {
+      "version": "13.1.2"
+    },
+    "OCHamcrest": {
+      "version": "9.0.3"
+    },
+    "OCMock": {
+      "version": "3.9.3"
+    },
+    "OCMockito": {
+      "version": "7.0.2"
+    },
+    "PLMediaStreamingKit": {
+      "version": "3.1.0"
+    },
+    "PSPDFTextView": {
+      "version": "1.2.0"
+    },
+    "PhoneNumberKit": {
+      "version": "3.7.6"
+    },
+    "PinLayout": {
+      "version": "1.10.5"
+    },
+    "PocketSVG": {
+      "version": "2.7.3"
+    },
+    "Porcupine-iOS": {
+      "version": "3.0.1"
+    },
+    "ProgressHUD": {
+      "version": "14.1.1"
+    },
+    "PromiseKit": {
+      "version": "8.1.1"
+    },
+    "PromisesObjC": {
+      "version": "2.3.1",
+      "testspecs": ["Tests", "PerformanceTests"]
+    },
+    "PromisesSwift": {
+      "version": "2.3.1"
+    },
+    "Protobuf": {
+      "version": "3.26.0-rc1"
+    },
+    "Protobuf-C++": {
+      "version": "5.26.0-rc1"
+    },
+    "Purchases": {
+      "version": "3.14.4"
+    },
+    "PurchasesCoreSwift": {
+      "version": "3.14.4"
+    },
+    "QMUIKit": {
+      "version": "4.7.0"
+    },
+    "Quick": {
+      "version": "7.4.0"
+    },
+    "RSKGrowingTextView": {
+      "version": "8.0.0"
+    },
+    "RTRootNavigationController": {
+      "version": "0.8.1"
+    },
+    "Realm": {
+      "version": "10.46.0"
+    },
+    "RealmSwift": {
+      "version": "10.46.0"
+    },
+    "ResearchKit": {
+      "version": "2.2.15"
+    },
+    "RevenueCat": {
+      "version": "4.33.0"
+    },
+    "RevenueCatUI": {
+      "version": "4.33.0"
+    },
+    "Rhino-iOS": {
+      "version": "3.0.1"
+    },
+    "RouteComposer": {
+      "version": "2.10.5"
+    },
+    "RxBlocking": {
+      "version": "6.6.0"
+    },
+    "RxCocoa": {
+      "version": "6.6.0"
+    },
+    "RxRelay": {
+      "version": "6.6.0"
+    },
+    "RxSwift": {
+      "version": "6.6.0"
+    },
+    "RxTest": {
+      "version": "6.6.0"
+    },
+    "SCLAlertView-Objective-C": {
+      "version": "1.3.0"
+    },
+    "SDWebImage": {
+      "version": "5.18.10"
+    },
+    "SDWebImageSwiftUI": {
+      "version": "2.2.6"
+    },
+    "SPAlert": {
+      "version": "5.1.8"
+    },
+    "SVProgressHUD": {
+      "version": "2.3.1"
+    },
+    "SensorsAnalyticsSDK": {
+      "version": "4.6.2"
+    },
+    "Sentry": {
+      "version": "8.19.0"
+    },
+    "SideMenuSwift": {
+      "version": "2.1.0"
+    },
+    "SkeletonUI": {
+      "version": "2.0.1"
+    },
+    "SnapKit": {
+      "version": "5.7.1"
+    },
+    "Sourcery": {
+      "version": "2.1.7"
+    },
+    "Starscream": {
+      "version": "4.0.6"
+    },
+    "StreamChat": {
+      "version": "4.47.1"
+    },
+    "StreamChatUI": {
+      "version": "4.47.1"
+    },
+    "Stripe": {
+      "version": "23.21.1"
+    },
+    "SuperPlayer": {
+      "version": "3.7.7"
+    },
+    "SwiftCSV": {
+      "version": "0.9.1"
+    },
+    "SwiftFormat": {
+      "version": "0.53.1"
+    },
+    "SwiftLint": {
+      "version": "0.54.0"
+    },
+    "SwiftMessages": {
+      "version": "9.0.9"
+    },
+    "SwiftNIOConcurrencyHelpers": {
+      "version": "2.39.1"
+    },
+    "SwiftProtobuf": {
+      "version": "1.25.2"
+    },
+    "SwiftSoup": {
+      "version": "2.7.0"
+    },
+    "SwiftUIIntrospect": {
+      "version": "1.1.1"
+    },
+    "SwifterSwift": {
+      "version": "6.0.0"
+    },
+    "SwiftyAttributes": {
+      "version": "5.4.0"
+    },
+    "SwiftyDropbox": {
+      "version": "10.0.1"
+    },
+    "SwiftyDropboxObjC": {
+      "version": "10.0.1"
+    },
+    "TABAnimated": {
+      "version": "2.6.5"
+    },
+    "TSStarscream": {
+      "version": "3.1.1"
+    },
+    "TZImagePickerController": {
+      "version": "3.8.4"
+    },
+    "TableViewDragger": {
+      "version": "2.0.0"
+    },
+    "Tabman": {
+      "version": "3.0.2"
+    },
+    "Toast": {
+      "version": "4.1.0"
+    },
+    "Toast-Swift": {
+      "version": "5.1.0"
+    },
+    "TrustKit": {
+      "version": "3.0.3"
+    },
+    "TrustWalletCore": {
+      "version": "4.0.21"
+    },
+    "URLNavigator": {
+      "version": "2.5.1"
+    },
+    "ViewInspector": {
+      "version": "0.9.10",
+      "testspecs": ["Tests"]
+    },
+    "VisualEffectView": {
+      "version": "4.1.5"
+    },
+    "WCDB": {
+      "version": "2.0.4"
+    },
+    "Willow": {
+      "version": "6.1.0"
+    },
+    "Wire": {
+      "version": "4.9.4",
+      "testspecs": ["Tests"]
+    },
+    "WordPress-Aztec-iOS": {
+      "version": "1.19.9"
+    },
+    "Wormholy": {
+      "version": "1.7.0"
+    },
+    "XLPagerTabStrip": {
+      "version": "9.1.0"
+    },
+    "YoutubeKit": {
+      "version": "0.9.0"
+    },
+    "ZLPhotoBrowser": {
+      "version": "4.4.8.2"
+    },
+    "ZXingObjC": {
+      "version": "3.6.9"
+    },
+    "_NIODataStructures": {
+      "version": "2.39.1"
+    },
+    "atlantis-proxyman": {
+      "version": "1.23.0"
+    },
+    "ffmpeg-kit-ios-full": {
+      "version": "6.0"
+    },
+    "hippy": {
+      "version": "2.14.11"
+    },
+    "leveldb-library": {
+      "version": "1.22.3"
+    },
+    "libheif": {
+      "version": "1.16.2"
+    },
+    "librav1e": {
+      "version": "0.6.0"
+    },
+    "libwebp": {
+      "version": "1.3.2"
+    },
+    "libzstd": {
+      "version": "1.5.5"
+    },
+    "lottie-ios": {
+      "version": "4.4.0"
+    },
+    "nanopb": {
+      "version": "2.30909.1"
+    },
+    "onnxruntime-mobile-objc": {
+      "version": "1.17.1",
+      "testspecs": ["Core/Tests"]
+    },
+    "themis": {
+      "version": "0.15.1"
+    },
+    "zxing-cpp": {
+      "version": "2.2.0"
+    }
   },
   "osx": {}
 }

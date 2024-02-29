@@ -30,11 +30,19 @@ fi
             launch_action = xcode_schemes.launch_action(target = "//:%s" % BAZELPODS),
         ),
         xcode_schemes.scheme(
+            name = BAZELPODS + " Compile",
+            build_action = xcode_schemes.build_action(targets = ["//:%s" % BAZELPODS]),
+            launch_action = xcode_schemes.launch_action(
+                target = "//:%s" % BAZELPODS,
+                args = ["compile --src $SRCROOT/Tests --log-level debug --patches bundle_deduplicate arm64_to_sim missing_sdks --no-concurrency --podspec $SRCROOT/Tests/Pods/FirebaseDatabase/FirebaseDatabase.json"]
+            ),
+        ),
+        xcode_schemes.scheme(
             name = BAZELPODS + " Tests",
             build_action = xcode_schemes.build_action(targets = ["//:%s" % BAZELPODS]),
             launch_action = xcode_schemes.launch_action(
                 target = "//:%s" % BAZELPODS,
-                args = ["--src $SRCROOT/Tests -a --log-level debug --patches bundle_deduplicate arm64_to_sim missing_sdks --diff"]
+                args = ["--src $SRCROOT/Tests -a --log-level debug --patches bundle_deduplicate arm64_to_sim missing_sdks --diff --no-concurrency --deps-prefix //Tests/Pods"]
             ),
         ),
         xcode_schemes.scheme(

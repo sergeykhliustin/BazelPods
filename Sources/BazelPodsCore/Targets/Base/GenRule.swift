@@ -14,11 +14,21 @@ class GenRule: BazelTarget {
     let outs: [String]
     let cmd: String
 
-    init(name: String, srcs: [String] = [], outs: [String] = [], cmd: String = "") {
+    init(name: String,
+         srcs: [String] = [],
+         outs: [String] = [],
+         cmd: String = "") {
         self.name = name
         self.srcs = srcs
         self.outs = outs
         self.cmd = cmd
+    }
+
+    convenience init(name: String,
+                     fileName: String? = nil,
+                     fileExtension: String,
+                     fileContent: String) {
+        self.init(name: name, outs: ["\(fileName ?? name).\(fileExtension)"], cmd: "cat <<EOF > $@\n\(fileContent)\nEOF")
     }
 
     func toStarlark() -> StarlarkNode {

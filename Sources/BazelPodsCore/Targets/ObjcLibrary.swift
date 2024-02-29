@@ -11,9 +11,9 @@ struct ObjcLibrary: BazelTarget {
     let loadNode: String = ""
     let name: String
 
-    let info: BaseAnalyzer.Result
-    let sources: SourcesAnalyzer.Result
-    let resources: ResourcesAnalyzer.Result
+    let info: BaseAnalyzer<PodSpec>.Result
+    let sources: SourcesAnalyzer<PodSpec>.Result
+    let resources: ResourcesAnalyzer<PodSpec>.Result
 
     var deps: [String]
     var conditionalDeps: [String: [Arch]]
@@ -27,12 +27,12 @@ struct ObjcLibrary: BazelTarget {
     var testonly: Bool
 
     init(name: String,
-         info: BaseAnalyzer.Result,
-         sources: SourcesAnalyzer.Result,
-         resources: ResourcesAnalyzer.Result,
-         sdkDeps: SdkDependenciesAnalyzer.Result,
-         vendoredDeps: VendoredDependenciesAnalyzer.Result,
-         buildSettings: BuildSettingsAnalyzer.Result,
+         info: BaseAnalyzer<PodSpec>.Result,
+         sources: SourcesAnalyzer<PodSpec>.Result,
+         resources: ResourcesAnalyzer<PodSpec>.Result,
+         sdkDeps: SdkDependenciesAnalyzer<PodSpec>.Result,
+         vendoredDeps: VendoredDependenciesAnalyzer<PodSpec>.Result,
+         buildSettings: BuildSettingsAnalyzer<PodSpec>.Result,
          infoplists: [String],
          deps: [String],
          conditionalDeps: [String: [Arch]]) {

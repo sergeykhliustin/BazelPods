@@ -8,15 +8,16 @@
 
 import Foundation
 
-public func replacePodsEnvVars(_ value: String, options: BuildOptions) -> String {
-    let podDir = options.podsRoot
-    let targetDir = options.podTargetSrcRoot
+public func replacePodsEnvVars(_ value: String, options: BuildOptions, absolutePath: Bool) -> String {
+    // TODO: Investigate
+    let podDir = absolutePath ? options.absolutePath(from: options.podsRoot) : options.podsRoot
+    let PODS_TARGET_SRCROOT = absolutePath ? options.sourcePath : options.podTargetSrcRoot
     return value
         .replacingOccurrences(of: "$(inherited)", with: "")
         .replacingOccurrences(of: "$(PODS_ROOT)", with: podDir)
         .replacingOccurrences(of: "${PODS_ROOT}", with: podDir)
-        .replacingOccurrences(of: "$(PODS_TARGET_SRCROOT)", with: targetDir)
-        .replacingOccurrences(of: "${PODS_TARGET_SRCROOT}", with: targetDir)
+        .replacingOccurrences(of: "$(PODS_TARGET_SRCROOT)", with: PODS_TARGET_SRCROOT)
+        .replacingOccurrences(of: "${PODS_TARGET_SRCROOT}", with: PODS_TARGET_SRCROOT)
 }
 
 public func xcconfigSettingToList(_ value: String) -> [String] {

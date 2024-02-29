@@ -38,7 +38,7 @@ integration:
 
 prepare-tests:
 	swift TestTools/generate_podfile.swift TestTools/Pods.json TestTools/Podfile_template > Tests/Podfile
-	cd Tests && pod install || pod install --repo-update
+	cd Tests && bundle exec pod install || bundle exec pod install --repo-update
 	bazel run :bazelpods $(CONFIG) -- \
 	--src "$(shell pwd)/Tests" \
 	--deps-prefix "//Tests/Pods" \
@@ -93,7 +93,7 @@ record-tests:
 
 integration-setup:
 	swift TestTools/generate_podfile.swift TestTools/Pods_Integration.json TestTools/Podfile_template > IntegrationTests/Podfile
-	cd IntegrationTests && pod install
+	cd IntegrationTests && bundle exec pod install
 	swift TestTools/generate_buildfile.swift TestTools/Pods_Integration.json TestTools/BUILD_template //IntegrationTests > IntegrationTests/BUILD.bazel
 
 integration-generate-static:

@@ -16,13 +16,15 @@ Core idea, Podspec parser, Starlark compiler are forked from [PodToBUILD](https:
 | vendored frameworks                                                             | ✅   | ❓     | ❓      | ❓   |
 | vendored xcframeworks                                                           | ✅   | ❓     | ❓      | ❓   |
 | bundles and resources                                                           | ✅   | ❓     | ❓      | ❓   |
-| [rules_xcodeproj](https://github.com/buildbuddy-io/rules_xcodeproj)             | ✅   | ❓     | ❓      | ❓   |
+| [rules_xcodeproj](https://github.com/MobileNativeFoundation/rules_xcodeproj)    | ✅   | ❓     | ❓      | ❓   |
+| tests specs                                                                     | Beta   | ❓     | ❓      | ❓   |
+| app specs                                                                       | Beta   | ❓     | ❓      | ❓   |
 
-###### ✅ - full support (report issues if no), 🔜 - not yet supported, ❓ - unknown, ❌ - not supported
+###### ✅ - full support (report issues if no),  🔜 - not yet supported, ❓ - unknown, ❌ - not supported
 
   - [x] Autodetect vendored frameworks and libs architectures and ignore unsupported
   - [x] Local pods with custom paths, private pods (resolved by CocoaPods)
-  - [ ] Nested subspecs (possibly works, but not tested yet)
+  - [x] Test and app specs 🚀
   
  ### 🎸 Let's rock
 Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) and [`rules_apple`](https://github.com/bazelbuild/rules_apple) first.
@@ -92,19 +94,24 @@ OPTIONS:
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'runner'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
                           'SomePod.testonly := true'
                           Platform specific:
                           'SomePod.platform_ios.sdk_dylibs += something,something'
+                          For test specs:
+                          'SomePod/UnitTests.runner := //:SomeTestsRunner'
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --no-concurrency        Disable concurrency.
   --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  --use-bundler           Option to use `bundle exec` for `pod` calls
+  --tests-timeout <tests-timeout>
+                          (Optional) Default timeout for test targets (short|moderate|long|eternal)
   --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
   --print-output          Print BUILD files contents to terminal output
   --dry-run               Dry run. Files will not be written
@@ -117,7 +124,7 @@ Compile
 ```
 OVERVIEW: Compiles podspec.json to BUILD file
 
-USAGE: bazelpods compile --src <src> [--platforms <platforms> ...] [--min-ios <min-ios>] [--patches <patches> ...] [--user-options <user-options> ...] [--deps-prefix <deps-prefix>] [--pods-root <pods-root>] [--frameworks] [--no-concurrency] [--log-level <log-level>] --podspec <podspec> [--subspecs <subspecs> ...]
+USAGE: bazelpods compile [<options>] --src <src> --podspec <podspec>
 
 OPTIONS:
   --src <src>             Sources root where Pods directory located (or renamed by podsRoot)
@@ -130,19 +137,24 @@ OPTIONS:
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'runner'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
                           'SomePod.testonly := true'
                           Platform specific:
                           'SomePod.platform_ios.sdk_dylibs += something,something'
+                          For test specs:
+                          'SomePod/UnitTests.runner := //:SomeTestsRunner'
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --no-concurrency        Disable concurrency.
   --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  --use-bundler           Option to use `bundle exec` for `pod` calls
+  --tests-timeout <tests-timeout>
+                          (Optional) Default timeout for test targets (short|moderate|long|eternal)
   --podspec <podspec>     podspec.json
   --subspecs <subspecs>   Subspecs list
   -h, --help              Show help information.
