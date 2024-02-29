@@ -35,11 +35,9 @@ apple_framework(
       "ios/Capacitor/Capacitor/Plugins/*.swift"
     ]
   ),
-  data = glob(
-    [
-      "ios/Capacitor/Capacitor/assets/native-bridge.js"
-    ]
-  ),
+  data = [
+    "ios/Capacitor/Capacitor/assets/native-bridge.js"
+  ],
   deps = [
     "//Tests/Pods/CapacitorCordova:CapacitorCordova"
   ],

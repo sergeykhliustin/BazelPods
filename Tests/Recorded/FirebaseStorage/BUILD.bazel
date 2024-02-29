@@ -123,12 +123,10 @@ ios_unit_test(
       "FirebaseStorage/Tests/ObjCIntegration/*.mm"
     ]
   ),
-  data = glob(
-    [
-      "FirebaseStorage/Tests/Integration/Resources/1mb.dat",
-      "FirebaseStorage/Tests/Integration/Resources/GoogleService-Info.plist"
-    ]
-  ),
+  data = [
+    "FirebaseStorage/Tests/Integration/Resources/1mb.dat",
+    "FirebaseStorage/Tests/Integration/Resources/GoogleService-Info.plist"
+  ],
   deps = [
     "//Tests/Pods/FirebaseAuth:FirebaseAuth",
     ":FirebaseStorage"

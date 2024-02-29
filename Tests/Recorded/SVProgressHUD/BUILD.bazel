@@ -27,11 +27,8 @@ apple_framework(
       "SVProgressHUD/*.m"
     ]
   ),
-  data = glob(
-    [
-      "SVProgressHUD/PrivacyInfo.xcprivacy"
-    ]
-  ) + [
+  data = [
+    "SVProgressHUD/PrivacyInfo.xcprivacy",
     "SVProgressHUD/SVProgressHUD.bundle"
   ],
   objc_defines = [

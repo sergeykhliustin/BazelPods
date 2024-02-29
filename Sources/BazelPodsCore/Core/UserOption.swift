@@ -53,6 +53,7 @@ public struct UserOption {
         case vendored_xcframeworks([String])
         case testonly(Bool)
         case link_dynamic(Bool)
+        case data([String])
         case runner(String)
         case test_host(String)
         case timeout(TestsTimeout)
@@ -66,6 +67,7 @@ public struct UserOption {
         case vendored_xcframeworks
         case testonly
         case link_dynamic
+        case data
         case runner
         case test_host
         case timeout
@@ -171,6 +173,8 @@ public struct UserOption {
                 return nil
             }
             attribute = .link_dynamic(bool)
+        case .data:
+            attribute = .data(value)
         case .runner:
             guard opt == .replace else {
                 log_error("Incorrect option for \(string). '\(keyPath)' supports only \(Opt.replace.rawValue) operator. Skipping...")

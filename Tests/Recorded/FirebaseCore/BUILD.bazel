@@ -157,11 +157,9 @@ ios_unit_test(
       "SharedTestUtilities/FIROptionsMock.m"
     ]
   ),
-  data = glob(
-    [
-      "FirebaseCore/Tests/Unit/Resources/GoogleService-Info.plist"
-    ]
-  ),
+  data = [
+    "FirebaseCore/Tests/Unit/Resources/GoogleService-Info.plist"
+  ],
   deps = [
     "//Tests/Pods/OCMock:OCMock",
     ":FirebaseCore"
