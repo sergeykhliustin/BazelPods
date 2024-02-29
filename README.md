@@ -104,6 +104,7 @@ OPTIONS:
                           For test specs:
                           'SomePod/UnitTests.runner := //:SomeTestsRunner'
                           'SomePod/UnitTests.test_host := //:SomeTestHostApp'
+                          'SomePod/UnitTests.timeout := eternal'
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
@@ -148,6 +149,7 @@ OPTIONS:
                           For test specs:
                           'SomePod/UnitTests.runner := //:SomeTestsRunner'
                           'SomePod/UnitTests.test_host := //:SomeTestHostApp'
+                          'SomePod/UnitTests.timeout := eternal'
   --deps-prefix <deps-prefix>
                           Dependencies prefix (default: //Pods)
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
