@@ -1,5 +1,4 @@
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
-load('@build_bazel_rules_ios//rules:test.bzl', 'ios_unit_test')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
 # see the bazel user manual for more information
@@ -11,21 +10,26 @@ config_setting(
   }
 )
 apple_framework(
-  name = "Wire",
-  module_name = "Wire",
-  bundle_id = "org.cocoapods.Wire",
-  swift_version = "5",
+  name = "GCDWebServer",
+  module_name = "GCDWebServer",
+  bundle_id = "org.cocoapods.GCDWebServer",
   link_dynamic = True,
   testonly = False,
   infoplists = [
-    ":Wire_InfoPlist"
+    ":GCDWebServer_InfoPlist"
   ],
   platforms = {
     "ios": "10.0"
   },
   srcs = glob(
     [
-      "wire-runtime-swift/src/main/swift/**/*.swift"
+      "GCDWebServer/**/*.h",
+      "GCDWebServer/**/*.m"
+    ]
+  ),
+  private_headers = glob(
+    [
+      "GCDWebServer/Core/GCDWebServerPrivate.h"
     ]
   ),
   objc_defines = [
@@ -50,15 +54,23 @@ apple_framework(
       ]
     }
   ),
+  sdk_dylibs = [
+    "z"
+  ],
+  sdk_frameworks = [
+    "CFNetwork",
+    "MobileCoreServices",
+    "SystemConfiguration"
+  ],
   visibility = [
     "//visibility:public"
   ]
 )
 genrule(
-  name = "Wire_InfoPlist",
+  name = "GCDWebServer_InfoPlist",
   srcs = [],
   outs = [
-    "Wire_InfoPlist.plist"
+    "GCDWebServer_InfoPlist.plist"
   ],
   cmd = """cat <<EOF > $@
 <?xml version="1.0" encoding="UTF-8"?>
@@ -66,15 +78,15 @@ genrule(
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>org.cocoapods.Wire</string>
+	<string>org.cocoapods.GCDWebServer</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Wire</string>
+	<string>GCDWebServer</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.9.4</string>
+	<string>3.5.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -91,51 +103,6 @@ genrule(
 		<integer>1</integer>
 		<integer>2</integer>
 	</array>
-</dict>
-</plist>
-
-EOF"""
-)
-ios_unit_test(
-  name = "Wire_Tests_Tests",
-  module_name = "Tests",
-  minimum_os_version = "11.0",
-  infoplists = [
-    ":Wire_Tests_Tests_InfoPlist"
-  ],
-  srcs = glob(
-    [
-      "wire-runtime-swift/src/test/swift/**/*.swift"
-    ]
-  ),
-  deps = [
-    ":Wire"
-  ],
-  visibility = [
-    "//visibility:public"
-  ]
-)
-genrule(
-  name = "Wire_Tests_Tests_InfoPlist",
-  srcs = [],
-  outs = [
-    "Wire_Tests_Tests_InfoPlist.plist"
-  ],
-  cmd = """cat <<EOF > $@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundlePackageType</key>
-	<string>BNDL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>4.9.4</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
 </dict>
 </plist>
 

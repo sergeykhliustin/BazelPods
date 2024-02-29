@@ -1,4 +1,6 @@
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
+load('@build_bazel_rules_ios//rules:test.bzl', 'ios_unit_test')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
 # see the bazel user manual for more information
@@ -120,6 +122,124 @@ genrule(
 		<integer>1</integer>
 		<integer>2</integer>
 	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+ios_unit_test(
+  name = "CoreStore_CoreStoreTests_Tests",
+  module_name = "CoreStoreTests",
+  minimum_os_version = "13.0",
+  infoplists = [
+    ":CoreStore_CoreStoreTests_Tests_InfoPlist"
+  ],
+  srcs = glob(
+    [
+      "CoreStoreTests/**/*.S",
+      "CoreStoreTests/**/*.c",
+      "CoreStoreTests/**/*.cc",
+      "CoreStoreTests/**/*.cpp",
+      "CoreStoreTests/**/*.cxx",
+      "CoreStoreTests/**/*.h",
+      "CoreStoreTests/**/*.hpp",
+      "CoreStoreTests/**/*.hxx",
+      "CoreStoreTests/**/*.m",
+      "CoreStoreTests/**/*.mm",
+      "CoreStoreTests/**/*.s",
+      "CoreStoreTests/**/*.swift"
+    ]
+  ),
+  data = glob(
+    [
+      "CoreStoreTests/**/*.xcdatamodel",
+      "CoreStoreTests/**/*.xcdatamodeld"
+    ]
+  ),
+  deps = [
+    ":CoreStore",
+    ":CoreStoreTests_CoreStoreTests_Bundle"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+precompiled_apple_resource_bundle(
+  name = "CoreStoreTests_CoreStoreTests_Bundle",
+  bundle_id = "org.cocoapods.CoreStoreTests",
+  bundle_name = "CoreStoreTests",
+  infoplists = [
+    ":CoreStoreTests_CoreStoreTests_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "CoreStoreTests/**/*.momd"
+    ]
+  )
+)
+genrule(
+  name = "CoreStoreTests_CoreStoreTests_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "CoreStoreTests_CoreStoreTests_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.CoreStoreTests</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>CoreStoreTests</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>9.2.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "CoreStore_CoreStoreTests_Tests_InfoPlist",
+  srcs = [],
+  outs = [
+    "CoreStore_CoreStoreTests_Tests_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>9.2.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 </dict>
 </plist>
 

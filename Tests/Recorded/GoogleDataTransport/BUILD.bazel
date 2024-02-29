@@ -1,4 +1,5 @@
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:test.bzl', 'ios_unit_test')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
 # see the bazel user manual for more information
@@ -144,6 +145,58 @@ genrule(
 		<integer>1</integer>
 		<integer>2</integer>
 	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+ios_unit_test(
+  name = "GoogleDataTransport_Tests-Unit_Tests",
+  module_name = "Tests_Unit",
+  minimum_os_version = "10.0",
+  infoplists = [
+    ":GoogleDataTransport_Tests-Unit_Tests_InfoPlist"
+  ],
+  srcs = glob(
+    [
+      "GoogleDataTransport/GDTCCTTests/Common/**/*.h",
+      "GoogleDataTransport/GDTCCTTests/Common/**/*.m",
+      "GoogleDataTransport/GDTCCTTests/Unit/Helpers/**/*.h",
+      "GoogleDataTransport/GDTCCTTests/Unit/Helpers/**/*.m",
+      "GoogleDataTransport/GDTCORTests/Common/**/*.h",
+      "GoogleDataTransport/GDTCORTests/Common/**/*.m",
+      "GoogleDataTransport/GDTCORTests/Unit/**/*.h",
+      "GoogleDataTransport/GDTCORTests/Unit/**/*.m"
+    ]
+  ),
+  deps = [
+    ":GoogleDataTransport"
+  ],
+  visibility = [
+    "//visibility:public"
+  ]
+)
+genrule(
+  name = "GoogleDataTransport_Tests-Unit_Tests_InfoPlist",
+  srcs = [],
+  outs = [
+    "GoogleDataTransport_Tests-Unit_Tests_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>9.3.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 </dict>
 </plist>
 

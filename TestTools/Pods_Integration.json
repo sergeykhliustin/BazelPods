@@ -1,83 +1,237 @@
 {
     "ios": {
-        "AMScrollingNavbar": "5.7.3",
-        "Action": "5.0.0",
-        "Alamofire": "5.6.2",
-        "Appboy-iOS-SDK": "4.5.0",
-        "Cartography": "4.0.0",
-        "Charts": "4.1.0",
-        "CocoaLumberjack": "3.7.4",
-        "CryptoSwift": "1.5.1",
-        "Eureka": "5.3.6",
-        "FSPagerView": "0.8.3",
-        "FacebookSDK": "11.2.1",
-        "Firebase": "9.5.0",
-        "FirebaseAnalytics": "9.5.0",
-        "GoogleMaps": "7.3.0",
-        "GrowingAutoTrackKit": "2.9.14",
-        "GrowingCoreKit": "2.9.14",
-        "IQKeyboardManager": "6.5.10",
-        "JTAppleCalendar": "8.0.4",
-        "KeychainAccess": "4.2.2",
-        "Kingfisher": "7.6.2",
-        "LTMorphingLabel": "0.9.3",
-        "Material": "3.1.8",
-        "MessageKit": "3.8.0",
-        "Moya": "15.0.0",
-        "NVActivityIndicatorView": "5.1.1",
-        "OHHTTPStubs": "9.1.0",
-        "ObjectMapper": "4.2.0",
-        "Onfido": "25.2.0",
-        "PromiseKit": "6.18.1",
-        "Protobuf": "3.22.0",
-        "R.swift": "6.1.0",
-        "ReSwift": "6.1.0",
-        "ReachabilitySwift": "5.0.0",
-        "ReactiveCocoa": "12.0.0",
-        "RxSwift": "6.5.0",
-        "SDWebImage": "5.13.2",
-        "SQLite.swift": "0.13.3",
-        "SkeletonView": "1.30.2",
-        "SnapKit": "5.6.0",
-        "Starscream": "4.0.4",
-        "SwiftDate": "6.3.1",
-        "SwiftMessages": "9.0.6",
-        "SwifterSwift": "5.2.0",
-        "SwiftyBeaver": "1.9.6",
-        "SwiftyJSON": "5.0.1",
-        "ViewAnimator": "3.1.0",
-        "Yoga": "1.14.0",
-        "ZoomSDK": "5.11.3.4099.1",
-        "lottie-ios": "3.4.3"
+        "AMScrollingNavbar": {
+            "version": "5.7.3"
+        },
+        "Action": {
+            "version": "5.0.0"
+        },
+        "Alamofire": {
+            "version": "5.6.2"
+        },
+        "Appboy-iOS-SDK": {
+            "version": "4.5.0"
+        },
+        "Cartography": {
+            "version": "4.0.0"
+        },
+        "Charts": {
+            "version": "4.1.0"
+        },
+        "CocoaLumberjack": {
+            "version": "3.7.4"
+        },
+        "CryptoSwift": {
+            "version": "1.5.1"
+        },
+        "Eureka": {
+            "version": "5.3.6"
+        },
+        "FSPagerView": {
+            "version": "0.8.3"
+        },
+        "FacebookSDK": {
+            "version": "11.2.1"
+        },
+        "Firebase": {
+            "version": "9.5.0"
+        },
+        "FirebaseAnalytics": {
+            "version": "9.5.0"
+        },
+        "GoogleMaps": {
+            "version": "7.3.0"
+        },
+        "GrowingAutoTrackKit": {
+            "version": "2.9.14"
+        },
+        "GrowingCoreKit": {
+            "version": "2.9.14"
+        },
+        "IQKeyboardManager": {
+            "version": "6.5.10"
+        },
+        "JTAppleCalendar": {
+            "version": "8.0.4"
+        },
+        "KeychainAccess": {
+            "version": "4.2.2"
+        },
+        "Kingfisher": {
+            "version": "7.6.2"
+        },
+        "LTMorphingLabel": {
+            "version": "0.9.3"
+        },
+        "Material": {
+            "version": "3.1.8"
+        },
+        "MessageKit": {
+            "version": "3.8.0"
+        },
+        "Moya": {
+            "version": "15.0.0"
+        },
+        "NVActivityIndicatorView": {
+            "version": "5.1.1"
+        },
+        "OHHTTPStubs": {
+            "version": "9.1.0"
+        },
+        "ObjectMapper": {
+            "version": "4.2.0"
+        },
+        "Onfido": {
+            "version": "25.2.0"
+        },
+        "PromiseKit": {
+            "version": "6.18.1"
+        },
+        "Protobuf": {
+            "version": "3.22.0"
+        },
+        "R.swift": {
+            "version": "6.1.0"
+        },
+        "ReSwift": {
+            "version": "6.1.0"
+        },
+        "ReachabilitySwift": {
+            "version": "5.0.0"
+        },
+        "ReactiveCocoa": {
+            "version": "12.0.0"
+        },
+        "RxSwift": {
+            "version": "6.5.0"
+        },
+        "SDWebImage": {
+            "version": "5.13.2"
+        },
+        "SQLite.swift": {
+            "version": "0.13.3"
+        },
+        "SkeletonView": {
+            "version": "1.30.2"
+        },
+        "SnapKit": {
+            "version": "5.6.0"
+        },
+        "Starscream": {
+            "version": "4.0.4"
+        },
+        "SwiftDate": {
+            "version": "6.3.1"
+        },
+        "SwiftMessages": {
+            "version": "9.0.6"
+        },
+        "SwifterSwift": {
+            "version": "5.2.0"
+        },
+        "SwiftyBeaver": {
+            "version": "1.9.6"
+        },
+        "SwiftyJSON": {
+            "version": "5.0.1"
+        },
+        "ViewAnimator": {
+            "version": "3.1.0"
+        },
+        "Yoga": {
+            "version": "1.14.0"
+        },
+        "ZoomSDK": {
+            "version": "5.11.3.4099.1"
+        },
+        "lottie-ios": {
+            "version": "3.4.3"
+        }
     },
     "osx": {
-        "Action": "5.0.0",
-        "Alamofire": "5.6.2",
-        "Cartography": "4.0.0",
-        "Charts": "4.1.0",
-        "CocoaLumberjack": "3.7.4",
-        "CryptoSwift": "1.5.1",
-        "Firebase": "9.5.0",
-        "FirebaseAnalytics": "9.5.0",
-        "KeychainAccess": "4.2.2",
-        "Kingfisher": "7.6.2",
-        "Moya": "15.0.0",
-        "OHHTTPStubs": "9.1.0",
-        "ObjectMapper": "4.2.0",
-        "PromiseKit": "6.18.1",
-        "ReSwift": "6.1.0",
-        "ReachabilitySwift": "5.0.0",
-        "ReactiveCocoa": "12.0.0",
-        "RxSwift": "6.5.0",
-        "SDWebImage": "5.13.2",
-        "SQLite.swift": "0.13.3",
-        "SnapKit": "5.6.0",
-        "Starscream": "4.0.4",
-        "SwiftDate": "6.3.1",
-        "SwifterSwift": "5.2.0",
-        "SwiftyBeaver": "1.9.6",
-        "SwiftyJSON": "5.0.1",
-        "Yoga": "1.14.0",
-        "lottie-ios": "3.4.3"
+        "Action": {
+            "version": "5.0.0"
+        },
+        "Alamofire": {
+            "version": "5.6.2"
+        },
+        "Cartography": {
+            "version": "4.0.0"
+        },
+        "Charts": {
+            "version": "4.1.0"
+        },
+        "CocoaLumberjack": {
+            "version": "3.7.4"
+        },
+        "CryptoSwift": {
+            "version": "1.5.1"
+        },
+        "Firebase": {
+            "version": "9.5.0"
+        },
+        "FirebaseAnalytics": {
+            "version": "9.5.0"
+        },
+        "KeychainAccess": {
+            "version": "4.2.2"
+        },
+        "Kingfisher": {
+            "version": "7.6.2"
+        },
+        "Moya": {
+            "version": "15.0.0"
+        },
+        "OHHTTPStubs": {
+            "version": "9.1.0"
+        },
+        "ObjectMapper": {
+            "version": "4.2.0"
+        },
+        "PromiseKit": {
+            "version": "6.18.1"
+        },
+        "ReSwift": {
+            "version": "6.1.0"
+        },
+        "ReachabilitySwift": {
+            "version": "5.0.0"
+        },
+        "ReactiveCocoa": {
+            "version": "12.0.0"
+        },
+        "RxSwift": {
+            "version": "6.5.0"
+        },
+        "SDWebImage": {
+            "version": "5.13.2"
+        },
+        "SQLite.swift": {
+            "version": "0.13.3"
+        },
+        "SnapKit": {
+            "version": "5.6.0"
+        },
+        "Starscream": {
+            "version": "4.0.4"
+        },
+        "SwiftDate": {
+            "version": "6.3.1"
+        },
+        "SwifterSwift": {
+            "version": "5.2.0"
+        },
+        "SwiftyBeaver": {
+            "version": "1.9.6"
+        },
+        "SwiftyJSON": {
+            "version": "5.0.1"
+        },
+        "Yoga": {
+            "version": "1.14.0"
+        },
+        "lottie-ios": {
+            "version": "3.4.3"
+        }
     }
 }
