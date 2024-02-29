@@ -9,9 +9,8 @@
 import Foundation
 
 public func replacePodsEnvVars(_ value: String, options: BuildOptions, absolutePath: Bool) -> String {
-    // TODO: Investigate
-    let podDir = absolutePath ? options.absolutePath(from: options.podsRoot) : options.podsRoot
-    let PODS_TARGET_SRCROOT = absolutePath ? options.sourcePath : options.podTargetSrcRoot
+    let podDir = absolutePath ? options.sourcePath.appendingPath(options.podsRoot) : options.podsRoot
+    let PODS_TARGET_SRCROOT = absolutePath ? options.podTargetAbsoluteRoot : options.podTargetSrcRoot
     return value
         .replacingOccurrences(of: "$(inherited)", with: "")
         .replacingOccurrences(of: "$(PODS_ROOT)", with: podDir)
