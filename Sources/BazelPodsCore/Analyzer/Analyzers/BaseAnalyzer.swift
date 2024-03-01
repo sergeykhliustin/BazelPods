@@ -36,7 +36,7 @@ struct BaseAnalyzer<S: BaseInfoRepresentable> {
         let name = spec.name
         let version = spec.version
         let platformVersion = try resolvePlatformVersion(platform)
-        let moduleName: String = spec.resolveModuleName(platform)
+        let moduleName: String = spec.resolveModuleName(platform, options: options)
         let platforms = [platform.bazelKey: platformVersion]
         let swiftVersion: String?
         if let versions = spec.attr(\.swiftVersions).platform(platform)??.compactMap({ Double($0) }) {

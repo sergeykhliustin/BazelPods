@@ -102,7 +102,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseCoreInternal_Unit_Tests",
-  module_name = "Unit",
+  bundle_name = "FirebaseCoreInternal_Unit_Unit",
+  module_name = "FirebaseCoreInternal_Unit_Unit",
   minimum_os_version = "10.0",
   test_host = ":FirebaseCoreInternal_Unit_AppHost",
   infoplists = [
@@ -291,7 +292,8 @@ ios_application_native(
 )
 ios_unit_test(
   name = "FirebaseCoreInternal_Integration_Tests",
-  module_name = "Integration",
+  bundle_name = "FirebaseCoreInternal_Unit_Integration",
+  module_name = "FirebaseCoreInternal_Unit_Integration",
   minimum_os_version = "10.0",
   test_host = ":FirebaseCoreInternal_Integration_AppHost",
   infoplists = [

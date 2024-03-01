@@ -129,7 +129,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseSessions_unit_Tests",
-  module_name = "unit",
+  bundle_name = "FirebaseSessions_Unit_unit",
+  module_name = "FirebaseSessions_Unit_unit",
   minimum_os_version = "11.0",
   test_host = ":FirebaseSessions_unit_AppHost",
   infoplists = [

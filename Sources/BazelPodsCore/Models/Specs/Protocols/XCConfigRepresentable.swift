@@ -13,6 +13,12 @@ protocol XCConfigRepresentable: BaseRepresentable {
     var xcconfig: [String: String] { get }
 }
 
+extension XCConfigRepresentable {
+    var moduleName: String? {
+        return podTargetXcconfig["SWIFT_MODULE_NAME"]
+    }
+}
+
 private enum Keys: String {
     case pod_target_xcconfig
     case user_target_xcconfig

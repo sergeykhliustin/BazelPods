@@ -111,7 +111,8 @@ EOF"""
 )
 ios_unit_test(
   name = "PromisesObjC_Tests_Tests",
-  module_name = "Tests",
+  bundle_name = "PromisesObjC_Unit_Tests",
+  module_name = "PromisesObjC_Unit_Tests",
   minimum_os_version = "10.0",
   infoplists = [
     ":PromisesObjC_Tests_Tests_InfoPlist"
@@ -157,7 +158,8 @@ EOF"""
 )
 ios_unit_test(
   name = "PromisesObjC_PerformanceTests_Tests",
-  module_name = "PerformanceTests",
+  bundle_name = "PromisesObjC_Unit_PerformanceTests",
+  module_name = "PromisesObjC_Unit_PerformanceTests",
   minimum_os_version = "10.0",
   infoplists = [
     ":PromisesObjC_PerformanceTests_Tests_InfoPlist"

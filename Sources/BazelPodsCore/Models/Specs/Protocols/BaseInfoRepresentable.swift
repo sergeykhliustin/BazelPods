@@ -60,9 +60,13 @@ extension BaseInfoRepresentable {
         }
     }
 
-    func resolveModuleName(_ platform: Platform) -> String {
+    func resolveModuleName(_ platform: Platform, options: BuildOptions) -> String {
         if let specModuleName = moduleName ?? platformRepresentable(platform)?.moduleName {
             return specModuleName
+        } else if let buildSettings = self as? XCConfigRepresentable, let moduleName = buildSettings.moduleName {
+            return moduleName
+        } else if let testSpec = self as? TestSpecRepresentable {
+            return [options.podName, testSpec.testType.rawValue.capitalized, name].joined(separator: "_")
         } else {
             return name.replacingOccurrences(of: "-", with: "_")
         }

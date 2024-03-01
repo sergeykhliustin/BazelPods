@@ -139,7 +139,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebasePerformance_unit_Tests",
-  module_name = "unit",
+  bundle_name = "FirebasePerformance_Unit_unit",
+  module_name = "FirebasePerformance_Unit_unit",
   minimum_os_version = "11.0",
   test_host = ":FirebasePerformance_unit_AppHost",
   infoplists = [

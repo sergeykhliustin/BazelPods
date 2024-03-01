@@ -155,7 +155,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseCrashlytics_unit_Tests",
-  module_name = "unit",
+  bundle_name = "FirebaseCrashlytics_Unit_unit",
+  module_name = "FirebaseCrashlytics_Unit_unit",
   minimum_os_version = "11.0",
   test_host = ":FirebaseCrashlytics_unit_AppHost",
   infoplists = [

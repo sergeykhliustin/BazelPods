@@ -111,7 +111,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseStorage_ObjCIntegration_Tests",
-  module_name = "ObjCIntegration",
+  bundle_name = "FirebaseStorage_Unit_ObjCIntegration",
+  module_name = "FirebaseStorage_Unit_ObjCIntegration",
   minimum_os_version = "11.0",
   test_host = ":FirebaseStorage_ObjCIntegration_AppHost",
   infoplists = [

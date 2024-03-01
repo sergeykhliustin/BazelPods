@@ -129,7 +129,8 @@ EOF"""
 )
 ios_unit_test(
   name = "FirebaseCore_swift-unit_Tests",
-  module_name = "swift_unit",
+  bundle_name = "FirebaseCore_Unit_swift-unit",
+  module_name = "FirebaseCore_Unit_swift-unit",
   minimum_os_version = "10.0",
   test_host = ":FirebaseCore_swift-unit_AppHost",
   infoplists = [

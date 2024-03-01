@@ -153,7 +153,8 @@ EOF"""
 )
 ios_unit_test(
   name = "GoogleUtilities_unit_Tests",
-  module_name = "unit",
+  bundle_name = "GoogleUtilities_Unit_unit",
+  module_name = "GoogleUtilities_Unit_unit",
   minimum_os_version = "10.0",
   test_host = ":GoogleUtilities_unit_AppHost",
   infoplists = [
@@ -343,7 +344,8 @@ ios_application_native(
 )
 ios_unit_test(
   name = "GoogleUtilities_unit-swift_Tests",
-  module_name = "unit_swift",
+  bundle_name = "GoogleUtilities_Unit_unit-swift",
+  module_name = "GoogleUtilities_Unit_unit-swift",
   minimum_os_version = "10.0",
   test_host = ":GoogleUtilities_unit-swift_AppHost",
   infoplists = [

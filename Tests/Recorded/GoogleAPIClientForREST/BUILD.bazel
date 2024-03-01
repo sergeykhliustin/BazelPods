@@ -163,7 +163,8 @@ EOF"""
 )
 ios_unit_test(
   name = "GoogleAPIClientForREST_Tests_Tests",
-  module_name = "Tests",
+  bundle_name = "GoogleAPIClientForREST_Unit_Tests",
+  module_name = "GoogleAPIClientForREST_Unit_Tests",
   minimum_os_version = "10.0",
   infoplists = [
     ":GoogleAPIClientForREST_Tests_Tests_InfoPlist"
