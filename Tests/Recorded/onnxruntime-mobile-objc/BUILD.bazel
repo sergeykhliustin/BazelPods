@@ -84,9 +84,9 @@ apple_framework(
     }
   ),
   objc_copts = [
-    "-ITests/Pods/onnxruntime-mobile-objc/objectivec",
     "-fvisibility=hidden",
-    "-fvisibility-inlines-hidden"
+    "-fvisibility-inlines-hidden",
+    "-ITests/Pods/onnxruntime-mobile-objc/objectivec"
   ],
   swift_copts = [
     "-Xcc",

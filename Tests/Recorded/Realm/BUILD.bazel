@@ -328,10 +328,10 @@ apple_framework(
     "UIKit"
   ],
   objc_copts = [
-    "-fapplication-extension",
     "-isystem",
     "Tests/Pods/Realm/include/core",
-    "-fvisibility-inlines-hidden"
+    "-fvisibility-inlines-hidden",
+    "-fapplication-extension"
   ],
   swift_copts = [
     "-application-extension"

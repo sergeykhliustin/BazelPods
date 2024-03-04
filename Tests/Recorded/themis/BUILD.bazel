@@ -48,10 +48,10 @@ apple_framework(
     "UIKit"
   ],
   objc_copts = [
-    "-DLIBRESSL",
     "-ITests/Pods/themis/include",
     "-ITests/Pods/themis/src",
-    "-ITests/Pods/themis/src/wrappers/themis/Obj-C"
+    "-ITests/Pods/themis/src/wrappers/themis/Obj-C",
+    "-DLIBRESSL"
   ],
   swift_copts = [
     "-Xcc",
