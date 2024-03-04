@@ -41,7 +41,8 @@ apple_framework(
     "//Tests/Pods/GoogleUtilities:GoogleUtilities"
   ],
   objc_defines = [
-    "COCOAPODS=1"
+    "COCOAPODS=1",
+    "Firebase_VERSION=10.20.0"
   ] + select(
     {
       "//conditions:default": [
@@ -67,7 +68,8 @@ apple_framework(
     "UIKit"
   ],
   objc_copts = [
-    "-ITests/Pods/FirebaseCore"
+    "-ITests/Pods/FirebaseCore",
+    "-fno-autolink"
   ],
   swift_copts = [
     "-Xcc",

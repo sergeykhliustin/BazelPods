@@ -20,7 +20,7 @@ public func replacePodsEnvVars(_ value: String, options: BuildOptions, absoluteP
 }
 
 public func xcconfigSettingToList(_ value: String) -> [String] {
-    return value
+    let result = value
         .components(separatedBy: "=\"")
         .map {
             let components = $0.components(separatedBy: "\"")
@@ -36,8 +36,15 @@ public func xcconfigSettingToList(_ value: String) -> [String] {
         .joined(separator: "=\\\"")
         .components(separatedBy: .whitespaces)
         .map { $0.removingPercentEncoding ?? "" }
-        .map { $0.replacingOccurrences(of: "\"", with: "") }
+        .map {
+            if $0.contains(" ") {
+                return $0.replacingOccurrences(of: "\"", with: "'")
+            } else {
+                return $0.replacingOccurrences(of: "\"", with: "")
+            }
+        }
         .map { $0.replacingOccurrences(of: "\\", with: "") }
         .filter({ $0 != "$(inherited)"})
         .filter({ !$0.isEmpty })
+    return result
 }

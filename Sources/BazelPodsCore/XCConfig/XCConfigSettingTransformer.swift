@@ -23,6 +23,10 @@ protocol LinkOptsProvider {
     func linkOpts(_ value: String) -> [String]
 }
 
+protocol ObjcDefinesProvider {
+    func objcDefines(_ value: String) -> [String]
+}
+
 struct HeaderSearchPathTransformer: XCConfigSettingTransformer,
                                     SwiftCoptsProvider,
                                     ObjcCoptsProvider {
@@ -89,6 +93,18 @@ struct SwiftOptsListTransformer: XCConfigSettingTransformer,
     }
 
     func swiftCopts(_ value: String) -> [String] {
+        return xcconfigSettingToList(value)
+    }
+}
+
+struct ObjcDefinesListTransformer: XCConfigSettingTransformer,
+                                   ObjcDefinesProvider {
+    let key: String
+    init(_ key: String) {
+        self.key = key
+    }
+
+    func objcDefines(_ value: String) -> [String] {
         return xcconfigSettingToList(value)
     }
 }

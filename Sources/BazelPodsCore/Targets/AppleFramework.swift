@@ -56,7 +56,7 @@ struct AppleFramework: BazelTarget {
         self.conditionalDeps = conditionalDeps
 
         self.swiftDefines = AttrSet(basic: ["COCOAPODS"])
-        self.objcDefines = AttrSet(basic: ["COCOAPODS=1"])
+        self.objcDefines = AttrSet(basic: ["COCOAPODS=1"] + buildSettings.objcDefines)
 
         sdkDylibs = sdkDeps.sdkDylibs
         sdkFrameworks = sdkDeps.sdkFrameworks

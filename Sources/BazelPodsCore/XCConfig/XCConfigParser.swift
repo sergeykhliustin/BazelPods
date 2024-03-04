@@ -12,13 +12,15 @@ final class XCConfigParser {
     private(set) var swiftCopts: [String] = []
     private(set) var objcCopts: [String] = []
     private(set) var linkOpts: [String] = []
+    private(set) var objcDefines: [String] = []
     private let transformers: [String: XCConfigSettingTransformer]
     private static let defaultTransformers: [XCConfigSettingTransformer] = [
         HeaderSearchPathTransformer(),
         ApplicationExtensionAPIOnlyTransformer(),
         LinkOptsListTransformer("OTHER_LDFLAGS"),
         ObjCOptsListTransformer("OTHER_CFLAGS"),
-        ObjCOptsListTransformer("OTHER_CPLUSPLUSFLAGS")
+        ObjCOptsListTransformer("OTHER_CPLUSPLUSFLAGS"),
+        ObjcDefinesListTransformer("GCC_PREPROCESSOR_DEFINITIONS")
     ]
 
     convenience init(spec: PodSpec, subspecs: [PodSpec] = [], options: BuildOptions) {
@@ -40,7 +42,7 @@ final class XCConfigParser {
             return result
         })
 
-        for key in config.keys {
+        for key in config.keys.sorted() {
             guard !XCSpecs.forceIgnore.contains(key) else { continue }
             let node: StarlarkNode?
             let value = replacePodsEnvVars(config[key]!, options: options, absolutePath: false)
@@ -56,13 +58,19 @@ final class XCConfigParser {
             case .none:
                 node = nil
             }
+            var handled = false
             if let node = node {
                 xcconfig[key] = node
-            } else if let transformer = self.transformers[key] {
+                handled = true
+            }
+            if let transformer = self.transformers[key] {
                 swiftCopts += (transformer as? SwiftCoptsProvider)?.swiftCopts(value) ?? []
                 objcCopts += (transformer as? ObjcCoptsProvider)?.objcCopts(value) ?? []
                 linkOpts += (transformer as? LinkOptsProvider)?.linkOpts(value) ?? []
-            } else {
+                objcDefines += (transformer as? ObjcDefinesProvider)?.objcDefines(value) ?? []
+                handled = true
+            }
+            if !handled {
                 log_debug("unhandled xcconfig \(key)")
             }
         }

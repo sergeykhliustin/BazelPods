@@ -50,7 +50,8 @@ apple_framework(
     "//Tests/Pods/MMKVCore:MMKVCore"
   ],
   objc_defines = [
-    "COCOAPODS=1"
+    "COCOAPODS=1",
+    "MMKV_IOS_EXTENSION"
   ] + select(
     {
       "//conditions:default": [
