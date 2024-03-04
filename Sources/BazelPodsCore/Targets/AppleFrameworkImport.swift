@@ -11,11 +11,7 @@ import Foundation
 struct AppleFrameworkImport: BazelTarget {
     var loadNode: String {
         let rule = appleFrameworkImport(isDynamic: isDynamic, isXCFramework: isXCFramework)
-        if isXCFramework {
-            return "load('@build_bazel_rules_apple//apple:apple.bzl', '\(rule)')"
-        } else {
-            return "load('@build_bazel_rules_ios//rules:apple_patched.bzl', '\(rule)')"
-        }
+        return "load('@build_bazel_rules_apple//apple:apple.bzl', '\(rule)')"
     }
     let name: String // A unique name for this rule.
     // The list of files under a .framework directory which are provided to Objective-C targets that depend on this target.

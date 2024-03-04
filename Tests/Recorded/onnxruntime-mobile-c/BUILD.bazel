@@ -75,6 +75,10 @@ apple_framework(
   weak_sdk_frameworks = [
     "CoreML"
   ],
+  objc_copts = [
+    "-fvisibility=hidden",
+    "-fvisibility-inlines-hidden"
+  ],
   xcconfig = {
     "OTHER_CPLUSPLUSFLAGS": [
       "-fvisibility=hidden",

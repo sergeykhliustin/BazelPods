@@ -28,7 +28,7 @@ struct XCSpecs {
     }()
 
     // TODO: Investigate
-    static let forceIgnore = [
+    static let forceIgnore: [String] = [
         "GCC_C_LANGUAGE_STANDARD"
     ]
 

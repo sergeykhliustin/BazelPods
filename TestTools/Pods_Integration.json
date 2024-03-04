@@ -7,7 +7,7 @@
             "version": "5.0.0"
         },
         "Alamofire": {
-            "version": "5.6.2"
+            "version": "5.9.0"
         },
         "Appboy-iOS-SDK": {
             "version": "4.5.0"
@@ -34,10 +34,10 @@
             "version": "11.2.1"
         },
         "Firebase": {
-            "version": "9.5.0"
+            "version": "10.20.0"
         },
         "FirebaseAnalytics": {
-            "version": "9.5.0"
+            "version": "10.20.0"
         },
         "GoogleMaps": {
             "version": "7.3.0"
@@ -52,7 +52,7 @@
             "version": "6.5.10"
         },
         "JTAppleCalendar": {
-            "version": "8.0.4"
+            "version": "8.0.5"
         },
         "KeychainAccess": {
             "version": "4.2.2"
@@ -153,7 +153,7 @@
             "version": "5.0.0"
         },
         "Alamofire": {
-            "version": "5.6.2"
+            "version": "5.9.0"
         },
         "Cartography": {
             "version": "4.0.0"
@@ -168,10 +168,10 @@
             "version": "1.5.1"
         },
         "Firebase": {
-            "version": "9.5.0"
+            "version": "10.20.0"
         },
         "FirebaseAnalytics": {
-            "version": "9.5.0"
+            "version": "10.20.0"
         },
         "KeychainAccess": {
             "version": "4.2.2"
