@@ -68,8 +68,8 @@ apple_framework(
     "UIKit"
   ],
   objc_copts = [
-    "-fno-autolink",
-    "-ITests/Pods/FirebaseCore"
+    "-ITests/Pods/FirebaseCore",
+    "-fno-autolink"
   ],
   swift_copts = [
     "-Xcc",

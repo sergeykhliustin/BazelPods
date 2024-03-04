@@ -42,7 +42,7 @@ final class XCConfigParser {
             return result
         })
 
-        for key in config.keys {
+        for key in config.keys.sorted() {
             guard !XCSpecs.forceIgnore.contains(key) else { continue }
             let node: StarlarkNode?
             let value = replacePodsEnvVars(config[key]!, options: options, absolutePath: false)

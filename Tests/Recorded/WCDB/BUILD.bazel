@@ -215,9 +215,9 @@ apple_framework(
     "UIKit"
   ],
   objc_copts = [
+    "-ITests/Pods/WCDB",
     "-fvisibility-inlines-hidden",
-    "-fvisibility-inlines-hidden",
-    "-ITests/Pods/WCDB"
+    "-fvisibility-inlines-hidden"
   ],
   swift_copts = [
     "-Xcc",
