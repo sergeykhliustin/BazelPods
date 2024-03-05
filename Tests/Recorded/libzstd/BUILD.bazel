@@ -66,9 +66,9 @@ apple_framework(
       ]
     }
   ),
-  xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++14"
-  },
+  cc_copts = [
+    "-std=gnu++14"
+  ],
   visibility = [
     "//visibility:public"
   ]

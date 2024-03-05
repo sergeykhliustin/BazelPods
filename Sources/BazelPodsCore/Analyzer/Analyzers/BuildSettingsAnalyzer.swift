@@ -11,6 +11,7 @@ struct BuildSettingsAnalyzer<S: XCConfigRepresentable> {
     struct Result {
         let swiftCopts: [String]
         let objcCopts: [String]
+        let ccCopts: [String]
         let linkOpts: [String]
         let objcDefines: [String]
         let xcconfig: [String: StarlarkNode]
@@ -46,6 +47,7 @@ struct BuildSettingsAnalyzer<S: XCConfigRepresentable> {
         return Result(
             swiftCopts: parser.swiftCopts,
             objcCopts: parser.objcCopts,
+            ccCopts: parser.ccCopts,
             linkOpts: parser.linkOpts,
             objcDefines: parser.objcDefines,
             xcconfig: parser.xcconfig

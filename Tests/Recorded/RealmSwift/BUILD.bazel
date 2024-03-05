@@ -69,9 +69,6 @@ apple_framework(
   swift_copts = [
     "-application-extension"
   ],
-  linkopts = [
-    "$(REALM_LD_CLASSIC)"
-  ],
   visibility = [
     "//visibility:public"
   ]

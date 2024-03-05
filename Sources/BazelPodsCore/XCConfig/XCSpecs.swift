@@ -32,6 +32,10 @@ struct XCSpecs {
         "GCC_C_LANGUAGE_STANDARD"
     ]
 
+    static let xcconfigIgnore: [String] = [
+        "CLANG_CXX_LANGUAGE_STANDARD"
+    ]
+
     // com.apple.compilers.llvm.clang.1_0
     static let clang: [XElement] = [
         ("CLANG_ADDRESS_SANITIZER", .boolean),

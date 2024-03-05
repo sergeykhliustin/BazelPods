@@ -13,10 +13,14 @@ final class XCConfigParser {
     private(set) var objcCopts: [String] = []
     private(set) var linkOpts: [String] = []
     private(set) var objcDefines: [String] = []
+    private(set) var ccCopts: [String] = []
     private let transformers: [String: XCConfigSettingTransformer]
+    private let options: BuildOptions
     private static let defaultTransformers: [XCConfigSettingTransformer] = [
         HeaderSearchPathTransformer(),
+        UserHeaderSearchPathTransformer(),
         ApplicationExtensionAPIOnlyTransformer(),
+        CLANG_CXX_LANGUAGE_STANDARD_Transformer(),
         LinkOptsListTransformer("OTHER_LDFLAGS"),
         ObjCOptsListTransformer("OTHER_CFLAGS"),
         ObjCOptsListTransformer("OTHER_CPLUSPLUSFLAGS"),
@@ -35,12 +39,15 @@ final class XCConfigParser {
     init(_ config: [String: String],
          options: BuildOptions,
          transformers: [XCConfigSettingTransformer] = defaultTransformers) {
+        self.options = options
 
         self.transformers = transformers.reduce([String: XCConfigSettingTransformer](), { result, transformer in
             var result = result
             result[transformer.key] = transformer
             return result
         })
+
+        let config = replaceEnvVars(in: config)
 
         for key in config.keys.sorted() {
             guard !XCSpecs.forceIgnore.contains(key) else { continue }
@@ -59,7 +66,7 @@ final class XCConfigParser {
                 node = nil
             }
             var handled = false
-            if let node = node {
+            if let node = node, !XCSpecs.xcconfigIgnore.contains(key) {
                 xcconfig[key] = node
                 handled = true
             }
@@ -68,11 +75,63 @@ final class XCConfigParser {
                 objcCopts += (transformer as? ObjcCoptsProvider)?.objcCopts(value) ?? []
                 linkOpts += (transformer as? LinkOptsProvider)?.linkOpts(value) ?? []
                 objcDefines += (transformer as? ObjcDefinesProvider)?.objcDefines(value) ?? []
+                ccCopts += (transformer as? CCCOptsProvider)?.cccOpts(value) ?? []
                 handled = true
             }
             if !handled {
                 log_debug("unhandled xcconfig \(key)")
             }
         }
+    }
+
+    private func replaceEnvVars(in config: [String: String]) -> [String: String] {
+        var config = config.mapValues({
+            replacePodsEnvVars($0, options: options, absolutePath: false)
+        })
+        while config.contains(where: { !$0.value.envVariables.isEmpty }) {
+            config = config.reduce(into: config, { result, value in
+                let key = value.key
+                var value = value.value
+                let envVars = value.envVariables
+                for envKey in envVars {
+                    if let envValue = result[envKey] {
+                        value = value.replacingOccurrences(of: "$(\(envKey))", with: envValue)
+                        value = value.replacingOccurrences(of: "${\(envKey)}", with: envValue)
+                    } else {
+                        value = value.replacingOccurrences(of: "$(\(envKey))", with: "")
+                        value = value.replacingOccurrences(of: "${\(envKey)}", with: "")
+                    }
+                }
+                result[key] = value
+            })
+        }
+        return config
+    }
+}
+
+private extension String {
+    static let ignore = [
+        "SDKROOT"
+    ]
+    var envVariables: [String] {
+        var result = [String]()
+        let pattern = #"\$\(([^$)]+)\)|\$\{([^$}]+)\}"#
+        do {
+            let regex = try NSRegularExpression(pattern: pattern)
+            let matches = regex.matches(in: self, range: NSRange(self.startIndex..., in: self))
+
+            for match in matches {
+                let nsRange = match.range(at: 1)
+                if let range = Range(nsRange, in: self) {
+                    let innerVarName = String(self[range])
+                    if !Self.ignore.contains(innerVarName) {
+                        result.append(innerVarName)
+                    }
+                }
+            }
+        } catch {
+            log_debug("Error extracting env variables: \(error)")
+        }
+        return result
     }
 }

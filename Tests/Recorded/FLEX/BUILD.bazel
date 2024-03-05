@@ -86,9 +86,9 @@ apple_framework(
     "WebKit",
     "UserNotifications"
   ],
-  xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++11"
-  },
+  cc_copts = [
+    "-std=gnu++11"
+  ],
   visibility = [
     "//visibility:public"
   ]

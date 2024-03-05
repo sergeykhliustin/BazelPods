@@ -76,8 +76,10 @@ apple_framework(
     "Foundation",
     "CoreData"
   ],
+  cc_copts = [
+    "-std=c++14"
+  ],
   xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "c++14",
     "CLANG_CXX_LIBRARY": "libc++",
     "GCC_ENABLE_CPP_EXCEPTIONS": "YES"
   },
