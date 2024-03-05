@@ -83,9 +83,9 @@ apple_framework(
     "CoreImage",
     "CoreVideo"
   ],
-  xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "c++20"
-  },
+  cc_copts = [
+    "-std=c++20"
+  ],
   visibility = [
     "//visibility:public"
   ]

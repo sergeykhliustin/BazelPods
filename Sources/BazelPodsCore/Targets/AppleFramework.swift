@@ -27,6 +27,7 @@ struct AppleFramework: BazelTarget {
 
     let objcCopts: [String]
     let swiftCopts: [String]
+    let ccCopts: [String]
     let linkOpts: [String]
 
     var linkDynamic: Bool
@@ -65,6 +66,7 @@ struct AppleFramework: BazelTarget {
         self.xcconfig = buildSettings.xcconfig
         self.objcCopts = buildSettings.objcCopts
         self.swiftCopts = buildSettings.swiftCopts
+        self.ccCopts = buildSettings.ccCopts
         self.linkOpts = buildSettings.linkOpts
 
         self.testonly = sdkDeps.testonly
@@ -125,6 +127,7 @@ struct AppleFramework: BazelTarget {
             .named(name: "weak_sdk_frameworks", value: weakSdkFrameworks.toStarlark()),
             .named(name: "objc_copts", value: objcCopts.toStarlark()),
             .named(name: "swift_copts", value: swiftCopts.toStarlark()),
+            .named(name: "cc_copts", value: ccCopts.toStarlark()),
             .named(name: "linkopts", value: linkOpts.toStarlark()),
             .named(name: "xcconfig", value: xcconfig.toStarlark()),
             .named(name: "visibility", value: ["//visibility:public"].toStarlark())

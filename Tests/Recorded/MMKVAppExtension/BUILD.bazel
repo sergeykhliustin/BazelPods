@@ -79,8 +79,10 @@ apple_framework(
   sdk_frameworks = [
     "CoreFoundation"
   ],
+  cc_copts = [
+    "-std=gnu++17"
+  ],
   xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++17",
     "CLANG_CXX_LIBRARY": "libc++",
     "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "NO",
     "GCC_PREPROCESSOR_DEFINITIONS": [

@@ -80,6 +80,16 @@ apple_framework(
       ]
     }
   ),
+  objc_copts = [
+    "-ITests/Pods/libwebp/",
+    "-ITests/Pods/libwebp/"
+  ],
+  swift_copts = [
+    "-Xcc",
+    "-ITests/Pods/libwebp/",
+    "-Xcc",
+    "-ITests/Pods/libwebp/"
+  ],
   visibility = [
     "//visibility:public"
   ]

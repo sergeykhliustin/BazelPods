@@ -27,10 +27,34 @@ protocol ObjcDefinesProvider {
     func objcDefines(_ value: String) -> [String]
 }
 
+protocol CCCOptsProvider {
+    func cccOpts(_ value: String) -> [String]
+}
+
 struct HeaderSearchPathTransformer: XCConfigSettingTransformer,
                                     SwiftCoptsProvider,
                                     ObjcCoptsProvider {
     let key = "HEADER_SEARCH_PATHS"
+
+    func swiftCopts(_ value: String) -> [String] {
+        return xcconfigSettingToList(value)
+            .reduce([String]()) { partialResult, path in
+                return partialResult + [
+                    "-Xcc", "-I\(path.replacingOccurrences(of: "\"", with: ""))"
+                ]
+            }
+    }
+
+    func objcCopts(_ value: String) -> [String] {
+        return xcconfigSettingToList(value)
+            .map({ "-I\($0.replacingOccurrences(of: "\"", with: ""))" })
+    }
+}
+
+struct UserHeaderSearchPathTransformer: XCConfigSettingTransformer,
+                                    SwiftCoptsProvider,
+                                    ObjcCoptsProvider {
+    let key = "USER_HEADER_SEARCH_PATHS"
 
     func swiftCopts(_ value: String) -> [String] {
         return xcconfigSettingToList(value)
@@ -106,5 +130,13 @@ struct ObjcDefinesListTransformer: XCConfigSettingTransformer,
 
     func objcDefines(_ value: String) -> [String] {
         return xcconfigSettingToList(value)
+    }
+}
+
+struct CLANG_CXX_LANGUAGE_STANDARD_Transformer: XCConfigSettingTransformer, CCCOptsProvider {
+    let key = "CLANG_CXX_LANGUAGE_STANDARD"
+
+    func cccOpts(_ value: String) -> [String] {
+        return ["-std=\(value)"]
     }
 }

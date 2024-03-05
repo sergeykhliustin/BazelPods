@@ -223,8 +223,10 @@ apple_framework(
     "-Xcc",
     "-ITests/Pods/WCDB"
   ],
+  cc_copts = [
+    "-std=gnu++14"
+  ],
   xcconfig = {
-    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++14",
     "CLANG_CXX_LIBRARY": "libc++",
     "GCC_PREPROCESSOR_DEFINITIONS": [
       "SQLITE_WCDB=1",
