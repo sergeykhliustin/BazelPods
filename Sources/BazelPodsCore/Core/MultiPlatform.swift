@@ -105,12 +105,14 @@ struct MultiPlatform<T: AttrSetConstraint>: Monoid, StarlarkConvertible, EmptyAw
     func toStarlark() -> StarlarkNode {
         precondition(ios != nil || osx != nil || watchos != nil || tvos != nil, "MultiPlatform empty can't be rendered")
 
+        // TODO: Change to T.empty and move ios up when we support other platforms
+        let iosSupport = [SelectCase.fallback.rawValue: ios ?? T.empty]
+
         return .functionCall(name: "select", arguments: [.basic((
             osx.map { [":\(SelectCase.osx.rawValue)": $0] } <+>
             watchos.map { [":\(SelectCase.watchos.rawValue)": $0] } <+>
             tvos.map { [":\(SelectCase.tvos.rawValue)": $0] } <+>
-            // TODO: Change to T.empty and move ios up when we support other platforms
-	        [SelectCase.fallback.rawValue: ios ?? T.empty ] ?? [:]
+	        iosSupport ?? [:]
         ).toStarlark())])
     }
 }
