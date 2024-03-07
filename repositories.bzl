@@ -67,20 +67,27 @@ swift_library(
 def bazelpods_dependencies():
     namespaced_http_archive(
         name = "swift-argument-parser",
-        url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.2.2.tar.gz",
-        strip_prefix = "swift-argument-parser-1.2.2",
-        sha256 = "44782ba7180f924f72661b8f457c268929ccd20441eac17301f18eff3b91ce0c",
+        url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.3.0.tar.gz",
+        strip_prefix = "swift-argument-parser-1.3.0",
+        sha256 = "e5010ff37b542807346927ba68b7f06365a53cf49d36a6df13cef50d86018204",
         build_file_content = namespaced_build_file([
             namespaced_swift_library(
                 name = "ArgumentParser",
                 srcs = ["Sources/ArgumentParser/**/*.swift"],
                 deps = [":ArgumentParserToolInfo"],
-                copts = ["-swift-version", "5"],
+                copts = [
+                    "-enable-library-evolution",
+                    "-swift-version", 
+                    "5"
+                ],
             ),
             namespaced_swift_library(
                 name = "ArgumentParserToolInfo",
                 srcs = ["Sources/ArgumentParserToolInfo/**/*.swift"],
-                copts = ["-swift-version", "5"],
+                copts = [
+                    "-enable-library-evolution",
+                    "-swift-version", "5"
+                ],
             )
         ])
     )
