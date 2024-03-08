@@ -9,12 +9,12 @@ import Foundation
 
 struct BuildSettingsAnalyzer<S: XCConfigRepresentable> {
     struct Result {
-        let swiftCopts: [String]
-        let objcCopts: [String]
-        let ccCopts: [String]
-        let linkOpts: [String]
-        let objcDefines: [String]
-        let xcconfig: [String: StarlarkNode]
+        var swiftCopts: [String]
+        var objcCopts: [String]
+        var ccCopts: [String]
+        var linkOpts: [String]
+        var objcDefines: [String]
+        var xcconfig: [String: StarlarkNode]
     }
     private let platform: Platform
     private let spec: S
