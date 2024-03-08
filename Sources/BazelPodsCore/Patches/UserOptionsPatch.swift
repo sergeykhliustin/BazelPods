@@ -91,6 +91,15 @@ struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
                 case .replace:
                     resources.resources = value
                 }
+            case .objc_defines(let value):
+                switch option.opt {
+                case .append:
+                    buildSettings.objcDefines += value.filter({ !buildSettings.objcDefines.contains($0) })
+                case .delete:
+                    buildSettings.objcDefines.removeAll(where: { value.contains($0) })
+                case .replace:
+                    buildSettings.objcDefines = value
+                }
             case .runner:
                 // test spec specific option
                 break

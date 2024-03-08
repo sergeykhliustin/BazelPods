@@ -94,7 +94,7 @@ OPTIONS:
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'runner', 'test_host', 'timeout'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'objc_defines', 'runner', 'test_host', 'timeout'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
@@ -139,7 +139,7 @@ OPTIONS:
                           If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'runner', 'test_host', 'timeout'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'objc_defines', 'runner', 'test_host', 'timeout'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'

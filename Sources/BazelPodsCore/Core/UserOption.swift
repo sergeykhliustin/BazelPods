@@ -54,6 +54,7 @@ public struct UserOption {
         case testonly(Bool)
         case link_dynamic(Bool)
         case data([String])
+        case objc_defines([String])
         case runner(String)
         case test_host(String)
         case timeout(TestsTimeout)
@@ -68,6 +69,7 @@ public struct UserOption {
         case testonly
         case link_dynamic
         case data
+        case objc_defines
         case runner
         case test_host
         case timeout
@@ -175,6 +177,8 @@ public struct UserOption {
             attribute = .link_dynamic(bool)
         case .data:
             attribute = .data(value)
+        case .objc_defines:
+            attribute = .objc_defines(value)
         case .runner:
             guard opt == .replace else {
                 log_error("Incorrect option for \(string). '\(keyPath)' supports only \(Opt.replace.rawValue) operator. Skipping...")
