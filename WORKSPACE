@@ -48,8 +48,8 @@ bazelpodstests_dependencies()
 
 http_archive(
     name = "rules_xcodeproj",
-    sha256 = "8840e624ce242b259e4e7ea4c1ef37fa77eedf85ce6a2d6b060e217bff2736cb",
-    url = "https://github.com/MobileNativeFoundation/rules_xcodeproj/releases/download/1.17.0/release.tar.gz",
+    sha256 = "84d48e6e664089078b32af0d46b1b72ec33baac3d4a4c6d34c6de12074817a7b",
+    url = "https://github.com/MobileNativeFoundation/rules_xcodeproj/releases/download/1.18.0/release.tar.gz",
 )
 
 load(
