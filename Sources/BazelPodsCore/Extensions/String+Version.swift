@@ -29,4 +29,22 @@ extension String {
 
         return .orderedSame
     }
+
+    var appleCompatibleVersion: String {
+        // Regular expression pattern to find semantic versioning parts
+        let pattern = #"^(\d+\.\d+\.\d+)"#
+
+        let regex = try? NSRegularExpression(pattern: pattern, options: [])
+        let nsVersion = self as NSString
+        let matches = regex?.matches(in: self, options: [], range: NSRange(location: 0, length: nsVersion.length))
+
+        if let match = matches?.first {
+            // Extract the matched version part which excludes pre-release or build metadata
+            let compatibleVersion = nsVersion.substring(with: match.range)
+            return compatibleVersion
+        }
+
+        // Return the original string if no match is found, or pattern matching fails
+        return self
+    }
 }

@@ -171,7 +171,7 @@ public final class PodSpec: PodSpecRepresentable {
     let appspecs: [AppSpec]
 
     public convenience init(JSONPodspec json: JSONDict) throws {
-        let version = (json["version"] as? String) ?? "1.0"
+        let version = (json["version"] as? String)?.appleCompatibleVersion ?? "1.0"
         try self.init(JSONPodspec: json, version: version)
     }
 
