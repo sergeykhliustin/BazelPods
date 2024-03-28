@@ -123,6 +123,9 @@
     "DSSwiftUIKit": {
       "version": "3.9.0"
     },
+    "Delegate": {
+      "version": "1.3.0"
+    },
     "Device": {
       "version": "3.6.0"
     },
