@@ -43,7 +43,7 @@ apple_framework(
       "ext/fts3/fts3_write.c",
       "ext/icu/icu.c",
       "ext/icu/sqliteicu.h",
-      "ext/misu/json1.c",
+      "ext/misc/json1.c",
       "ext/rbu/sqlite3rbu.c",
       "ext/rbu/sqlite3rbu.h",
       "ext/rtree/rtree.c",
@@ -182,7 +182,6 @@ apple_framework(
     "SQLITE_DEFAULT_SYNCHRONOUS=1",
     "SQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=4194304",
     "SQLITE_MAX_SCHEMA_RETRY=50",
-    "SQLITE_MAX_VARIABLE_NUMBER=99",
     "SQLITE_TEMP_STORE=2",
     "SQLITE_THREADSAFE=2",
     "SQLITE_ENABLE_API_ARMOR=1",
@@ -268,7 +267,6 @@ apple_framework(
       "SQLITE_DEFAULT_SYNCHRONOUS=1",
       "SQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=4194304",
       "SQLITE_MAX_SCHEMA_RETRY=50",
-      "SQLITE_MAX_VARIABLE_NUMBER=99",
       "SQLITE_TEMP_STORE=2",
       "SQLITE_THREADSAFE=2",
       "SQLITE_ENABLE_API_ARMOR=1",
@@ -335,7 +333,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4.2</string>
+	<string>1.4.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
