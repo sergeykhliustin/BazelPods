@@ -604,6 +604,9 @@
     "SwiftyDropboxObjC": {
       "version": "10.0.1"
     },
+    "SwiftyGif": {
+      "version": "5.4.5"
+    },
     "TABAnimated": {
       "version": "2.6.5"
     },
