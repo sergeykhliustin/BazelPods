@@ -34,7 +34,7 @@ swift_library(
         "Sources/BazelPods/**/*.swift",
         "Sources/Shared/**/*.swift"
     ]),
-    deps = [":BazelPodsCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
+    deps = [":BazelPodsCore", ":Logger", "@bazelpods_swift_argument_parser//:ArgumentParser"],
     copts = ["-swift-version", SWIFT_VERSION]
 )
 
@@ -65,6 +65,6 @@ swift_library(
         "Sources/Analyzer/**/*.swift",
         "Sources/Shared/**/*.swift"
     ]),
-    deps = [":BazelPodsCore", ":Logger", "@bazelpods-swift-argument-parser//:ArgumentParser"],
+    deps = [":BazelPodsCore", ":Logger", "@bazelpods_swift_argument_parser//:ArgumentParser"],
     copts = ["-swift-version", SWIFT_VERSION],
 )

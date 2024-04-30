@@ -1,13 +1,13 @@
 startup --output_base=./bazel-output-base
 
+common --enable_bzlmod
+
 build --announce_rc
 build --spawn_strategy=local
 build --strategy=SwiftCompile=worker
 build --verbose_failures
 build --compilation_mode=fastbuild
-build --experimental_multi_threaded_digest
 build --verbose_failures
-build:rules_xcodeproj --xcode_version_config=@local_config_xcode//:host_xcodes
 
 common:ci --isatty=1
 common:ci --terminal_columns=127
