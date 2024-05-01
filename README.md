@@ -29,6 +29,11 @@ Core idea, Podspec parser, Starlark compiler are forked from [PodToBUILD](https:
  ### 🎸 Let's rock
 Don't forget to setup [`rules_ios`](https://github.com/bazel-ios/rules_ios) and [`rules_apple`](https://github.com/bazelbuild/rules_apple) first.
 
+Add `BazelPods` to your `MODULE.bazel`
+```starlark
+bazel_dep(name = "bazelpods", version = "<version>")
+```
+
 Add `BazelPods` to your `WORKSPACE`
 ```starlark
 http_archive(

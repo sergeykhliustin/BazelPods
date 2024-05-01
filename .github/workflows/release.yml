@@ -15,7 +15,7 @@ jobs:
       - name: Get latest release tag
         id: latesttag
         run: |
-          CURRENT_VERSION=$(gh release list --limit 1 --json version | jq .[0].tagName | tr -d '"')
+          CURRENT_VERSION=$(gh release list --limit 1 --json tagName | jq .[0].tagName | tr -d '"')
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
 
       - name: Validate new version
@@ -33,44 +33,38 @@ jobs:
 
       - name: Archive sources
         run: |
-          tar czvf release.tar.gz Sources BUILD repositories.bzl
+          tar czvf release.tar.gz Sources BUILD.bazel repositories.bzl MODULE.bazel
 
       - name: Calculate SHA256
         run: |
           echo "SHA256=$(shasum -a 256 release.tar.gz | cut -d ' ' -f 1)" >> $GITHUB_ENV
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+        run: |
+          set -euo pipefail
+
+          git config user.name "Release Workflow"
+          git config user.email "noreply@github.com"
+
+          gh release create "${{ github.ref }}" \
+            --title "${{ env.NEW_VERSION }}" \
+            --target "$GITHUB_SHA" \
+            --generate-notes \
+            --prerelease \
+            --notes "### Bzlmod Snippet
+          \`\`\`starlark
+          bazel_dep(name = \"bazelpods\", version = \"${{ env.NEW_VERSION }}\")
+          \`\`\`
+          ## Workspace Snippet
+          \`\`\`starlark
+          http_archive(
+            name = \"bazelpods\",
+            sha256 = \"${{ env.SHA256 }}\",
+            url = \"https://github.com/sergeykhliustin/BazelPods/releases/download/${{ env.NEW_VERSION }}/release.tar.gz\"
+          )
+          load(\"@bazelpods//:repositories.bzl\", \"bazelpods_dependencies\")
+          bazelpods_dependencies()
+          \`\`\`" \
+            "release.tar.gz"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            ## Workspace Snippet
-
-            ```starlark
-            http_archive(
-                name = "bazelpods",
-                sha256 = "${{ env.SHA256 }}",
-                url = "https://github.com/sergeykhliustin/BazelPods/releases/download/${{ env.NEW_VERSION }}/release.tar.gz"
-            )
-
-            load("@bazelpods//:repositories.bzl", "bazelpods_dependencies")
-
-            bazelpods_dependencies()
-            ```
-          draft: true
-          prerelease: false
-
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: ./release.tar.gz
-          asset_name: release.tar.gz
-          asset_content_type: application/gzip
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
