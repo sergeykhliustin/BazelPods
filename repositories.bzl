@@ -8,7 +8,7 @@ load(
     "http_archive"
 )
 
-NAMESPACE_PREFIX = "bazelpods-"
+NAMESPACE_PREFIX = "bazelpods_"
 
 def namespaced_name(name):
     if name.startswith("@"):
@@ -41,8 +41,7 @@ def namespaced_http_archive(name, **kwargs):
 def namespaced_build_file(libs):
     return """
 package(default_visibility = ["//visibility:public"])
-load("@build_bazel_rules_swift//swift:swift.bzl", "swift_c_module",
-"swift_library")
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 """ + "\n\n".join(libs)
 
 def namespaced_swift_library(name, srcs, deps = None, defines = None, copts=[]):
@@ -56,6 +55,7 @@ swift_library(
     deps = [{deps}],
     defines = [{defines}],
     copts = ["-DSWIFT_PACKAGE", {copts}],
+    visibility = ["//visibility:public"],
 )""".format(**dict(
         name = name,
         srcs = ",\n".join(['"%s"' % x for x in srcs]),
@@ -66,7 +66,7 @@ swift_library(
 
 def bazelpods_dependencies():
     namespaced_http_archive(
-        name = "swift-argument-parser",
+        name = "swift_argument_parser",
         url = "https://github.com/apple/swift-argument-parser/archive/refs/tags/1.3.0.tar.gz",
         strip_prefix = "swift-argument-parser-1.3.0",
         sha256 = "e5010ff37b542807346927ba68b7f06365a53cf49d36a6df13cef50d86018204",
@@ -92,28 +92,6 @@ def bazelpods_dependencies():
         ])
     )
 
-def bazelpodstests_dependencies():
-    namespaced_new_git_repository(
-        name = "SwiftCheck",
-        remote = "https://github.com/typelift/SwiftCheck.git",
-        build_file_content = namespaced_build_file([
-            namespaced_swift_library(
-                name = "SwiftCheck",
-                srcs = ["Sources/**/*.swift"],
-            ),
-        ]),
-        commit = "077c096c3ddfc38db223ac8e525ad16ffb987138",
-    )
-    namespaced_new_git_repository(
-        name = "FileCheck",
-        remote = "https://github.com/llvm-swift/FileCheck.git",
-        build_file_content = namespaced_build_file([
-            namespaced_swift_library(
-                name = "FileCheck",
-                srcs = ["Sources/**/*.swift"],
-            ),
-        ]),
-        commit = "bd9cb30ceee1f21c02f51a7168f58471449807d8",
-    )
-
-
+non_module_deps = module_extension(
+    implementation = lambda _: bazelpods_dependencies()
+)

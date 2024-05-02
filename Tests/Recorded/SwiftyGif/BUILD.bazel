@@ -1,4 +1,5 @@
 load('@build_bazel_rules_ios//rules:framework.bzl', 'apple_framework')
+load('@build_bazel_rules_ios//rules:precompiled_apple_resource_bundle.bzl', 'precompiled_apple_resource_bundle')
 # Add a config setting release for compilation mode
 # Assume that people are using `opt` for release mode
 # see the bazel user manual for more information
@@ -28,6 +29,9 @@ apple_framework(
       "SwiftyGif/*.swift"
     ]
   ),
+  deps = [
+    ":SwiftyGif_SwiftyGif_Bundle"
+  ],
   objc_defines = [
     "COCOAPODS=1"
   ] + select(
@@ -58,6 +62,19 @@ apple_framework(
     "//visibility:public"
   ]
 )
+precompiled_apple_resource_bundle(
+  name = "SwiftyGif_SwiftyGif_Bundle",
+  bundle_id = "org.cocoapods.SwiftyGif",
+  bundle_name = "SwiftyGif",
+  infoplists = [
+    ":SwiftyGif_SwiftyGif_Bundle_InfoPlist"
+  ],
+  resources = glob(
+    [
+      "SwiftyGif/PrivacyInfo.xcprivacy"
+    ]
+  )
+)
 genrule(
   name = "SwiftyGif_InfoPlist",
   srcs = [],
@@ -78,7 +95,49 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>5.4.4</string>
+	<string>5.4.5</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+</dict>
+</plist>
+
+EOF"""
+)
+genrule(
+  name = "SwiftyGif_SwiftyGif_Bundle_InfoPlist",
+  srcs = [],
+  outs = [
+    "SwiftyGif_SwiftyGif_Bundle_InfoPlist.plist"
+  ],
+  cmd = """cat <<EOF > $@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.cocoapods.SwiftyGif</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>SwiftyGif</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>5.4.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
