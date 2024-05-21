@@ -244,6 +244,7 @@ apple_framework(
       "ResearchKit/ActiveTasks/ORKdBHLToneAudiometry/ORKAudiometry/ORKAudiometry.h",
       "ResearchKit/ActiveTasks/ORKdBHLToneAudiometry/ORKdBHLToneAudiometryOnboardingStep.h",
       "ResearchKit/ActiveTasks/ORKdBHLToneAudiometry/ORKdBHLToneAudiometryStep.h",
+      "ResearchKit/Common/CLLocationManager+ResearchKit.h",
       "ResearchKit/Common/ORKActiveStepView.h",
       "ResearchKit/Common/ORKAnswerFormat_Private.h",
       "ResearchKit/Common/ORKBodyContainerView.h",
@@ -385,6 +386,7 @@ apple_framework(
       "ResearchKit/ActiveTasks/ORKdBHLToneAudiometry/ORKAudiometry/ORKAudiometry.h",
       "ResearchKit/ActiveTasks/ORKdBHLToneAudiometry/ORKdBHLToneAudiometryOnboardingStep.h",
       "ResearchKit/ActiveTasks/ORKdBHLToneAudiometry/ORKdBHLToneAudiometryStep.h",
+      "ResearchKit/Common/CLLocationManager+ResearchKit.h",
       "ResearchKit/Common/ORKActiveStepView.h",
       "ResearchKit/Common/ORKAnswerFormat_Private.h",
       "ResearchKit/Common/ORKBodyContainerView.h",
@@ -536,7 +538,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.2.15</string>
+	<string>2.2.16</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
