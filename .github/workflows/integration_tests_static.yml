@@ -6,6 +6,8 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
+env: 
+  GIT_CLONE_PROTECTION_ACTIVE: false
 jobs:
   test:
     name: Integration Tests Static
