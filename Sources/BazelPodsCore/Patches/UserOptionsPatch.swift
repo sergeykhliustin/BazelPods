@@ -109,6 +109,42 @@ struct UserOptionsPatch: Patch, TestSpecSpecificPatch {
             case .timeout:
                 // test spec specific option
                 break
+            case .objc_copts(let value):
+                switch option.opt {
+                case .append:
+                    buildSettings.objcCopts += value
+                case .delete:
+                    buildSettings.objcCopts.removeAll(where: { value.contains($0) })
+                case .replace:
+                    buildSettings.objcCopts = value
+                }
+            case .swift_copts(let value):
+                switch option.opt {
+                case .append:
+                    buildSettings.swiftCopts += value
+                case .delete:
+                    buildSettings.swiftCopts.removeAll(where: { value.contains($0) })
+                case .replace:
+                    buildSettings.swiftCopts = value
+                }
+            case .cc_copts(let value):
+                switch option.opt {
+                case .append:
+                    buildSettings.ccCopts += value
+                case .delete:
+                    buildSettings.ccCopts.removeAll(where: { value.contains($0) })
+                case .replace:
+                    buildSettings.ccCopts = value
+                }
+            case .linkopts(let value):
+                switch option.opt {
+                case .append:
+                    buildSettings.linkOpts += value
+                case .delete:
+                    buildSettings.linkOpts.removeAll(where: { value.contains($0) })
+                case .replace:
+                    buildSettings.linkOpts = value
+                }
             }
         }
     }

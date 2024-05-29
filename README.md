@@ -96,10 +96,11 @@ OPTIONS:
   --patches <patches>     Patches. It will be applied in the order listed here.
                           Available options: bundle_deduplicate, arm64_to_sim, arm64_to_sim_forced, missing_sdks, user_options.
                           user_options requires --user-options configured.
-                          If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
+                          If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically. (values: bundle_deduplicate, arm64_to_sim, arm64_to_sim_forced, missing_sdks, user_options)
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'objc_defines', 'runner', 'test_host', 'timeout'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'objc_defines', 'runner', 'test_host', 'timeout',
+                          'objc_copts', 'swift_copts', 'cc_copts', 'linkopts'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
@@ -115,10 +116,10 @@ OPTIONS:
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --no-concurrency        Disable concurrency.
-  --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  --log-level <log-level> Log level (debug|info|warning|error|none) (values: debug, info, warning, error, none; default: info)
   --use-bundler           Option to use `bundle exec` for `pod` calls
   --tests-timeout <tests-timeout>
-                          (Optional) Default timeout for test targets (short|moderate|long|eternal)
+                          (Optional) Default timeout for test targets (short|moderate|long|eternal) (values: short, moderate, long, eternal)
   --pods-json <pods-json> Pods.json (default: Pods/Pods.json)
   --print-output          Print BUILD files contents to terminal output
   --dry-run               Dry run. Files will not be written
@@ -141,10 +142,11 @@ OPTIONS:
   --patches <patches>     Patches. It will be applied in the order listed here.
                           Available options: bundle_deduplicate, arm64_to_sim, arm64_to_sim_forced, missing_sdks, user_options.
                           user_options requires --user-options configured.
-                          If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically.
+                          If 'user_options' not specified, but --user_options exist, user_options patch are applied automatically. (values: bundle_deduplicate, arm64_to_sim, arm64_to_sim_forced, missing_sdks, user_options)
   --user-options <user-options>
                           User extra options.
-                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'objc_defines', 'runner', 'test_host', 'timeout'.
+                          Supported fields: 'sdk_frameworks', 'sdk_dylibs', 'weak_sdk_frameworks', 'vendored_libraries', 'vendored_frameworks', 'vendored_xcframeworks', 'testonly', 'link_dynamic', 'data', 'objc_defines', 'runner', 'test_host', 'timeout',
+                          'objc_copts', 'swift_copts', 'cc_copts', 'linkopts'.
                           Supported operators: '+=' (append), '-=' (delete), ':=' (replace).
                           Example:
                           'SomePod.sdk_dylibs += something,something'
@@ -160,10 +162,10 @@ OPTIONS:
   --pods-root <pods-root> Pods root relative to workspace. Used for headers search paths (default: Pods)
   -f, --frameworks        Packaging pods in dynamic frameworks if possible (same as `use_frameworks!`)
   --no-concurrency        Disable concurrency.
-  --log-level <log-level> Log level (debug|info|warning|error|none) (default: info)
+  --log-level <log-level> Log level (debug|info|warning|error|none) (values: debug, info, warning, error, none; default: info)
   --use-bundler           Option to use `bundle exec` for `pod` calls
   --tests-timeout <tests-timeout>
-                          (Optional) Default timeout for test targets (short|moderate|long|eternal)
+                          (Optional) Default timeout for test targets (short|moderate|long|eternal) (values: short, moderate, long, eternal)
   --podspec <podspec>     podspec.json
   --subspecs <subspecs>   Subspecs list
   -h, --help              Show help information.

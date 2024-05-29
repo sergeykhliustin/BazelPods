@@ -98,7 +98,6 @@ enum PodSpecField: String {
     case prefixHeaderFile = "prefix_header_file"
     case prefixHeaderContents = "prefix_header_contents"
     case preservePaths = "preserve_paths"
-    case compilerFlags = "compiler_flags"
     case subspecs
     case source
     case license
@@ -145,9 +144,9 @@ public final class PodSpec: PodSpecRepresentable {
     let podTargetXcconfig: [String: String]
     let userTargetXcconfig: [String: String]
     let xcconfig: [String: String]
+    let compilerFlags: [String]
 
     let subspecs: [PodSpec]
-    let compilerFlags: [String]
     let source: PodSpecSource?
     let license: PodSpecLicense
     let defaultSubspecs: [String]
@@ -221,6 +220,7 @@ public final class PodSpec: PodSpecRepresentable {
         xcconfig = Self.xcconfig(json: json)
         podTargetXcconfig = Self.podTargetXcconfig(json: json)
         userTargetXcconfig = Self.userTargetXcconfig(json: json)
+        compilerFlags = Self.compilerFlags(json: json)
 
         // VendoredDependenciesRepresentable
         vendoredLibraries = Self.vendoredLibraries(json: json)
@@ -235,7 +235,6 @@ public final class PodSpec: PodSpecRepresentable {
         prefixHeaderContents = fieldMap[.prefixHeaderContents] as? String
 
         preservePaths = strings(fromJSON: fieldMap[.preservePaths])
-        compilerFlags = strings(fromJSON: fieldMap[.compilerFlags])
 
         defaultSubspecs = strings(fromJSON: fieldMap[.defaultSubspecs])
 

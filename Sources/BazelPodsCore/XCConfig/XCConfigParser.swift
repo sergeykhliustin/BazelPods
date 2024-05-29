@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class XCConfigParser {
+final class XCConfigParser<S: XCConfigRepresentable> {
     private(set) var xcconfig: [String: StarlarkNode] = [:]
     private(set) var swiftCopts: [String] = []
     private(set) var objcCopts: [String] = []
@@ -16,7 +16,7 @@ final class XCConfigParser {
     private(set) var ccCopts: [String] = []
     private let transformers: [String: XCConfigSettingTransformer]
     private let options: BuildOptions
-    private static let defaultTransformers: [XCConfigSettingTransformer] = [
+    private let defaultTransformers: [XCConfigSettingTransformer] = [
         HeaderSearchPathTransformer(),
         UserHeaderSearchPathTransformer(),
         ApplicationExtensionAPIOnlyTransformer(),
@@ -27,21 +27,23 @@ final class XCConfigParser {
         ObjcDefinesListTransformer("GCC_PREPROCESSOR_DEFINITIONS")
     ]
 
-    convenience init(spec: PodSpec, subspecs: [PodSpec] = [], options: BuildOptions) {
-        let resolved =
-        spec.collectAttribute(with: subspecs, keyPath: \.xcconfig) <>
-        spec.collectAttribute(with: subspecs, keyPath: \.podTargetXcconfig) <>
-        spec.collectAttribute(with: subspecs, keyPath: \.userTargetXcconfig)
+    convenience init(spec: S, subspecs: [S] = [], platform: Platform, options: BuildOptions) {
+        let xcconfig = spec.collectAttribute(with: subspecs, keyPath: \.xcconfig).platform(platform) ?? [:]
+        let podTargetXcconfig = spec.collectAttribute(with: subspecs, keyPath: \.podTargetXcconfig).platform(platform) ?? [:]
+        let userTargetXcconfig = spec.collectAttribute(with: subspecs, keyPath: \.userTargetXcconfig).platform(platform) ?? [:]
+        let mergedConfig = xcconfig
+            .merging(podTargetXcconfig, uniquingKeysWith: { $1 })
+            .merging(userTargetXcconfig, uniquingKeysWith: { $1 })
 
-        self.init(resolved.multi.ios ?? [:], options: options)
+        let compilerFlags = spec.collectAttribute(with: subspecs, keyPath: \.compilerFlags).platform(platform) ?? []
+
+        self.init(mergedConfig, compilerFlags: compilerFlags, options: options)
     }
 
-    init(_ config: [String: String],
-         options: BuildOptions,
-         transformers: [XCConfigSettingTransformer] = defaultTransformers) {
+    private init(_ config: [String: String], compilerFlags: [String], options: BuildOptions) {
         self.options = options
 
-        self.transformers = transformers.reduce([String: XCConfigSettingTransformer](), { result, transformer in
+        self.transformers = defaultTransformers.reduce([String: XCConfigSettingTransformer](), { result, transformer in
             var result = result
             result[transformer.key] = transformer
             return result
@@ -80,6 +82,13 @@ final class XCConfigParser {
             }
             if !handled {
                 log_debug("unhandled xcconfig \(key)")
+            }
+        }
+
+        for flag in compilerFlags {
+            let normalized = replacePodsEnvVars(flag, options: options, absolutePath: false)
+            if !normalized.isEmpty {
+                ccCopts.append(normalized)
             }
         }
     }

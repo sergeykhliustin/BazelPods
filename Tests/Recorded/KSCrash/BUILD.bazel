@@ -86,6 +86,9 @@ apple_framework(
     "Foundation",
     "CoreFoundation"
   ],
+  cc_copts = [
+    "-fno-optimize-sibling-calls"
+  ],
   xcconfig = {
     "GCC_ENABLE_CPP_EXCEPTIONS": "YES"
   },

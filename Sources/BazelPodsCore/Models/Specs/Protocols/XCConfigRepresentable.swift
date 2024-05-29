@@ -11,6 +11,7 @@ protocol XCConfigRepresentable: BaseRepresentable {
     var podTargetXcconfig: [String: String] { get }
     var userTargetXcconfig: [String: String] { get }
     var xcconfig: [String: String] { get }
+    var compilerFlags: [String] { get }
 }
 
 extension XCConfigRepresentable {
@@ -23,6 +24,7 @@ private enum Keys: String {
     case pod_target_xcconfig
     case user_target_xcconfig
     case xcconfig
+    case compiler_flags
 }
 
 extension XCConfigRepresentable {
@@ -36,5 +38,10 @@ extension XCConfigRepresentable {
 
     static func xcconfig(json: JSONDict) -> [String: String] {
         return extractValue(fromJSON: json[Keys.xcconfig.rawValue], default: [:])
+    }
+
+    static func compilerFlags(json: JSONDict) -> [String] {
+        let stringFlags = extractValue(fromJSON: json[Keys.compiler_flags.rawValue], default: "")
+        return stringFlags.split(separator: " ").map { String($0) }
     }
 }

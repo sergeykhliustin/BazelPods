@@ -36,13 +36,7 @@ struct BuildSettingsAnalyzer<S: XCConfigRepresentable> {
     }
 
     private func run() -> Result {
-        let xcconfig = spec.collectAttribute(with: subspecs, keyPath: \.xcconfig).platform(platform) ?? [:]
-        let podTargetXcconfig = spec.collectAttribute(with: subspecs, keyPath: \.podTargetXcconfig).platform(platform) ?? [:]
-        let userTargetXcconfig = spec.collectAttribute(with: subspecs, keyPath: \.userTargetXcconfig).platform(platform) ?? [:]
-        let mergedConfig = xcconfig
-            .merging(podTargetXcconfig, uniquingKeysWith: { $1 })
-            .merging(userTargetXcconfig, uniquingKeysWith: { $1 })
-        let parser = XCConfigParser(mergedConfig, options: options)
+        let parser = XCConfigParser(spec: spec, subspecs: subspecs, platform: platform, options: options)
 
         return Result(
             swiftCopts: parser.swiftCopts,

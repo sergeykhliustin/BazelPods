@@ -343,7 +343,11 @@ apple_framework(
     "-ITests/Pods/Realm/include/Realm"
   ],
   cc_copts = [
-    "-std=c++20"
+    "-std=c++20",
+    "-DREALM_COCOA_VERSION='@"10.46.0"'",
+    "-DREALM_ENABLE_SYNC",
+    "-DREALM_HAVE_CONFIG",
+    "-D__ASSERTMACROS__"
   ],
   linkopts = [
     "-Wl,-unexported_symbols_list,Tests/Pods/Realm/Configuration/Realm/PrivateSymbols.txt"
