@@ -45,6 +45,7 @@ public final class TestSpec: TestSpecRepresentable {
     let xcconfig: [String: String]
     let podTargetXcconfig: [String: String]
     let userTargetXcconfig: [String: String]
+    let compilerFlags: [String]
 
     let vendoredLibraries: [String]
     let vendoredFrameworks: [String]
@@ -84,6 +85,7 @@ public final class TestSpec: TestSpecRepresentable {
         xcconfig = Self.xcconfig(json: json)
         podTargetXcconfig = Self.podTargetXcconfig(json: json)
         userTargetXcconfig = Self.userTargetXcconfig(json: json)
+        compilerFlags = Self.compilerFlags(json: json)
         vendoredLibraries = Self.vendoredLibraries(json: json)
         vendoredFrameworks = Self.vendoredFrameworks(json: json)
         infoPlist = Self.infoPlist(json: json)

@@ -63,6 +63,9 @@
         "LTMorphingLabel": {
             "version": "0.9.3"
         },
+        "MMKV": {
+            "version": "1.3.5"
+        },
         "Material": {
             "version": "3.1.8"
         },
@@ -181,6 +184,9 @@
         },
         "Kingfisher": {
             "version": "7.6.2"
+        },
+        "MMKV": {
+            "version": "1.3.5"
         },
         "Moya": {
             "version": "15.0.0"

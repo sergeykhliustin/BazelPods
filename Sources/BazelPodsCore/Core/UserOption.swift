@@ -58,6 +58,10 @@ public struct UserOption {
         case runner(String)
         case test_host(String)
         case timeout(TestsTimeout)
+        case objc_copts([String])
+        case swift_copts([String])
+        case cc_copts([String])
+        case linkopts([String])
     }
     public enum KeyPath: String, CaseIterable {
         case sdk_frameworks
@@ -73,6 +77,10 @@ public struct UserOption {
         case runner
         case test_host
         case timeout
+        case objc_copts
+        case swift_copts
+        case cc_copts
+        case linkopts
     }
 
     public init?(_ string: String) {
@@ -216,11 +224,20 @@ public struct UserOption {
                 let timeout = TestsTimeout(rawValue: last)
             else {
                 log_error(
+                    // swiftlint:disable:next line_length
                     "Incorrect value for \(string). Should be one of \(TestsTimeout.allCases.map({ $0.rawValue }).joined(separator: ", "))). Skipping..."
                 )
                 return nil
             }
             attribute = .timeout(timeout)
+        case .objc_copts:
+            attribute = .objc_copts(value)
+        case .swift_copts:
+            attribute = .swift_copts(value)
+        case .cc_copts:
+            attribute = .cc_copts(value)
+        case .linkopts:
+            attribute = .linkopts(value)
         }
         self.name = name
         self.opt = opt

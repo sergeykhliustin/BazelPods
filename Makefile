@@ -105,7 +105,9 @@ integration-generate-static:
 	--patches bundle_deduplicate arm64_to_sim_forced missing_sdks \
 	-a -d \
 	--color yes \
-	--log-level debug
+	--log-level debug \
+	--user-options \
+	"MMKVCore.cc_copts += -fno-objc-arc"
 
 integration-generate-dynamic:
 	bazel run :bazelpods $(CONFIG) -- \
@@ -117,7 +119,9 @@ integration-generate-dynamic:
 	--color yes \
 	--log-level debug \
 	--patches bundle_deduplicate arm64_to_sim_forced missing_sdks user_options \
-	--user-options "CocoaLumberjack.platform_ios.sdk_frameworks += CoreGraphics"
+	--user-options \
+	"CocoaLumberjack.platform_ios.sdk_frameworks += CoreGraphics" \
+	"MMKVCore.cc_copts += -fno-objc-arc"
 
 integration-build-x86_64:
 	bazel build $(CONFIG) //IntegrationTests:TestApp_iOS --ios_multi_cpus=x86_64

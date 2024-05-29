@@ -68,6 +68,9 @@ apple_framework(
   swift_copts = [
     "-application-extension"
   ],
+  cc_copts = [
+    "-DPRODUCT_NAME=Nimble/Nimble"
+  ],
   linkopts = [
     "-weak-lXCTestSwiftSupport",
     "-Xlinker",

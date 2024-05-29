@@ -388,13 +388,10 @@
       "version": "3.7.6"
     },
     "MMKV": {
-      "version": "1.3.3"
+      "version": "1.3.5"
     },
     "MMKVAppExtension": {
-      "version": "1.3.3"
-    },
-    "MMKVCore": {
-      "version": "1.3.3"
+      "version": "1.3.5"
     },
     "MTHawkeye": {
       "version": "0.12.8"

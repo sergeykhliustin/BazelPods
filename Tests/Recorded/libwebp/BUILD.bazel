@@ -90,6 +90,9 @@ apple_framework(
     "-Xcc",
     "-ITests/Pods/libwebp/"
   ],
+  cc_copts = [
+    "-D_THREAD_SAFE"
+  ],
   visibility = [
     "//visibility:public"
   ]
