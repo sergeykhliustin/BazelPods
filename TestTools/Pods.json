@@ -239,6 +239,9 @@
     "GKPhotoBrowser": {
       "version": "2.7.3"
     },
+    "GKSliderView": {
+      "version": "1.2.2"
+    },
     "GMStepper": {
       "version": "2.3"
     },
