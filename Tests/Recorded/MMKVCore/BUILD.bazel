@@ -109,7 +109,7 @@ apple_framework(
     "UIKit"
   ],
   cc_copts = [
-    "-std=gnu++17",
+    "-std=gnu++20",
     "-x",
     "objective-c++"
   ],
@@ -141,7 +141,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.5</string>
+	<string>1.3.7</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
