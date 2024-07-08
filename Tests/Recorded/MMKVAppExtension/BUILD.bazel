@@ -80,7 +80,7 @@ apple_framework(
     "CoreFoundation"
   ],
   cc_copts = [
-    "-std=gnu++17"
+    "-std=gnu++20"
   ],
   xcconfig = {
     "CLANG_CXX_LIBRARY": "libc++",
@@ -113,7 +113,7 @@ genrule(
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.5</string>
+	<string>1.3.7</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
