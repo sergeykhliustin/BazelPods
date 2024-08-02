@@ -86,6 +86,7 @@ struct ResourcesAnalyzer<S: ResourcesRepresentable> {
                     if let last = components.last {
                         var fixed = last
                             .replacingOccurrences(of: "xcassets", with: "xcassets/**")
+                            .replacingOccurrences(of: "xcdatamodeld", with: "xcdatamodeld/**")
                         //                    .replacingOccurrences(of: "lproj", with: "lproj")
                         if fixed.isEmpty || fixed == "*" {
                             fixed = "**"
