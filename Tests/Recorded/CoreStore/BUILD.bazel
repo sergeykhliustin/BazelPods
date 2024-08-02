@@ -154,7 +154,7 @@ ios_unit_test(
   data = glob(
     [
       "CoreStoreTests/**/*.xcdatamodel",
-      "CoreStoreTests/**/*.xcdatamodeld"
+      "CoreStoreTests/**/*.xcdatamodeld/**"
     ]
   ),
   deps = [

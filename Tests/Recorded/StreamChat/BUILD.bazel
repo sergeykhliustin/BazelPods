@@ -80,7 +80,7 @@ precompiled_apple_resource_bundle(
   ],
   resources = glob(
     [
-      "Sources/StreamChat/**/*.xcdatamodeld"
+      "Sources/StreamChat/**/*.xcdatamodeld/**"
     ]
   )
 )
