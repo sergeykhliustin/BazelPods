@@ -39,6 +39,6 @@ use_repo(non_module_deps, "bazelpods_swift_argument_parser")
 
 bazel_dep(
     name = "rules_xcodeproj", 
-    version = "2.5.2",
+    version = "2.6.0",
     dev_dependency=True
 )
