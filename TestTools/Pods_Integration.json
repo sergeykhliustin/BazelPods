@@ -236,9 +236,6 @@
         "SwiftyJSON": {
             "version": "5.0.1"
         },
-        "SuperwallKit": {
-          "version": "3.7.0"
-        },
         "Yoga": {
             "version": "1.14.0"
         },
