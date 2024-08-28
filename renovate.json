@@ -7,7 +7,11 @@
   "packageRules": [
     {
       "matchDepNames": ["rules_apple", "rules_swift"],
-      "groupName": "base_rules"
+      "enabled": false
+    },
+    {
+      "matchDepNames": ["rules_ios"],
+      "enabled": true
     }
   ]
 }

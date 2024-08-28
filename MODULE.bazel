@@ -13,7 +13,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_apple",
-    version = "3.8.0",
+    version = "3.5.1",
     repo_name = "build_bazel_rules_apple",
 )
 bazel_dep(
@@ -22,7 +22,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_swift",
-    version = "2.1.1",
+    version = "1.18.0",
     repo_name = "build_bazel_rules_swift",
 )
 bazel_dep(
