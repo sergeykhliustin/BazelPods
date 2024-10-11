@@ -18,7 +18,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.0.12",
+    version = "0.0.13",
 )
 bazel_dep(
     name = "rules_swift",
