@@ -690,6 +690,9 @@
     "hippy": {
       "version": "2.14.11"
     },
+    "ios-voice-processor": {
+      "version": "1.1.2"
+    },
     "leveldb-library": {
       "version": "1.22.3"
     },
