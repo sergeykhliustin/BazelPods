@@ -27,7 +27,7 @@ bazel_dep(
 )
 bazel_dep(
 	name = "rules_ios", 
-	version = "5.1.0",
+	version = "5.2.0",
 	repo_name = "build_bazel_rules_ios"
 )
 
